@@ -6,7 +6,7 @@ Team members:
 - Matteo Gisondi - MatteoGisondi
 - Jonathan Jong - jongjonathan
 - Joseph Mezzecappa - JosephMezza
-- Steven Arsan - TODO
+- Steven Arsan - steven-arsan
 
 
 Languages and Technologies used:
