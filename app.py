@@ -20,7 +20,7 @@ class User(UserMixin):
         self.password = password
 
     def __repr__(self):
-        return 'User({})'.format(self.username)
+        return 'User({})'.format(self.id)
 
 
 @app.route('/')
