@@ -1,3 +1,64 @@
 body{
     background-color: lightblue;
 }
+.main-grid{
+    display: grid;
+    height: 1000px;
+    width: 1000px;
+    left: auto;
+    right: auto;
+    margin: 0 auto;
+    justify-content: center;
+
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 125x 125 px;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+
+}
+.main-grid img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    left: auto;
+    right: auto;
+    margin: auto;
+    justify-content: center;
+  
+
+}
+.sign-up{
+    left: auto;
+    right: auto;
+    margin: auto;
+    justify-content: center;
+    text-align: center;
+ 
+}
+.signup-btn{
+    background-color:rgb(24, 134, 197);
+    left: auto;
+    right: auto;
+    width: 300px;
+    height: 30px;
+    justify-content: center;
+    text-align: center;
+    border-radius: 30px;
+}
+.signup-tab{
+    width: 300px;
+    left: auto;
+    right: auto;
+    margin: auto;
+}
+.inputbox{
+    justify-content: center;
+    left: auto;
+    right: auto;
+    margin: auto;
+    width: 300px;
+    height: 40px;
+    border-radius: 30px;
+    border: 1px solid gainsboro;
+    margin: 5px;
+}

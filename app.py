@@ -5,11 +5,13 @@ app.secret_key = 'secret_key'
 
 
 @app.route('/')
+
 def index():
-    return render_template('base.html')
+    return render_template('main.html')
 @app.route('/home')
+
 def home():
-    return render_template('base.html')
+    return render_template('main.html')
 
 @app.route('/login')
 def login():
