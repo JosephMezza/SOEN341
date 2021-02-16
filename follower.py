@@ -55,7 +55,7 @@ def follow(user, follower):
 
     userIndex = followerlist[0].index(user)
     followerIndex = followerlist[0].index(follower)
-    followerlist[followerIndex][userIndex] = 'X'
+    followerlist[userIndex][followerIndex] = 'X'
     #if a user follows another, a X is typed in their intersection in the list
 
     with open('data/followers.csv', 'w', newline='') as csvfile:
@@ -70,6 +70,7 @@ def imagesForUser(user):
     with open('data/userimages.csv', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
         imagelist = list(reader)
+        # opens the csv file with the images and checks 
 
     userExist = False
     userIndex = 0
@@ -84,26 +85,101 @@ def imagesForUser(user):
     # will return a list of all images the user has
     return imagelist[userIndex][1:]
 
+# returns a list with all the followers of a specific user
+def getUserFollowers(user):
+    followerlist = []
+    with open('data/followers.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        followerlist = list(reader)
+        # opens the csv file where the followers are stored and tracks the data inside a list
+    
+    userExist = False
+    for people in followerlist[0]:
+        if people == user:
+            userExist = True
+    if  not userExist:
+        return
+    # testing to make sure the user and followers are real
+
+    userIndex = followerlist[0].index(user)
+    print(followerlist[userIndex])
+    followers = []
+    for x in range(len(followerlist[userIndex])):
+        if followerlist[userIndex][x] == "X":
+            followers.append(followerlist[x][0])
+            # checks the user to see all the people they follow and store it in a list
+    return followers
+
+
+# returns a list with all images to be displayed for a user
+def getImagesToShow(user):
+    imagelist = []
+    with open('data/userimages.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        imagelist = list(reader)
+        # opens the csv file with the images and checks 
+
+    userExist = False
+    for people in imagelist:
+        if people[0] == user:
+            userExist = True
+    if  not userExist:
+        return 
+        # testing to make sure the user is real and takes the users position
+    
+    
+    followerlist = getUserFollowers(user)
+    picturesDisplay = []
+    for follower in followerlist:
+        picturesDisplay= picturesDisplay + imagesForUser(follower)
+    return picturesDisplay
+    
 
 
 # testof the methods
+
 # addUser("Mikeyyy")
 # follow("Drand1943","Milloon")
 # follow("Drand1943","Drand1943")
 # follow("Drand1943","wgerwgg")
 # follow("sdfwergwghr","Drand1943")
 # print(imagesForUser("Giarturner"))
+# print(getUserFollowers("Cagoo1938"))
+# print(getImagesToShow("Whimseeplis"))
 
 
-# THIS CODE WILL RANDOMLY POPULATE AN IMAGE DATABASE
-# imagelist = []
-# with open('data/userimages.csv', newline='') as csvfile:
-#         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-#         imagelist = list(reader)
-# for users in imagelist:
-#     for x in range(random.randint(1, 10)):
-#         users.append("images\\img%20("+str(random.randint(1, 245))+").jpg")
+# THIS METHOD WILL RANDOMLY POPULATE AN IMAGE DATABASE, DO NOT USE
+def populateImageDatabse():
+    imagelist = []
+    with open('data/userimages.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        imagelist = list(reader)
+        # opens the csv file where the images are stored and tracks the data inside a list
 
-# with open('data/userimages.csv', 'w', newline='') as csvfile:
-#         writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-#         writer.writerows(imagelist)
+    for users in imagelist:
+        for x in range(random.randint(1, 10)):
+            users.append("images\\img%20("+str(random.randint(1, 245))+").jpg")
+            # randomly assigns images to users
+
+    with open('data/userimages.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        writer.writerows(imagelist)
+        # list with all users and pictures will be transposed in the csv
+
+
+# this method will randomly populate the followers csv, do not overuse this method
+def populateFollowerDatabase(): 
+    followerlist = []
+    with open('data/followers.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        followerlist = list(reader)
+        # opens the csv file where the followers are stored and tracks the data inside a list
+
+    for x in range(random.randint(1, 20000)):
+        followerlist[random.randint(1, 1000)][random.randint(1, 1000)] = 'X'
+        # randomly assigns followers to users.
+
+    with open('data/followers.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        writer.writerows(followerlist)
+        #the list with the new followers X  marked in it will be put back into the csv file
