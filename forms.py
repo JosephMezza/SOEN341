@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.fields.html5 import EmailField
+from wtforms.fields.html5 import EmailField,
 from wtforms.validators import InputRequired, EqualTo, Email, Length
 
 
@@ -10,12 +10,11 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-class RegisterForm(FlaskForm):
+class SignUpForm(FlaskForm):
     username_validator = ''  # TODO : regex for valid username (i.e. no special chars)
     username = StringField('Username',
                            validators=[InputRequired(),
-                                       Length(4, 32),
-                                       username_validator])
+                                       Length(4, 32)])
     email = EmailField('Email', validators=[InputRequired(), Email()])
     first_name = StringField('First Name', validators=[InputRequired()])
     last_name = StringField('Last Name', validators=[InputRequired()])
@@ -25,5 +24,5 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Login')
 
     def validate_password(self, password):
-        # provide password validation criteria
+        # TODO : provide password validation criteria
         return True
