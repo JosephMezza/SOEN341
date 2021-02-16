@@ -102,7 +102,6 @@ def getUserFollowers(user):
     # testing to make sure the user and followers are real
 
     userIndex = followerlist[0].index(user)
-    print(followerlist[userIndex])
     followers = []
     for x in range(len(followerlist[userIndex])):
         if followerlist[userIndex][x] == "X":
@@ -147,6 +146,8 @@ def getImagesToShow(user):
 # print(getUserFollowers("Cagoo1938"))
 # print(getImagesToShow("Whimseeplis"))
 
+
+# *************************************************************************DO NOT USE METHODS***************************************************************************
 
 # THIS METHOD WILL RANDOMLY POPULATE AN IMAGE DATABASE, DO NOT USE
 def populateImageDatabse():
