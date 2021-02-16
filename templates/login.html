@@ -2,41 +2,29 @@
 {% block content %}
 <!DOCTYPE html>
 <html>
+   <head>
 <title>Login</title>
+<link rel="stylesheet" href="/static/login.css">
+</head>
 <body>
-
-    <div class="container">
-        <center>
-            <h2>Log in</h2>
-                <table>
-                <tr>
-                 <td>Email or Phone Number:</td>
-                 <td>
-                     <input type="text" name="user">
-                 </td>
-                </tr>
-    
-                <tr>
-                 <td>Password:</td>
-                 <td>
-                    <input type="password" name="user_password">
-                 </td>
-                </tr>
-                <tr>
-                   <td> 
-                      <input type="submit" name="submit" value="Sign in">
-                   </td>
-                </tr>
-                <tr>
-                 
-                 <td>
-                    <b>Create New Account</b>
-                 </td>
-                </tr>
-        </div>
-
-
-
+   <div class = "box">
+      <img class = "userimage" src = "/images/user.png">
+      <h2>Welcome Back!</h2>
+      <form>
+         <p class = "fields">Username</p>
+         <input type = "text" placeholder = "Enter Username">
+         <p class = "fields">Password</p>
+         <input type = "password" placeholder="Enter Password">
+         <br>
+         <input class = "login" type = "submit" value = "Login"><br>
+         <div class="redirect">
+         <p class = "options">
+         <a class = "options" href = "#" > Forgot your password?</a></p>
+         <p class = "options">
+         <a class = "options" href = "signup.html">Don't have an account?</a></p>
+       </div>
+      </form>
+   </div>
 </body>
 
 </html>
