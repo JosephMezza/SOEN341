@@ -1,6 +1,6 @@
 import time
 import csv
-
+import random
 
 
 def addUser(user):
@@ -70,3 +70,17 @@ def follow(user, follower):
 # follow("Drand1943","Drand1943")
 # follow("Drand1943","wgerwgg")
 # follow("sdfwergwghr","Drand1943")
+
+
+# THIS CODE WILL RANDOMLY POPULATE AN IMAGE DATABASE
+# imagelist = []
+# with open('data/userimages.csv', newline='') as csvfile:
+#         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+#         imagelist = list(reader)
+# for users in imagelist:
+#     for x in range(random.randint(1, 10)):
+#         users.append("images\\img%20("+str(random.randint(1, 245))+").jpg")
+
+# with open('data/userimages.csv', 'w', newline='') as csvfile:
+#         writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+#         writer.writerows(imagelist)
