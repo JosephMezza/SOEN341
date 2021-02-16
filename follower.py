@@ -64,12 +64,35 @@ def follow(user, follower):
         #the list with the new follower X  marked in it will be put back into the csv file
 
 
+# returns a lsit with all the pictures they posted
+def imagesForUser(user):
+    imagelist = []
+    with open('data/userimages.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        imagelist = list(reader)
+
+    userExist = False
+    userIndex = 0
+    for index, people in enumerate(imagelist):
+        if people[0] == user:
+            userExist = True
+            userIndex = index
+    if  not userExist:
+        return 
+    # testing to make sure the user is real and takes the users position
+
+    # will return a list of all images the user has
+    return imagelist[userIndex][1:]
+
+
+
 # testof the methods
 # addUser("Mikeyyy")
 # follow("Drand1943","Milloon")
 # follow("Drand1943","Drand1943")
 # follow("Drand1943","wgerwgg")
 # follow("sdfwergwghr","Drand1943")
+# print(imagesForUser("Giarturner"))
 
 
 # THIS CODE WILL RANDOMLY POPULATE AN IMAGE DATABASE
