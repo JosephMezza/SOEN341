@@ -1,9 +1,9 @@
 body{
   margin: 0;
   padding: 0;
-  background-image: url("/images/polaroid.jpg");
-  background-position: center;
+  background-image: url('/static/images/polaroid.jpg');
   background-size: cover;
+  background-repeat: no-repeat;
  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 .box{
@@ -54,16 +54,13 @@ input{
 input.login{
     height: 35px;
     cursor: pointer;
-    padding: 5px;
-
     margin-top: 10px;
     font-size: 23px;
     background-color: #4285F4;
     border-radius: 15px;
     border-width: 0;
 }
-input.login:hover{
-    
+input.login:hover{ 
     border-color: #4285F4;
     background-color: white;
     transition: linear 0.5s;
