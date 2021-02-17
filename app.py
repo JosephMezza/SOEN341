@@ -20,7 +20,10 @@ def login():
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
-    
+
+@app.route('/post')
+def post():
+    return render_template('post.html')
 
 
 if __name__ == '__main__':
