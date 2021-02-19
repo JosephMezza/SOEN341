@@ -1,0 +1,80 @@
+body{
+  margin: 0;
+  padding: 0;
+  background-image: url('/static/images/polaroid.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+ font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.box{
+    border-radius: 5px;
+    width: 350px;
+    height: 400px;
+    background-color: black;
+    color: white;
+    top:50%;
+    left:50%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box; /* Includes any borders into the width, height */
+    padding: 20px;
+}
+.userimage{
+display: block;
+left: 35%;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    border-radius: 50%;
+    top: -18%;   
+}
+.fields{
+font-weight: bold;
+}
+h2{
+    text-align: center;
+}
+p{
+    font-size: 19px;
+    margin:2px;
+}
+
+input{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 19px;
+    color: white;
+    border: none;
+    border-bottom: solid white 1px;
+    outline: none;
+    height: 35px;
+    background-color: transparent;
+    width: 100%;
+    margin-bottom: 15px;
+}
+input.login{
+    height: 35px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 23px;
+    background-color: #4285F4;
+    border-radius: 15px;
+    border-width: 0;
+}
+input.login:hover{ 
+    border-color: #4285F4;
+    background-color: white;
+    transition: linear 0.5s;
+    color: #4285F4;
+}
+div.redirect{
+    width: 100%; 
+    text-align: center;
+}
+.options{
+font-size: 20px;
+color: #4285F4;
+text-decoration: none;
+}
+p.options{
+    margin-bottom: 10px;
+}

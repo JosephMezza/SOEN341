@@ -47,9 +47,9 @@ def find_user(username):
 @app.route('/')
 def index():
     """ default app route : probably shouldn't be base.html """
-    return render_template('base.html')
+    return render_template('main.html')
 
-
+  
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -77,7 +77,7 @@ def logout():
     return redirect('/')
 
 
-@app.route('/sign_up', methods=['GET', 'POST'])
+@app.route('/signup', methods=['GET', 'POST'])
 def sign_up():
     """ TODO : This must be changed to searching the database"""
     form = SignUpForm()
@@ -94,8 +94,11 @@ def sign_up():
             return redirect('/login')
         else:
             flash('This username already exists')
-    return render_template('sign_up.html', form=form)
+    return render_template('signup.html', form=form)
 
+  @app.route('/post')
+  def post():
+    return render_template('post.html')
 
 if __name__ == '__main__':
     app.run()

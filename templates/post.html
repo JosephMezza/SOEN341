@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="..\static\stylesheet.css">
+    <script src='main.js'></script>
+</head>
+<body>
+    <section class = "container-fluid no-padding">
+        <div class = "card">
+            <div class = "card-header">
+                Profile
+            </div>
+            <img src="..\static\images\img3.jpg" id = "car3" alt="car3">
+            <div class = "card-footer">
+                <input type = "button" class = "like-btn" value = "like">
+                Caption
+            </div>
+
+        </div>
+        
+    </section>
+</body>
+</html>
+{% endblock %}
