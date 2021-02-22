@@ -49,7 +49,7 @@ def index():
     """ default app route : probably shouldn't be base.html """
     return render_template('main.html')
 
-  
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -96,8 +96,8 @@ def sign_up():
             flash('This username already exists')
     return render_template('signup.html', form=form)
 
-  @app.route('/post')
-  def post():
+@app.route('/post')
+def post():
     return render_template('post.html')
 
 if __name__ == '__main__':
