@@ -16,7 +16,7 @@ def setListCSV(fileName, listToWrite):
 
 
 
-def addUser(user):
+def addUser(user, password, email, firstName, lastName):
     followerlist = getListFromCSV('data/followers.csv')
     # copy the csv information in a list
 
@@ -32,6 +32,14 @@ def addUser(user):
     
     setListCSV('data/followers.csv', followerlist)    
     #the list with the new user inserted
+
+    userslist = getListFromCSV('data/users.csv')
+    userslist.append([user, email, firstName, lastName, password])
+    setListCSV('data/users.csv', userslist)
+
+    imagelist = getListFromCSV('data/userImages.csv')
+    imagelist.append([user])
+    setListCSV('data/userImages.csv', imagelist)
 
 
 
@@ -138,7 +146,7 @@ def getImagesToShow(user):
 # print(imagesForUser("Giarturner"))
 # print(getUserFollowers("Cagoo1938"))
 # print(getImagesToShow("Cagoo1938"))
-addUser("robadobbob")
+addUser("robadobbob", "1234567890!!lol", "robbiieeee@gamil.com", "Robert", "Tobert")
 
 
 # *************************************************************************DO NOT USE METHODS***************************************************************************
