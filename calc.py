@@ -1,6 +1,6 @@
-class Calculator:
+import pytest
 
- if __name__ == "__main__":
-    num1 = 4
-    num2 = 4
-    print(num1 == num2)
+def add(strng: str)-> int:
+    f'Hello {strng}'
+
+
