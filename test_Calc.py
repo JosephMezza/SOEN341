@@ -1,4 +1,4 @@
-from SOEN341 import Calculator
+from Calculator import Calculator
 
 def test_add():
     x,y = 1,2
