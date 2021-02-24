@@ -26,7 +26,7 @@ class posts:
 
 
 
-def addpost(user, imgpath):
+def addPost(user, imgpath):
     newPost = posts(user, imgpath)
     postsList = getListFromCSV('data/posts.csv')
     post = []
