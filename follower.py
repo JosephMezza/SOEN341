@@ -14,7 +14,9 @@ def setListCSV(fileName, listToWrite):
         writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerows(listToWrite)
 
-
+def getusers():
+    followerlist = getListFromCSV('data/followers.csv')
+    return followerlist[0][1:]
 
 def addUser(user, password, email, firstName, lastName):
     followerlist = getListFromCSV('data/followers.csv')
@@ -158,14 +160,14 @@ def populateImageDatabse():
 
     for users in imagelist:
         for x in range(random.randint(1, 10)):
-            users.append("images\\img%20("+str(random.randint(1, 245))+").jpg")
+            users.append("img("+str(random.randint(1, 245))+").jpg")
             # randomly assigns images to users
 
     with open('data/userimages.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerows(imagelist)
         # list with all users and pictures will be transposed in the csv
-
+        
 
 # this method will randomly populate the followers csv, do not overuse this method
 def populateFollowerDatabase(): 
