@@ -3,13 +3,13 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from forms import LoginForm, SignUpForm
 import bcrypt
 import csv
+import follower
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
 # allow the use of @login_required on endpoints which require an account
 # unauthenticated users will be redirected to login page
 
@@ -48,14 +48,12 @@ def find_user(username):
 @app.route('/')
 def index():
     """ default app route : probably shouldn't be base.html """
-    
-    return render_template('main.html', loggedIn = session['loggedIn'])
-
-
+    imageList = follower.getImagesToShow("Marknow") # eventually change to logged in user
+    return render_template('main.html', imageList = imageList, loggedIn = session['loggedIn'])
+  
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    
     if form.validate_on_submit():
         user = find_user(form.username.data)
         valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
@@ -106,6 +104,12 @@ def sign_up():
 @app.route('/post')
 def post():
     return render_template('post.html')
+
+
+@app.route('/users')
+def users():
+    usersList = follower.getusers()
+    return render_template('users.html', usersList = usersList)
 
 if __name__ == '__main__':
     app.run()
