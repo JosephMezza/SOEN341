@@ -23,9 +23,9 @@ def addUser(user, password, email, firstName, lastName):
     # copy the csv information in a list
 
 
-    for people in followerlist[0]:
-        if people == user:
-           return
+    # for people in followerlist[0]:
+    #     if people == user:
+    #        return
     # Checks if it is a new user
 
     followerlist.append([user])
