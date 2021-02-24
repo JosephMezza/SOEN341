@@ -1,4 +1,4 @@
-from flask import Flask, session, redirect, render_template, flash
+from flask import Flask, session, redirect, render_template, flash, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from forms import LoginForm, SignUpForm
 import bcrypt
@@ -39,9 +39,9 @@ def find_user(username):
     user = None
     with open('data/users.csv', 'r') as f:
         users = f.readlines()[1:]  # omit header
-        for user in users:
-            if user[0] == username:
-                user = User(*user)
+    for user in users:
+        if user[0] == username:
+            user = User(*user)
     return user
 
 
@@ -49,29 +49,42 @@ def find_user(username):
 def index():
     """ default app route : probably shouldn't be base.html """
     imageList = follower.getImagesToShow("Marknow") # eventually change to logged in user
-    return render_template('main.html', imageList = imageList, loggedIn = session['loggedIn'])
-  
+    return render_template('main.html', imageList=imageList, loggedIn=session['loggedIn'])
+
+# Test User:
+# Calasts53
+# eeG1fior0g
 @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     form = LoginForm()
+#     print(form.username.data)
+#     if form.validate_on_submit():
+#         user = find_user(form.username.data)
+#         valid_password = form.password.data == user.password
+#         # valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
+#         if user and valid_password:
+#             print('valid')
+#             login_user(user)
+#             flash('Log in successful.')
+#             # check if the next page is set in the session by the @login_required decorator
+#             # if not set, it will default to '/'
+#             next_page = session.get('next', '/')
+#             # reset the next page to default '/'
+#             session['next'] = '/'
+#             session['loggedIn'] = True
+#             return redirect(next_page, loggedIn=session['loggedIn'])
+#         else:
+#             flash('Incorrect username/password')
+#             session['loggedIn'] = False
+#     return render_template('login.html', form=form, loggedIn=session['loggedIn'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = find_user(form.username.data)
-        valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
-        if user and valid_password:
-            login_user(user)
-            flash('Log in successful.')
-            # check if the next page is set in the session by the @login_required decorator
-            # if not set, it will default to '/'
-            next_page = session.get('next', '/')
-            # reset the next page to default '/'
-            session['next'] = '/'
-            session['loggedIn'] = True
-            return redirect(next_page, loggedIn = loggedIn) #Will this work like in render template?
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
         else:
-            flash('Incorrect username/password')
-            session['loggedIn'] = False
-          
-    return render_template('login.html', form=form,loggedIn = session['loggedIn'])
+            return redirect(url_for('home'))
+    return render_template('login.html', error=error)
 
 
 @app.route('/logout')
