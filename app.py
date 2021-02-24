@@ -46,10 +46,12 @@ def find_user(username):
 
 @app.route('/')
 def index():
-    """ default app route : probably shouldn't be base.html """
-    session['loggedIn'] = None  # TODO : remove this
-    print(session)
     imageList = follower.getImagesToShow("Marknow") # eventually change to logged in user
+
+    # """ default app route : probably shouldn't be base.html """
+    # session['loggedIn'] = None  # TODO : remove this
+    # print(session)
+    
     return render_template('main.html', imageList=imageList, loggedIn=session['loggedIn'])
 
 # Test User:
@@ -111,9 +113,14 @@ def post():
     return render_template('post.html')
 
 
-@app.route('/users')
+@app.route('/users' , methods=["GET","POST"])
 def users():
     usersList = follower.getusers()
+    if request.method == 'POST':
+        userToFollow = request.form.get('follow')
+        print(userToFollow)
+        follower.follow("Marknow", userToFollow)
+        return redirect("/")
     return render_template('users.html', usersList = usersList)
 
 if __name__ == '__main__':

@@ -46,7 +46,6 @@ def addUser(user, password, email, firstName, lastName):
 
 
 def follow(user, follower):
-
     followerlist = getListFromCSV('data/followers.csv')
         # opens the csv file where the followers are stored and tracks the data inside a list
 
@@ -54,15 +53,16 @@ def follow(user, follower):
         return
         # testing to make sure you cannot follow yourself
 
-    userExist = False
-    followerExist = False
-    for people in followerlist[0]:
-        if people == user:
-            userExist = True
-        if people == follow:
-            followerExist = True
-    if not followerExist or not userExist:
-        return
+    # userExist = False
+    # followerExist = False
+    # for people in followerlist[0]:
+    #     if people == user:
+    #         userExist = True
+    #     if people == follow:
+    #         followerExist = True
+    # if not followerExist or not userExist:
+    #     print("big problem")
+    #     return
     # testing to make sure the user and followers are real
     
    
@@ -141,7 +141,7 @@ def getImagesToShow(user):
 # testof the methods
 
 # addUser("Mikeyyy")
-# follow("Drand1943","Milloon")
+# follow("Drand1943","Ablion73")
 # follow("Drand1943","Drand1943")
 # follow("Drand1943","wgerwgg")
 # follow("sdfwergwghr","Drand1943")

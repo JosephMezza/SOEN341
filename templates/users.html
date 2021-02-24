@@ -6,9 +6,13 @@
 <title>Followers</title>
 </head>
 <body>
-   {% for i in usersList %}
-   {{i}} <input type = "button" value = "Follow" /><br>
-   {% endfor %}
+   <form action="" method="POST" >
+      {% for i in usersList %}
+      {{i}}
+      <button class="btn btn-danger" type="submit" name="follow" value="{{  i  }}"> follow</button>
+      <br>
+      {% endfor %}
+   <form action="" method="POST" ></form>
 </body>
 
 </html>
