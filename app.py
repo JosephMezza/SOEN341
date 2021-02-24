@@ -3,13 +3,13 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from forms import LoginForm, SignUpForm
 import bcrypt
 import csv
+import follower
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
 # allow the use of @login_required on endpoints which require an account
 # unauthenticated users will be redirected to login page
 
@@ -48,14 +48,12 @@ def find_user(username):
 @app.route('/')
 def index():
     """ default app route : probably shouldn't be base.html """
-    loggedIn = session['loggedIn']
-    return render_template('main.html', loggedIn = loggedIn)
-
-
+    imageList = follower.getImagesToShow("Marknow") # eventually change to logged in user
+    return render_template('main.html', imageList = imageList)
+  
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    loggedIn = False
     if form.validate_on_submit():
         user = find_user(form.username.data)
         valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
@@ -67,15 +65,10 @@ def login():
             next_page = session.get('next', '/')
             # reset the next page to default '/'
             session['next'] = '/'
-            session['loggedIn'] = True
-            loggedIn = session['loggedIn']
-            return redirect(next_page, loggedIn = loggedIn) #Will this work like in render template?
+            return redirect(next_page)
         else:
-            print("Hello")
             flash('Incorrect username/password')
-            session['loggedIn'] = False
-            loggedIn = session[loggedIn]
-    return render_template('login.html', form=form,loggedIn = loggedIn)
+    return render_template('login.html', form=form)
 
 
 @app.route('/logout')
@@ -107,6 +100,12 @@ def sign_up():
 @app.route('/post')
 def post():
     return render_template('post.html')
+
+
+@app.route('/users')
+def users():
+    usersList = follower.getusers()
+    return render_template('users.html', usersList = usersList)
 
 if __name__ == '__main__':
     app.run()

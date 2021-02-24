@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+   <head>
+<title>Followers</title>
+</head>
+<body>
+   {% for i in usersList %}
+   {{i}} <input type = "button" value = "Follow" /><br>
+   {% endfor %}
+</body>
+
+</html>
+{% endblock %}
