@@ -46,7 +46,7 @@ def find_user(username):
 
 @app.route('/')
 def index():
-    imageList = follower.getImagesToShow("Marknow") # eventually change to logged in user
+    imageList = follower.getImagesToShow("Calasts53") # eventually change to logged in user
 
     # """ default app route : probably shouldn't be base.html """
     # session['loggedIn'] = None  # TODO : remove this
@@ -119,7 +119,7 @@ def users():
     if request.method == 'POST':
         userToFollow = request.form.get('follow')
         print(userToFollow)
-        follower.follow("Marknow", userToFollow)
+        follower.follow("Calasts53", userToFollow)
         return redirect("/")
     return render_template('users.html', usersList = usersList)
 
