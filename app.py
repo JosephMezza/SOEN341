@@ -9,6 +9,7 @@ app.secret_key = 'secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
 # allow the use of @login_required on endpoints which require an account
 # unauthenticated users will be redirected to login page
 
@@ -47,12 +48,14 @@ def find_user(username):
 @app.route('/')
 def index():
     """ default app route : probably shouldn't be base.html """
-    return render_template('main.html')
+    loggedIn = session['loggedIn']
+    return render_template('main.html', loggedIn = loggedIn)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    loggedIn = False
     if form.validate_on_submit():
         user = find_user(form.username.data)
         valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
@@ -64,10 +67,15 @@ def login():
             next_page = session.get('next', '/')
             # reset the next page to default '/'
             session['next'] = '/'
-            return redirect(next_page)
+            session['loggedIn'] = True
+            loggedIn = session['loggedIn']
+            return redirect(next_page, loggedIn = loggedIn) #Will this work like in render template?
         else:
+            print("Hello")
             flash('Incorrect username/password')
-    return render_template('login.html', form=form)
+            session['loggedIn'] = False
+            loggedIn = session[loggedIn]
+    return render_template('login.html', form=form,loggedIn = loggedIn)
 
 
 @app.route('/logout')
