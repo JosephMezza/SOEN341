@@ -13,6 +13,7 @@ login_manager.login_view = 'login'
 # allow the use of @login_required on endpoints which require an account
 # unauthenticated users will be redirected to login page
 
+
 class User(UserMixin):
     def __init__(self, username, email, first_name, last_name, password=None):
         self.id = username
@@ -36,18 +37,18 @@ def load_user(user_id):
 
 def find_user(username):
     """ TODO : this will later be changed to searching the database"""
-    user = None
-    with open('data/users.csv', 'r') as f:
-        users = f.readlines()[1:]  # omit header
-    for user in users:
+    users = follower.getListFromCSV('data/users.csv')
+    for user in users[1:]:
         if user[0] == username:
-            user = User(*user)
-    return user
+            return User(*user)
+    return None
 
 
 @app.route('/')
 def index():
     """ default app route : probably shouldn't be base.html """
+    session['loggedIn'] = None  # TODO : remove this
+    print(session)
     imageList = follower.getImagesToShow("Marknow") # eventually change to logged in user
     return render_template('main.html', imageList=imageList, loggedIn=session['loggedIn'])
 
@@ -55,36 +56,26 @@ def index():
 # Calasts53
 # eeG1fior0g
 @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     form = LoginForm()
-#     print(form.username.data)
-#     if form.validate_on_submit():
-#         user = find_user(form.username.data)
-#         valid_password = form.password.data == user.password
-#         # valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
-#         if user and valid_password:
-#             print('valid')
-#             login_user(user)
-#             flash('Log in successful.')
-#             # check if the next page is set in the session by the @login_required decorator
-#             # if not set, it will default to '/'
-#             next_page = session.get('next', '/')
-#             # reset the next page to default '/'
-#             session['next'] = '/'
-#             session['loggedIn'] = True
-#             return redirect(next_page, loggedIn=session['loggedIn'])
-#         else:
-#             flash('Incorrect username/password')
-#             session['loggedIn'] = False
-#     return render_template('login.html', form=form, loggedIn=session['loggedIn'])
 def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = find_user(form.username.data)
+        valid_password = form.password.data == user.password
+        # valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
+        if user and valid_password:
+            session['loggedIn'] = True
+            login_user(user)
+            flash('Log in successful.')
+            # check if the next page is set in the session by the @login_required decorator
+            # if not set, it will default to '/'
+            next_page = session.get('next', '/')
+            # reset the next page to default '/'
+            session['next'] = '/'
+            return redirect(next_page)
         else:
-            return redirect(url_for('home'))
-    return render_template('login.html', error=error)
+            session['loggedIn'] = False
+            flash('Incorrect username/password')
+    return render_template('login.html', form=form, loggedIn=session['loggedIn'])
 
 
 @app.route('/logout')
@@ -113,6 +104,7 @@ def sign_up():
         else:
             flash('This username already exists')
     return render_template('signup.html', form=form)
+
 
 @app.route('/post')
 def post():
