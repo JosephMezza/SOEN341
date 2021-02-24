@@ -11,18 +11,18 @@
       <img class = "userimage" src = "/static/images/user.png">
       <h2>Welcome Back!</h2>
       <form method="POST" action="/login">
-         <div class="form-group col-md-6">
+         <div class = "login">
             {{ form.csrf_token() }}
             <label for=""> {{ form.username.label }}</label>
             {{ form.username }}
          </div>
-         <div class="form-group col-md-6">
+         <div class = "login">
             {{ form.csrf_token() }}
             <label for=""> {{ form.password.label }}</label>
             {{ form.password }}
          </div>
          <div class="form-group">
-               {{ form.submit(class="btn btn-primary")}}
+               {{ form.submit(class="submit")}}
          </div>
          <div class="redirect">
          <p class = "options">

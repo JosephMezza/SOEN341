@@ -29,6 +29,8 @@ body{
     margin: auto;
 }
 .inputbox{
+    padding: 3px 10px;
+    outline:none;
     justify-content: center;
     left: auto;
     right: auto;
