@@ -48,14 +48,14 @@ def find_user(username):
 @app.route('/')
 def index():
     """ default app route : probably shouldn't be base.html """
-    loggedIn = session['loggedIn']
-    return render_template('main.html', loggedIn = loggedIn)
+    
+    return render_template('main.html', loggedIn = session['loggedIn'])
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    loggedIn = False
+    
     if form.validate_on_submit():
         user = find_user(form.username.data)
         valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
@@ -68,19 +68,18 @@ def login():
             # reset the next page to default '/'
             session['next'] = '/'
             session['loggedIn'] = True
-            loggedIn = session['loggedIn']
             return redirect(next_page, loggedIn = loggedIn) #Will this work like in render template?
         else:
-            print("Hello")
             flash('Incorrect username/password')
             session['loggedIn'] = False
-            loggedIn = session[loggedIn]
-    return render_template('login.html', form=form,loggedIn = loggedIn)
+          
+    return render_template('login.html', form=form,loggedIn = session['loggedIn'])
 
 
 @app.route('/logout')
 @login_required
 def logout():
+    # Make loggedIn = False
     logout_user()
     return redirect('/')
 
