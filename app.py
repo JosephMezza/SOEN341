@@ -46,13 +46,13 @@ def find_user(username):
 
 @app.route('/')
 def index():
+    # print(session['username'])
     imageList = follower.getImagesToShow("Calasts53") # eventually change to logged in user
-
     # """ default app route : probably shouldn't be base.html """
     # session['loggedIn'] = None  # TODO : remove this
     # print(session)
     
-    return render_template('main.html', imageList=imageList, loggedIn=session['loggedIn'])
+    return render_template('main.html', imageList=imageList)#, loggedIn=session['loggedIn']
 
 # Test User:
 # Calasts53
@@ -77,14 +77,16 @@ def login():
         else:
             session['loggedIn'] = False
             flash('Incorrect username/password')
-    return render_template('login.html', form=form, loggedIn=session['loggedIn'])
+    return render_template('login.html', form=form, )#loggedIn=session['loggedIn']
 
 
 @app.route('/logout')
 @login_required
 def logout():
     # Make loggedIn = False
+    session['loggedIn'] = False
     logout_user()
+    session.clear()
     return redirect('/')
 
 
