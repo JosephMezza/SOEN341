@@ -21,7 +21,7 @@ class SignUpForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired(), Length(8)])
     password2 = PasswordField('Repeat password',
                               validators=[InputRequired(), EqualTo('password', message='Passwords must match.')])
-    submit = SubmitField('Login')
+    submit = SubmitField('Sign Up')
 
     def validate_password(self, password):
         # TODO : provide password validation criteria

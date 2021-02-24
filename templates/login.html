@@ -10,18 +10,18 @@
    <div class = "box">
       <img class = "userimage" src = "/static/images/user.png">
       <h2>Welcome Back!</h2>
-      <form action="" method = "post">
+      <form action="/login" method="post">
          <p class = "fields">Username</p>
-         <input type = "text" placeholder = "Enter Username" value = "{{request.form.username}}">
-         <p class = "fields">Password</p>
-         <input type = "password" placeholder="Enter Password" value = "{{request.form.password}}">
+         <input type="text" placeholder="Enter Username" value="{{request.form.username}}">
+         <p class="fields">Password</p>
+         <input type="password" placeholder="Enter Password" value="{{request.form.password}}">
          <br>
-         <input class = "login" type = "submit" value = "Login"><br>
+         <input class="login" type="submit" value="Login"><br>
          <div class="redirect">
          <p class = "options">
-         <a class = "options" href = "#" > Forgot your password?</a></p>
+         <a class = "options" href="#">Forgot your password?</a></p>
          <p class = "options">
-         <a class = "options" href = "signup">Don't have an account?</a></p>
+         <a class = "options" href="signup">Don't have an account?</a></p>
        </div>
       </form>
    </div>
