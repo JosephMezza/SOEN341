@@ -121,12 +121,12 @@ def getImagesToShow(user):
     imagelist = getListFromCSV('data/userimages.csv')
         # opens the csv file with the images and checks 
 
-    userExist = False
-    for people in imagelist:
-        if people[0] == user:
-            userExist = True
-    if  not userExist:
-        return 
+    # userExist = False
+    # for people in imagelist:
+    #     if people[0] == user:
+    #         userExist = True
+    # if  not userExist:
+    #     return 
         # testing to make sure the user is real and takes the users position
     
     

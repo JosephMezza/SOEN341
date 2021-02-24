@@ -47,11 +47,19 @@ def find_user(username):
 @app.route('/')
 def index():
     # print(session['username'])
-    imageList = follower.getImagesToShow("Calasts53") # eventually change to logged in user
+     # eventually change to logged in user
     # """ default app route : probably shouldn't be base.html """
     # session['loggedIn'] = None  # TODO : remove this
     # print(session)
-    
+    username = "Calasts53"
+    try:
+        username = str(session['_user_id'])
+        print(username)
+    except:
+        print("An exception occurred")
+        username = "Calasts53"
+    imageList = follower.getImagesToShow(username)
+
     return render_template('main.html', imageList=imageList)#, loggedIn=session['loggedIn']
 
 # Test User:
@@ -121,7 +129,8 @@ def users():
     if request.method == 'POST':
         userToFollow = request.form.get('follow')
         print(userToFollow)
-        follower.follow("Calasts53", userToFollow)
+        username = str(session['_user_id'])
+        follower.follow(username, userToFollow)
         return redirect("/")
     return render_template('users.html', usersList = usersList)
 
