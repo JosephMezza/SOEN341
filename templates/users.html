@@ -10,17 +10,14 @@
    <form action="" method="POST" >
       <div class = "box" >
          <p>
-         {% for i in usersList %}
-         {{i}}
-         <button type = "button" button class="btn" type="submit" name="follow" value="{{  i  }}"> Follow</button>
-         <br>
-         {% endfor %}
+            {% for i in usersList %}
+               {{i}}
+               <button class="btn" type="submit" name="follow" value="{{ i }}">Follow</button>
+               <br>
+            {% endfor %}
          </p>
-         
-
       </div>
-      
-   <form action="" method="POST" ></form>
+   </form>
 </body>
 
 </html>

@@ -1,9 +1,11 @@
 import csv
 
 def getListFromCSV(fileName):
+    dataList = []
     with open(fileName, newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    return list(reader)
+        reader = csv.reader(csvfile, delimiter=',')
+        dataList = list(reader)
+    return dataList
 
 
 def setListCSV(fileName, listToWrite):
@@ -19,6 +21,7 @@ def getusers():
 
 def addUser(user, password, email, firstName, lastName):
     followerlist = getListFromCSV('data/followers.csv')
+
     # copy the csv information in a list
 
     # for people in followerlist[0]:
@@ -28,6 +31,7 @@ def addUser(user, password, email, firstName, lastName):
 
     followerlist.append([user])
     followerlist[0].append(user)
+    followerlist[-1].append(',' * len(followerlist[0]))
     # inserting the new user inside the list
 
     setListCSV('data/followers.csv', followerlist)
@@ -76,13 +80,11 @@ def imagesForUser(user):
     imagelist = getListFromCSV('data/userimages.csv')
         # opens the csv file with the images and checks
 
-    userExist = False
-    userIndex = 0
+    userIndex = -1
     for index, people in enumerate(imagelist):
         if people[0] == user:
-            userExist = True
             userIndex = index
-    if  not userExist:
+    if not userIndex:
         return
     # testing to make sure the user is real and takes the users position
 
@@ -114,6 +116,7 @@ def getUserFollowers(user):
 
 # returns a list with all images to be displayed for a user
 def getImagesToShow(user):
+    username = user
     imagelist = getListFromCSV('data/userimages.csv')
         # opens the csv file with the images and checks
 
@@ -125,11 +128,11 @@ def getImagesToShow(user):
     #     return
         # testing to make sure the user is real and takes the users position
 
-    followerlist = getUserFollowers(user)
-    picturesDisplay = []
-    for follower in followerlist:
-        picturesDisplay += imagesForUser(follower)
-    return picturesDisplay
+    imageList = []
+    for follower in getUserFollowers(user):
+        print(imagesForUser(follower))
+        imageList += imagesForUser(follower)
+    return imageList
 
 
 if __name__ == '__main__':
@@ -180,4 +183,4 @@ if __name__ == '__main__':
     # print(getImagesToShow("Cagoo1938"))
     # addUser("robadobbob", "1234567890!!lol", "robbiieeee@gamil.com", "Robert", "Tobert")
     # copy_plaintext_passwords()
-    hash_passwords()
+    # hash_passwords()

@@ -11,7 +11,7 @@
 <body>
     <div class="sign-up">
         <h2>Let's get started!<br></h2>
-            <form method="POST" action="/login">
+            <form method="POST" action="/signup">
                 <table class = "signup-tab">
                     <tr>
                         <td>
@@ -56,8 +56,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <td id = "accountmsg">Already have an account?
-                            <a href = "login" style="color: beige">Login</a>
+                        <td>
+                            <div class="form-group">
+                                {{ form.submit(class="submit")}}
+                            </div>
                         </td>
                     </tr>
                     <tr>

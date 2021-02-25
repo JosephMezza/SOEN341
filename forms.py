@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.fields.html5 import EmailField
-from wtforms.validators import InputRequired, EqualTo, Email, Length
+from wtforms.validators import InputRequired, EqualTo, Email, Length, Regexp
 
 
 class LoginForm(FlaskForm):
@@ -11,20 +11,27 @@ class LoginForm(FlaskForm):
 
 
 class SignUpForm(FlaskForm):
-    first_name = StringField('First Name', validators=[InputRequired(),
-                                                       '^[a-zA-Z]+'])
-    last_name = StringField('Last Name', validators=[InputRequired()])
+
+    first_name = StringField('First Name', validators=[InputRequired(),])
+                                                 #       Regexp('^[a-zA-Z]+$', 0,
+                                                 #              'First Name must be alphabetic')
+    last_name = StringField('Last Name', validators=[InputRequired(),])
+                                                 #     Regexp('^[a-zA-Z]+$', 0,
+                                                 #            'Last Name must be alphabetic')
     email = EmailField('Email', validators=[InputRequired(),
                                             Email()])
-    username_validator = '^[a-zA-Z0-9._]+'
     username = StringField('Username',
                            validators=[InputRequired(),
-                                       Length(4, 32),
-                                       username_validator])
-    password = PasswordField('Password', validators=[InputRequired(), Length(8)])
+                                       Length(4, 32),])
+                                   #     Regexp('^[a-zA-Z0-9._]+', 0,
+                                   #            'Username must be alphanumeric and can contain . and _')
+    password = PasswordField('Password',
+                             validators=[InputRequired(),
+                             Length(8),])
+                            #  Regexp('^[a-zA-Z0-9_!]+', 0,
+                            #         'Password must be alphanumeric and can contain ! and _')
     password2 = PasswordField('Repeat password',
-                              validators=[InputRequired(), EqualTo('password', message='Passwords must match.')])
+                              validators=[InputRequired(),
+                                          EqualTo('password',
+                                                  message='Passwords must match')])
     submit = SubmitField('Sign Up')
-
-    def validate_password(self, password):
-        return True

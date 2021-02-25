@@ -1,3 +1,4 @@
+from re import I
 from flask import Flask, session, redirect, render_template, flash, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from forms import LoginForm, SignUpForm
@@ -54,6 +55,7 @@ def index():
     except:
         print("An exception occurred")
         username = "Calasts53"
+    print(username)
     imageList = follower.getImagesToShow(username)
 
     return render_template('main.html', imageList=imageList) #, loggedIn=session['loggedIn']
@@ -81,6 +83,7 @@ def login():
         else:
             session['loggedIn'] = False
             flash('Incorrect username/password')
+            return render_template('main.html')
     return render_template('login.html', form=form, )#loggedIn=session['loggedIn']
 
 
@@ -98,15 +101,14 @@ def logout():
 def sign_up():
     """ TODO : This must be changed to searching the database"""
     form = SignUpForm()
+    print(form.username)
     if form.validate_on_submit():
         # check first if user already exists
         user = find_user(form.username.data)
         if not user:
-            salt = bcrypt.gensalt()
-            password = bcrypt.hashpw(form.password.data.encode(), salt)
-            with open('data/users.csv', 'w') as f:
-                user_data = ','.join(form.username.data, form.email.data, form.first_name.data, form.last_name.data, password.decode())
-                f.write(user_data)
+            # salt = bcrypt.gensalt()
+            # password = bcrypt.hashpw(form.password.data.encode(), salt)
+            follower.addUser(form.username.data, form.password.data, form.email.data, form.first_name.data, form.last_name.data)
             flash('Sign up successful.')
             return redirect('/login')
         else:
@@ -129,6 +131,7 @@ def users():
         follower.follow(username, userToFollow)
         return redirect("/")
     return render_template('users.html', usersList = usersList)
+
 
 if __name__ == '__main__':
     app.run()
