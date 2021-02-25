@@ -11,12 +11,13 @@ class LoginForm(FlaskForm):
 
 
 class SignUpForm(FlaskForm):
-    username_validator = ''  # TODO : regex for valid username (i.e. no special chars)
+    username_validator = '^[a-zA-Z0-9._]+'
     username = StringField('Username',
                            validators=[InputRequired(),
-                                       Length(4, 32)])
+                                       Length(4, 32),
+                                       username_validator])
     email = EmailField('Email', validators=[InputRequired(), Email()])
-    first_name = StringField('First Name', validators=[InputRequired()])
+    first_name = StringField('First Name', validators=[InputRequired(), '^[a-zA-Z]+')
     last_name = StringField('Last Name', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired(), Length(8)])
     password2 = PasswordField('Repeat password',
@@ -24,5 +25,4 @@ class SignUpForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     def validate_password(self, password):
-        # TODO : provide password validation criteria
         return True
