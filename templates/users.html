@@ -4,14 +4,22 @@
 <html>
    <head>
 <title>Followers</title>
+<link rel="stylesheet" href="/static/users.css">
 </head>
 <body>
    <form action="" method="POST" >
-      {% for i in usersList %}
-      {{i}}
-      <button class="btn btn-danger" type="submit" name="follow" value="{{  i  }}"> follow</button>
-      <br>
-      {% endfor %}
+      <div class = "box" >
+         <p>
+         {% for i in usersList %}
+         {{i}}
+         <button type = "button" button class="btn" type="submit" name="follow" value="{{  i  }}"> Follow</button>
+         <br>
+         {% endfor %}
+         </p>
+         
+
+      </div>
+      
    <form action="" method="POST" ></form>
 </body>
 

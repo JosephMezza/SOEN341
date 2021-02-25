@@ -1,6 +1,4 @@
-import time
 import csv
-import random
 
 def getListFromCSV(fileName):
     with open(fileName, newline='') as csvfile:
@@ -135,6 +133,7 @@ def getImagesToShow(user):
 
 
 if __name__ == '__main__':
+    import random
 
     def populateImageDatabse():
         """THIS METHOD WILL RANDOMLY POPULATE AN IMAGE DATABASE, DO NOT USE"""
@@ -169,7 +168,7 @@ if __name__ == '__main__':
 
     def hash_passwords():
         with open('data/users.csv', 'r') as f:
-
+            pass
 
     # addUser("Mikeyyy")
     # follow("Drand1943","Ablion73")
