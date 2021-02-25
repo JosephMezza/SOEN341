@@ -2,7 +2,6 @@ from flask import Flask, session, redirect, render_template, flash, request, url
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from forms import LoginForm, SignUpForm
 import bcrypt
-import csv
 import follower
 
 app = Flask(__name__)
@@ -47,10 +46,7 @@ def find_user(username):
 @app.route('/')
 def index():
     # print(session['username'])
-     # eventually change to logged in user
-    # """ default app route : probably shouldn't be base.html """
-    # session['loggedIn'] = None  # TODO : remove this
-    # print(session)
+    # eventually change to logged in user
     username = "Calasts53"
     try:
         username = str(session['_user_id'])
@@ -60,7 +56,7 @@ def index():
         username = "Calasts53"
     imageList = follower.getImagesToShow(username)
 
-    return render_template('main.html', imageList=imageList)#, loggedIn=session['loggedIn']
+    return render_template('main.html', imageList=imageList) #, loggedIn=session['loggedIn']
 
 # Test User:
 # Calasts53
