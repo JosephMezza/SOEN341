@@ -1,8 +1,9 @@
-from flask import Flask, session, redirect, render_template, flash
+from re import I
+from flask import Flask, session, redirect, render_template, flash, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from forms import LoginForm, SignUpForm
 import bcrypt
-import csv
+import follower
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -11,6 +12,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 # allow the use of @login_required on endpoints which require an account
 # unauthenticated users will be redirected to login page
+
 
 class User(UserMixin):
     def __init__(self, username, email, first_name, last_name, password=None):
@@ -35,28 +37,41 @@ def load_user(user_id):
 
 def find_user(username):
     """ TODO : this will later be changed to searching the database"""
-    user = None
-    with open('data/users.csv', 'r') as f:
-        users = f.readlines()[1:]  # omit header
-        for user in users:
-            if user[0] == username:
-                user = User(*user)
-    return user
+    users = follower.getListFromCSV('data/users.csv')
+    for user in users[1:]:
+        if user[0] == username:
+            return User(*user)
+    return None
 
 
 @app.route('/')
 def index():
-    """ default app route : probably shouldn't be base.html """
-    return render_template('main.html')
+    # print(session['username'])
+    # eventually change to logged in user
+    username = "Calasts53"
+    try:
+        username = str(session['_user_id'])
+        print(username)
+    except:
+        print("An exception occurred")
+        username = "Calasts53"
+    print(username)
+    imageList = follower.getImagesToShow(username)
 
+    return render_template('main.html', imageList=imageList) #, loggedIn=session['loggedIn']
 
+# Test User:
+# Calasts53
+# eeG1fior0g
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = find_user(form.username.data)
-        valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
+        valid_password = form.password.data == user.password
+        # valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
         if user and valid_password:
+            session['loggedIn'] = True
             login_user(user)
             flash('Log in successful.')
             # check if the next page is set in the session by the @login_required decorator
@@ -66,14 +81,19 @@ def login():
             session['next'] = '/'
             return redirect(next_page)
         else:
+            session['loggedIn'] = False
             flash('Incorrect username/password')
-    return render_template('login.html', form=form)
+            return render_template('main.html')
+    return render_template('login.html', form=form, )#loggedIn=session['loggedIn']
 
 
 @app.route('/logout')
 @login_required
 def logout():
+    # Make loggedIn = False
+    session['loggedIn'] = False
     logout_user()
+    session.clear()
     return redirect('/')
 
 
@@ -81,24 +101,37 @@ def logout():
 def sign_up():
     """ TODO : This must be changed to searching the database"""
     form = SignUpForm()
+    print(form.username)
     if form.validate_on_submit():
         # check first if user already exists
         user = find_user(form.username.data)
         if not user:
-            salt = bcrypt.gensalt()
-            password = bcrypt.hashpw(form.password.data.encode(), salt)
-            with open('data/users.csv', 'w') as f:
-                user_data = ','.join(form.username.data, form.email.data, form.first_name.data, form.last_name.data, password.decode())
-                f.write(user_data)
+            # salt = bcrypt.gensalt()
+            # password = bcrypt.hashpw(form.password.data.encode(), salt)
+            follower.addUser(form.username.data, form.password.data, form.email.data, form.first_name.data, form.last_name.data)
             flash('Sign up successful.')
             return redirect('/login')
         else:
             flash('This username already exists')
     return render_template('signup.html', form=form)
 
+
 @app.route('/post')
 def post():
     return render_template('post.html')
+
+
+@app.route('/users' , methods=["GET","POST"])
+def users():
+    usersList = follower.getusers()
+    if request.method == 'POST':
+        userToFollow = request.form.get('follow')
+        print(userToFollow)
+        username = str(session['_user_id'])
+        follower.follow(username, userToFollow)
+        return redirect("/")
+    return render_template('users.html', usersList = usersList)
+
 
 if __name__ == '__main__':
     app.run()

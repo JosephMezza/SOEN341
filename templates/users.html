@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+   <head>
+<title>Followers</title>
+<link rel="stylesheet" href="/static/users.css">
+</head>
+<body>
+   <form action="" method="POST" >
+      <div class = "box" >
+         <p>
+            {% for i in usersList %}
+               {{i}}
+               <button class="btn" type="submit" name="follow" value="{{ i }}">Follow</button>
+               <br>
+            {% endfor %}
+         </p>
+      </div>
+   </form>
+</body>
+
+</html>
+{% endblock %}

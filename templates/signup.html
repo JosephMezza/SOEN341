@@ -10,52 +10,66 @@
 </head>
 <body>
     <div class="sign-up">
-            <h2>Let's get started!<br></h2>
-                    <table class = "signup-tab">
-                        <tr>
-                         <td>
-                             <input type="text" name="firstname" placeholder="First Name" class= "inputbox">
-                         </td>
-                        </tr>
-        
-                        <tr>
-                            <td>
-                                <input type="text" name="lastname" placeholder= "Last Name"  class= "inputbox">
-                            </td>
-                        </tr>
-        
-                        <tr>
-                                <td>
-                                    <input type="text" name="email" placeholder="Email"  class= "inputbox">
-                                </td>
-                        </tr>
-        
-                        <tr>
-                            <td>
-                                <input type="text" name="user" placeholder="Username" class= "inputbox">
-                            </td>
-                        </tr>
-            
-                        <tr>
-                         <td>
-                            <input type="password" name="user_password" placeholder="Password" class= "inputbox">
-                         </td>
-                        </tr>
-        
-                        <tr>
-                           <td> 
-                              <input type="submit" class="signup-btn" value="Sign up">
-                           </td>
-                        </tr>
-                        <tr>
-                            <td id = "accountmsg">Already have an account? 
-                               <a href = "login" style="color: beige">Login</a>
-                            </td>
-                         </tr>
-                        <tr>                
+        <h2>Let's get started!<br></h2>
+            <form method="POST" action="/signup">
+                <table class = "signup-tab">
+                    <tr>
+                        <td>
+                            {{ form.csrf_token() }}
+                            <label for=""> {{ form.first_name.label }}</label>
+                            {{ form.first_name }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ form.csrf_token() }}
+                            <label for=""> {{ form.last_name.label }}</label>
+                            {{ form.last_name }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ form.csrf_token() }}
+                            <label for=""> {{ form.email.label }}</label>
+                            {{ form.email }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ form.csrf_token() }}
+                            <label for=""> {{ form.username.label }}</label>
+                            {{ form.username }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ form.csrf_token() }}
+                            <label for=""> {{ form.password.label }}</label>
+                            {{ form.password }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ form.csrf_token() }}
+                            <label for=""> {{ form.password2.label }}</label>
+                            {{ form.password2 }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group">
+                                {{ form.submit(class="submit")}}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id = "accountmsg">Already have an account?
+                            <a href = "login" style="color: beige">Login</a>
+                        </td>
+                    </tr>
+                </table>
+            </form>
         </div>
-    
-    
 </body>
 </html>
 {% endblock %}

@@ -10,13 +10,20 @@
    <div class = "box">
       <img class = "userimage" src = "/static/images/user.png">
       <h2>Welcome Back!</h2>
-      <form>
-         <p class = "fields">Username</p>
-         <input type = "text" placeholder = "Enter Username">
-         <p class = "fields">Password</p>
-         <input type = "password" placeholder="Enter Password">
-         <br>
-         <input class = "login" type = "submit" value = "Login"><br>
+      <form method="POST" action="/login">
+         <div class = "login">
+            {{ form.csrf_token() }}
+            <label for=""> {{ form.username.label }}</label>
+            {{ form.username }}
+         </div>
+         <div class = "login">
+            {{ form.csrf_token() }}
+            <label for=""> {{ form.password.label }}</label>
+            {{ form.password }}
+         </div>
+         <div class="form-group">
+               {{ form.submit(class="submit")}}
+         </div>
          <div class="redirect">
          <p class = "options">
          <a class = "options" href = "#" > Forgot your password?</a></p>

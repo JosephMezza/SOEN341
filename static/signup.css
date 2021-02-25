@@ -9,8 +9,8 @@ body{
     margin: auto;
     justify-content: center;
     text-align: center;
-    padding-top:100px
- 
+    padding-top: 100px;
+
 }
 .signup-btn{
     background-color:rgb(24, 134, 197);
@@ -28,7 +28,9 @@ body{
     right: auto;
     margin: auto;
 }
-.inputbox{
+label{
+    padding: 3px 10px;
+    outline:none;
     justify-content: center;
     left: auto;
     right: auto;

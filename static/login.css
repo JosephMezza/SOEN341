@@ -9,7 +9,7 @@ body{
 .box{
     border-radius: 5px;
     width: 350px;
-    height: 400px;
+    height: 420px;
     background-color: black;
     color: white;
     top:50%;
@@ -38,7 +38,22 @@ p{
     font-size: 19px;
     margin:2px;
 }
-
+label{
+    font-size: 20px;
+    margin-bottom: 0px;
+}
+input.submit{
+    font-size: 20px;
+    background-color: #1868e7;
+    border: none;
+    color: white;
+    border-radius: 15px;
+    transition: linear 1s;
+}
+input.submit:hover{
+    background-color: #0452d1;   
+    transition: linear 1s;
+}
 input{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 19px;
@@ -51,29 +66,21 @@ input{
     width: 100%;
     margin-bottom: 15px;
 }
-input.login{
-    height: 35px;
-    cursor: pointer;
-    margin-top: 10px;
-    font-size: 23px;
-    background-color: #4285F4;
-    border-radius: 15px;
-    border-width: 0;
+div.login{
+    margin-bottom: 5px;
 }
-input.login:hover{ 
-    border-color: #4285F4;
-    background-color: white;
-    transition: linear 0.5s;
-    color: #4285F4;
-}
+
 div.redirect{
     width: 100%; 
     text-align: center;
 }
 .options{
 font-size: 20px;
-color: #4285F4;
+color: #1868e7;
 text-decoration: none;
+}
+.options:hover{
+    text-decoration: none;
 }
 p.options{
     margin-bottom: 10px;
