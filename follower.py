@@ -5,19 +5,21 @@ def getListFromCSV(fileName):
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
     return list(reader)
 
+
 def setListCSV(fileName, listToWrite):
     with open(fileName, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerows(listToWrite)
 
+
 def getusers():
     followerlist = getListFromCSV('data/followers.csv')
     return followerlist[0][1:]
 
+
 def addUser(user, password, email, firstName, lastName):
     followerlist = getListFromCSV('data/followers.csv')
     # copy the csv information in a list
-
 
     # for people in followerlist[0]:
     #     if people == user:
@@ -40,7 +42,6 @@ def addUser(user, password, email, firstName, lastName):
     setListCSV('data/userImages.csv', imagelist)
 
 
-
 def follow(user, follower):
     followerlist = getListFromCSV('data/followers.csv')
         # opens the csv file where the followers are stored and tracks the data inside a list
@@ -60,8 +61,6 @@ def follow(user, follower):
     #     print("big problem")
     #     return
     # testing to make sure the user and followers are real
-
-
 
     userIndex = followerlist[0].index(user)
     followerIndex = followerlist[0].index(follower)
@@ -89,6 +88,7 @@ def imagesForUser(user):
 
     # will return a list of all images the user has
     return imagelist[userIndex][1:]
+
 
 # returns a list with all the followers of a specific user
 def getUserFollowers(user):
