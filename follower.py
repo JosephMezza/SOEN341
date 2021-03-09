@@ -15,12 +15,15 @@ def setListCSV(fileName, listToWrite):
 
 
 def getusers():
-    followerlist = getListFromCSV('data/followers.csv')
-    return followerlist[0][1:]
+    followerlist = getListFromCSV('data/followers2.csv')
+    newfollowerslist=[]
+    for people in followerlist:
+        newfollowerslist.append(people[0])
+    return newfollowerslist
 
 
 def addUser(user, password, email, firstName, lastName):
-    followerlist = getListFromCSV('data/followers.csv')
+    followerlist = getListFromCSV('data/followers2.csv')
 
     # copy the csv information in a list
 
@@ -30,11 +33,9 @@ def addUser(user, password, email, firstName, lastName):
     # Checks if it is a new user
 
     followerlist.append([user])
-    followerlist[0].append(user)
-    followerlist[-1].append(',' * len(followerlist[0]))
     # inserting the new user inside the list
 
-    setListCSV('data/followers.csv', followerlist)
+    setListCSV('data/followers2.csv', followerlist)
     #the list with the new user inserted
 
     userslist = getListFromCSV('data/users.csv')
@@ -47,12 +48,16 @@ def addUser(user, password, email, firstName, lastName):
 
 
 def follow(user, follower):
-    followerlist = getListFromCSV('data/followers.csv')
+    followerlist = getListFromCSV('data/followers2.csv')
         # opens the csv file where the followers are stored and tracks the data inside a list
 
     if user == follower:
         return
         # testing to make sure you cannot follow yourself
+
+    for people in followerlist:
+        if people[0] == user:
+            people.append(follower)
 
     # userExist = False
     # followerExist = False
@@ -66,12 +71,14 @@ def follow(user, follower):
     #     return
     # testing to make sure the user and followers are real
 
-    userIndex = followerlist[0].index(user)
-    followerIndex = followerlist[0].index(follower)
-    followerlist[userIndex][followerIndex] = 'X'
+    # userIndex = followerlist[0].index(user)
+    # followerIndex = followerlist[0].index(follower)
+    # followerlist[userIndex][followerIndex] = 'X'
+
+    
     #if a user follows another, a X is typed in their intersection in the list
 
-    setListCSV('data/followers.csv', followerlist)
+    setListCSV('data/followers2.csv', followerlist)
     #the list with the new follower X  marked in it will be put back into the csv file
 
 
@@ -94,13 +101,15 @@ def imagesForUser(user):
 
 # returns a list with all the followers of a specific user
 def getUserFollowers(user):
-    followerlist = getListFromCSV('data/followers.csv')
+    followerlist = getListFromCSV('data/followers2.csv')
         # opens the csv file where the followers are stored and tracks the data inside a list
+    if followerlist[0][0][3:]== user:
+        return followerlist[0][1:]
 
     userExist = False
-    for people in followerlist[0]:
-        if people == user:
-            userExist = True
+    for people in followerlist:
+        if people[0] == user:
+            return people[1:]
     if  not userExist:
         return
     # testing to make sure the user and followers are real
@@ -156,16 +165,22 @@ if __name__ == '__main__':
 
     def populateFollowerDatabase():
         """this method will randomly populate the followers csv, do not overuse this method"""
-        followerlist = getListFromCSV('data/followers.csv')
+        followerlist = getListFromCSV('data/followers2.csv')
             # opens the csv file where the followers are stored and tracks the data inside a list
+        newfollowerslist=[]
+        for users in followerlist:
+            users= [users[0]]
+            for x in range(10):
+                users.append(followerlist[random.randint(1, 1002)][0])
+            newfollowerslist.append(users)
 
-        for x in range(random.randint(1, 20000)):
-            followerlist[random.randint(1, 1000)][random.randint(1, 1000)] = 'X'
+        # for x in range(random.randint(1, 20000)):
+        #     followerlist[random.randint(1, 1000)][random.randint(1, 1000)] = 'X'
             # randomly assigns followers to users
 
-        with open('data/followers.csv', 'w+', newline='') as csvfile:
+        with open('data/followers2.csv', 'w+', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            writer.writerows(followerlist)
+            writer.writerows(newfollowerslist)
             # the list with the new followers X marked in it will be put back into the csv file
 
 
@@ -175,12 +190,15 @@ if __name__ == '__main__':
 
     # addUser("Mikeyyy")
     # follow("Drand1943","Ablion73")
-    # follow("Drand1943","Drand1943")
+    # follow("Drand1943","wgerwgg")
     # follow("Drand1943","wgerwgg")
     # follow("sdfwergwghr","Drand1943")
     # print(imagesForUser("Giarturner"))
     # print(getUserFollowers("Cagoo1938"))
-    # print(getImagesToShow("Cagoo1938"))
+    # print(getImagesToShow("Ristraid"))
     # addUser("robadobbob", "1234567890!!lol", "robbiieeee@gamil.com", "Robert", "Tobert")
     # copy_plaintext_passwords()
     # hash_passwords()
+    # populateFollowerDatabase()
+    print(getUserFollowers("Drand1943"))
+    print(getusers())

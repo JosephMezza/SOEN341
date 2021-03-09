@@ -45,5 +45,15 @@ def addComment(comment, postID):
     postsList[postID].append(comment)
     setListCSV('data/posts.csv', postsList)
 
-addPost("Ablion73", "img(1).jpg")
-addComment("wow so ugly!", 1)
+def like(postID):
+    postsList = getListFromCSV('data/posts.csv')
+    likes = int(postsList[postID][3])
+    likes=likes+1
+    postsList[postID][3]= likes
+    setListCSV('data/posts.csv', postsList)
+
+
+
+# addPost("Ablion73", "img(1).jpg")
+# addComment("OMG MARY ME!!!!", 1)
+like(3)
