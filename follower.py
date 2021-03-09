@@ -144,6 +144,17 @@ def getImagesToShow(user):
     return imageList
 
 
+def addimage(user, imageName):
+    imagelist = getListFromCSV('data/userimages.csv') 
+
+    for people in imagelist:
+        if people[0] == user:
+            people.append(imageName)
+
+
+    setListCSV('data/userimages.csv', imagelist)
+
+
 if __name__ == '__main__':
     import random
 
