@@ -4,6 +4,10 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from forms import LoginForm, SignUpForm
 import bcrypt
 import follower
+import tornado.web
+import tornado.ioloop
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -132,6 +136,42 @@ def users():
         return redirect("/")
     return render_template('users.html', usersList = usersList)
 
+
+app.config["IMAGE_UPLOADS"] = "images"
+app.config["ALLOWED_IMAGE_EXTENSIONS"] = ["JPEG", "JPG", "PNG", "GIF"]
+app.config["MAX_IMAGE_FILESIZE"] = 0.5 * 1024 * 1024
+
+def allowed_image(filename):
+
+    if not "." in filename:
+        return False
+
+    ext = filename.rsplit(".", 1)[1]
+
+    if ext.upper() in app.config["ALLOWED_IMAGE_EXTENSIONS"]:
+        return True
+    else:
+        return False
+
+
+def allowed_image_filesize(filesize):
+
+    if int(filesize) <= app.config["MAX_IMAGE_FILESIZE"]:
+        return True
+    else:
+        return False
+
+
+@app.route('/upload-image' , methods=["GET","POST"])
+def postimage():
+    if request.method == "POST":
+        if request.files:
+            image = request.files["image"]
+            print(image)
+            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+            print("Image saved")
+            return redirect(request.url)
+    return render_template("upload-image.html")
 
 if __name__ == '__main__':
     app.run()
