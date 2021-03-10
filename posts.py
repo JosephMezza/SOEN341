@@ -54,6 +54,6 @@ def like(postID):
 
 
 
-# addPost("Ablion73", "img(1).jpg")
+addPost("Poters", "img(3).jpg")
 # addComment("OMG MARY ME!!!!", 1)
-like(3)
+# like(1)

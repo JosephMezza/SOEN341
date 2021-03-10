@@ -114,13 +114,13 @@ def getUserFollowers(user):
         return
     # testing to make sure the user and followers are real
 
-    userIndex = followerlist[0].index(user)
-    followers = []
-    for x in range(len(followerlist[userIndex])):
-        if followerlist[userIndex][x] == "X":
-            followers.append(followerlist[x][0])
-            # checks the user to see all the people they follow and store it in a list
-    return followers
+    # userIndex = followerlist[0].index(user)
+    # followers = []
+    # for x in range(len(followerlist[userIndex])):
+    #     if followerlist[userIndex][x] == "X":
+    #         followers.append(followerlist[x][0])
+    #         # checks the user to see all the people they follow and store it in a list
+    # return followers
 
 
 # returns a list with all images to be displayed for a user
