@@ -54,14 +54,16 @@ def index():
     # print(session['username'])
     # eventually change to logged in user
     username = "Calasts53"
+    imageList = []
     try:
         username = str(session['_user_id'])
         print(username)
+        imageList = follower.getImagesToShow(username)
     except:
         print("An exception occurred")
         username = "Calasts53"
     print(username)
-    imageList = follower.getImagesToShow(username)
+    
 
     return render_template('main.html', imageList=imageList) #, loggedIn=session['loggedIn']
 
