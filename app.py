@@ -8,6 +8,7 @@ import tornado.web
 import tornado.ioloop
 import os
 from werkzeug.utils import secure_filename
+import posts
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -120,9 +121,11 @@ def sign_up():
     return render_template('signup.html', form=form)
 
 
-@app.route('/post')
+@app.route('/post', methods=['GET', 'POST'])
 def post():
-    return render_template('post.html')
+    id= 0
+    postList = posts.getInfo(id)
+    return render_template('post.html', id=id, postList = postList)
 
 
 @app.route('/users' , methods=["GET","POST"])
@@ -159,6 +162,7 @@ def postimage():
             follower.addimage(username, imageName)
             return redirect(request.url)
     return render_template("upload-image.html")
+
 
 if __name__ == '__main__':
     app.run()

@@ -16,10 +16,11 @@ def setListCSV(fileName, listToWrite):
 
 
 class posts:
-    def __init__(self, user, imgpath):
+    def __init__(self, user, imgpath, caption):
         self.likes = 0
         self.user = user
         self.imgpath = imgpath
+        self.caption = caption
         today = date.today() 
         self.time = today.strftime("%b-%d-%Y")
         self.comments = []
@@ -28,13 +29,14 @@ class posts:
 
 
 
-def addPost(user, imgpath):
-    newPost = posts(user, imgpath)
+def addPost(user, imgpath, caption):
+    newPost = posts(user, imgpath, caption)
     postsList = getListFromCSV('data/posts.csv')
     post = []
     post.append(newPost.postID)
     post.append(newPost.user)
     post.append(newPost.imgpath)
+    post.append(newPost.caption)
     post.append(newPost.likes)
     post.append(newPost.time)
     postsList.append(post)
@@ -52,8 +54,12 @@ def like(postID):
     postsList[postID][3]= likes
     setListCSV('data/posts.csv', postsList)
 
+def getInfo(ID):
+    postsList = getListFromCSV('data/posts.csv')
+    return postsList[ID+1]
 
 
-addPost("Poters", "img(3).jpg")
-# addComment("OMG MARY ME!!!!", 1)
+addPost("Poters", "img(3).jpg", "LOOK AT lolol")
+# addComment("OMG MARY ME plssssss!!!!", 1)
 # like(1)
+print(getInfo(0))

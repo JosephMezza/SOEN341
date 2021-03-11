@@ -28,7 +28,7 @@
     {% if current_user.is_authenticated %}
     <div class = "main-grid">
         {% for i in imageList %}
-   <img src = "static/images/{{i}}" alt = "i"/>
+   <a><img src = "static/images/{{i}}" alt = "i"/></a>
    {% endfor %}
    {% else %}
    please login to see pics
