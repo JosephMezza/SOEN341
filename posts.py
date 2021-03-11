@@ -44,14 +44,14 @@ def addPost(user, imgpath, caption):
 
 def addComment(comment, postID):
     postsList = getListFromCSV('data/posts.csv')
-    postsList[postID].append(comment)
+    postsList[postID+1].append(comment)
     setListCSV('data/posts.csv', postsList)
 
 def like(postID):
     postsList = getListFromCSV('data/posts.csv')
-    likes = int(postsList[postID][3])
+    likes = int(postsList[postID+1][4])
     likes=likes+1
-    postsList[postID][3]= likes
+    postsList[postID+1][4]= likes
     setListCSV('data/posts.csv', postsList)
 
 def getInfo(ID):
@@ -59,7 +59,7 @@ def getInfo(ID):
     return postsList[ID+1]
 
 
-addPost("Poters", "img(3).jpg", "LOOK AT lolol")
+#addPost("Poters", "img(3).jpg", "LOOK AT lolol")
 # addComment("OMG MARY ME plssssss!!!!", 1)
 # like(1)
 print(getInfo(0))
