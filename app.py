@@ -129,6 +129,17 @@ def sign_up():
 def post():
     id= 0
     postList = posts.getInfo(id)
+    if request.method == 'POST' and 'like' in request.form:
+        posts.like(id)
+        return redirect("/post")
+    if request.method == 'POST' and 'Comment' in request.form:
+        comment = request.form["comment"]
+        print(comment)
+        posts.addComment(comment, id)
+        return redirect("/post")
+
+        
+        
     return render_template('post.html', id=id, postList = postList)
 
 
