@@ -59,6 +59,8 @@ def index():
         username = str(session['_user_id'])
         print(username)
         imageList = follower.getImagesToShow(username)
+        imagedict = {imageList[index*2+1]: imageList[index*2] for index in len(imageList)/2-5}
+        print(imagedict)
     except:
         print("An exception occurred")
         username = "Calasts53"

@@ -59,7 +59,7 @@ def getInfo(ID):
     return postsList[ID+1]
 
 
-addPost("Poters", "img(3).jpg", "LOOK AT lolol")
+# addPost("Poters", "img(3).jpg", "LOOK AT lolol")
 # addComment("OMG MARY ME plssssss!!!!", 1)
 # like(1)
-print(getInfo(0))
+# print(getInfo(0))
