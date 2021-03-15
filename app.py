@@ -130,8 +130,8 @@ def post():
     if request.method == 'POST' and 'like' in request.form:
         posts.like(id)
         return redirect("/post")
-    if request.method == 'POST' and 'Comment' in request.form:
-        comment = request.form["comment"]
+    if request.method == 'POST' and 'comment' in request.form:
+        comment = request.form.get("comment")
         print(comment)
         posts.addComment(comment, id)
         return redirect("/post")
