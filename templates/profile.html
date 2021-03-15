@@ -30,7 +30,7 @@
         {% for image in imageList %}
             {% if image == '' %}
             {% else %}
-                    <a><img src = "../static/images/{{image}}" alt = "{{image}}"/></a> 
+                <a href= '/post/{{image}}'><img src = "../static/images/{{image}}" alt = "{{image}}"/></a> 
             {% endif %}
     {% endfor %}
     </div>

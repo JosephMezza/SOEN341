@@ -28,10 +28,10 @@
     {% if current_user.is_authenticated %}
     <div class = "main-grid">
         {% set foundImage = { 'flag': True } %}
-        {% for i in imageList %}
-            {% if i == '' %}
+        {% for image in imageList %}
+            {% if image == '' %}
             {% else %}
-                    <a><img src = "static/images/{{i}}" alt = "{{i}}"/></a> 
+                    <a href= '/post/{{image}}'><img src = "static/images/{{image}}" alt = "{{image}}"/></a> 
             {% endif %}
     {% endfor %}
     {% else %}

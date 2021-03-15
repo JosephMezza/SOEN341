@@ -58,8 +58,16 @@ def getInfo(ID):
     postsList = getListFromCSV('data/posts.csv')
     return postsList[ID]
 
+def getID(image):
+    postsList = getListFromCSV('data/posts.csv')
+    ID = 1
+    for posts in postsList:
+        if posts[2] == image:
+            ID = posts[0]
+    return ID
 
 # addPost("Poters", "img(3).jpg", "LOOK AT lolol")
 # addComment("OMG MARY ME plssssss!!!!", 4749)
 # like(1)
 # print(getInfo(4749))
+# print(getID("img(5).jpg"))

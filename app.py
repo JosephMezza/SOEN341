@@ -125,18 +125,18 @@ def sign_up():
     return render_template('signup.html', form=form)
 
 
-@app.route('/post', methods=['GET', 'POST'])
-def post():
-    id= 20
+@app.route('/post/<image>', methods=['GET', 'POST'])
+def post(image):
+    id= int(posts.getID(image))
     postList = posts.getInfo(id)
     if request.method == 'POST' and 'like' in request.form:
         posts.like(id)
-        return redirect("/post")
+        return redirect("/post/"+image)
     if request.method == 'POST' and 'comment' in request.form:
         comment = request.form.get("comment")
         print(comment)
         posts.addComment(comment, id)
-        return redirect("/post")
+        return redirect("/post/"+image)
 
         
         
