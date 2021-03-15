@@ -27,12 +27,16 @@
     <br>
     {% if current_user.is_authenticated %}
     <div class = "main-grid">
+        {% set foundImage = { 'flag': True } %}
         {% for i in imageList %}
-   <a><img src = "static/images/{{i}}" alt = "i"/></a>
-   {% endfor %}
-   {% else %}
-   please login to see pics
-   {% endif %}
+            {% if i == '' %}
+            {% else %}
+                    <a><img src = "static/images/{{i}}" alt = "{{i}}"/></a> 
+            {% endif %}
+    {% endfor %}
+    {% else %}
+    please login to see pics
+    {% endif %}
     </div>
 
 

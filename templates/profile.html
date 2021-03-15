@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <title>{% block title %}SOEN 341{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Customize stylesheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">"
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="..\static\stylesheet.css">
+    <style>
+        body {
+            padding-top: 50px;
+        }
+    </style>
+    {% endblock %}
+</head>
+
+<body> 
+    <br>
+    <div class = "main-grid">
+
+        {% for image in imageList %}
+            {% if image == '' %}
+            {% else %}
+                    <a><img src = "../static/images/{{image}}" alt = "{{image}}"/></a> 
+            {% endif %}
+    {% endfor %}
+    </div>
+
+
+   
+
+
+</body>
+
+</html>
+{% endblock %}

@@ -59,6 +59,8 @@ def index():
         username = str(session['_user_id'])
         print(username)
         imageList = follower.getImagesToShow(username)
+        imagedict = {imageList[index*2+1]: imageList[index*2] for index in len(imageList)/2-5}
+        print(imagedict)
     except:
         print("An exception occurred")
         username = "Calasts53"
@@ -125,7 +127,7 @@ def sign_up():
 
 @app.route('/post', methods=['GET', 'POST'])
 def post():
-    id= 0
+    id= 20
     postList = posts.getInfo(id)
     if request.method == 'POST' and 'like' in request.form:
         posts.like(id)
@@ -151,6 +153,13 @@ def users():
         follower.follow(username, userToFollow)
         return redirect("/")
     return render_template('users.html', usersList = usersList)
+
+@app.route('/profile/<username>' , methods=["GET","POST"])
+def profile(username):
+    print(username)
+    imageList= follower.imagesForUser(username)
+    print(imageList)
+    return render_template('profile.html', imageList = imageList)
 
 
 app.config["IMAGE_UPLOADS"] = "static/images"
