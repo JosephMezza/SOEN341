@@ -31,12 +31,7 @@
         {% for i in imageList %}
             {% if i == '' %}
             {% else %}
-            {%if foundImage['flag'] == True%}
                     <a><img src = "static/images/{{i}}" alt = "{{i}}"/></a> 
-                    {% foundImage.update({ 'flag': False }) %}
-            {%else%}
-            {% foundImage.update({ 'flag': True }) %}
-            {%endif%}
             {% endif %}
     {% endfor %}
     {% else %}

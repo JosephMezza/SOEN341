@@ -17,7 +17,7 @@ def setListCSV(fileName, listToWrite):
 def getusers():
     followerlist = getListFromCSV('data/followers2.csv')
     newfollowerslist=[]
-    for people in followerlist:
+    for people in followerlist[1::]:
         newfollowerslist.append(people[0])
     return newfollowerslist
 
@@ -139,7 +139,6 @@ def getImagesToShow(user):
 
     imageList = []
     for follower in getUserFollowers(user):
-        print(imagesForUser(follower))
         imageList += imagesForUser(follower)
     return imageList
 
@@ -162,12 +161,11 @@ if __name__ == '__main__':
         """THIS METHOD WILL RANDOMLY POPULATE AN IMAGE DATABASE, DO NOT USE"""
         imagelist = getListFromCSV('data/userimages.csv')
         # opens the csv file where the images are stored and tracks the data inside a list
-        id =0 
-        for users in imagelist:
+        id =1
+        for users in imagelist[1::]:
             for x in range(5):
-                image = "img("+str(random.randint(1, 245))+").jpg"
+                image = "img("+str(id)+").jpg"
                 users.append(image)
-                users.append(id)
                 posts.addPost(users[0], image, "Random caption"+str(id))
                 id = id+1
                 # randomly assigns images to users
@@ -186,7 +184,7 @@ if __name__ == '__main__':
         for users in followerlist:
             users= [users[0]]
             for x in range(10):
-                users.append(followerlist[random.randint(1, 1002)][0])
+                users.append(followerlist[random.randint(1, 49)][0])
             newfollowerslist.append(users)
 
         # for x in range(random.randint(1, 20000)):
@@ -218,4 +216,5 @@ if __name__ == '__main__':
     # print(getUserFollowers("Drand1943"))
     # print(getusers())
     # populateImageDatabse()
-    print(imagesForUser("Thithe"))
+    # print(imagesForUser("Thithe"))
+    # print(getImagesToShow("Thithe"))

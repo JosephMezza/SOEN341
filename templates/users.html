@@ -12,7 +12,7 @@
          <p>
             {% for i in usersList %}
            
-               {{i}}
+               <a href="/profile/{{i}}">{{i}}</a>
                <button class="btn" type="submit" name="follow" value="{{ i }}">Follow</button>
                <br>
                

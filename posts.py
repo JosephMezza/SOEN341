@@ -25,7 +25,7 @@ class posts:
         self.time = today.strftime("%b-%d-%Y")
         self.comments = []
         postsList = getListFromCSV('data/posts.csv')
-        self.postID = len(postsList)-1
+        self.postID = len(postsList)
 
 
 
@@ -44,26 +44,22 @@ def addPost(user, imgpath, caption):
 
 def addComment(comment, postID):
     postsList = getListFromCSV('data/posts.csv')
-    postsList[postID+1].append(comment)
+    postsList[postID].append(comment)
     setListCSV('data/posts.csv', postsList)
 
 def like(postID):
     postsList = getListFromCSV('data/posts.csv')
-    likes = int(postsList[postID+1][4])
+    likes = int(postsList[postID][4])
     likes=likes+1
-    postsList[postID+1][4]= likes
+    postsList[postID][4]= likes
     setListCSV('data/posts.csv', postsList)
 
 def getInfo(ID):
     postsList = getListFromCSV('data/posts.csv')
-    return postsList[ID+1]
+    return postsList[ID]
 
 
-<<<<<<< HEAD
 # addPost("Poters", "img(3).jpg", "LOOK AT lolol")
-=======
-#addPost("Poters", "img(3).jpg", "LOOK AT lolol")
->>>>>>> 7fdd49687622ce4bffde6ef368526c2e00b71c0c
-# addComment("OMG MARY ME plssssss!!!!", 1)
+# addComment("OMG MARY ME plssssss!!!!", 4749)
 # like(1)
-# print(getInfo(0))
+# print(getInfo(4749))
