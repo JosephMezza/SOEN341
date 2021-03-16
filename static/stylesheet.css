@@ -28,9 +28,17 @@
     height: 100%;
     width: 100%;
     padding: 30px;
+
+}
+html{
+   height: 100%;
+    
+  }
+body{
     background-color:#eef5ed;
     background-size: cover;
-    position: fixed;
+    position: relative;
+    height: 100%
 }
 .container-fluid > .card{
     margin: auto;
@@ -50,4 +58,8 @@
 }
 .user{
     font-weight: bold;
+}
+#likebutton{
+    height: 30px;
+    width: 30px;
 }

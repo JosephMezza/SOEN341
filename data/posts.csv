@@ -1,4 +1,4 @@
-﻿﻿ID,user,image,caption,likes,time,comments
+﻿ID,user,image,caption,likes,time,comments
 1,Ablion73,img(1).jpg,Random caption1,0,Mar-14-2021
 2,Ablion73,img(2).jpg,Random caption2,0,Mar-14-2021
 3,Ablion73,img(3).jpg,Random caption3,0,Mar-14-2021
@@ -18,7 +18,7 @@
 17,Wrove1935,img(17).jpg,Random caption17,0,Mar-14-2021
 18,Wrove1935,img(18).jpg,Random caption18,0,Mar-14-2021
 19,Wrove1935,img(19).jpg,Random caption19,0,Mar-14-2021
-20,Wrove1935,img(20).jpg,Random caption20,0,Mar-14-2021
+20,Wrove1935,img(20).jpg,Random caption20,9,Mar-14-2021
 21,Kning1982,img(21).jpg,Random caption21,0,Mar-14-2021
 22,Kning1982,img(22).jpg,Random caption22,0,Mar-14-2021
 23,Kning1982,img(23).jpg,Random caption23,0,Mar-14-2021
