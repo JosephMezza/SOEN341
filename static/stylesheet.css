@@ -30,15 +30,29 @@
     padding: 30px;
 
 }
+.bin{
+    display: flex;
+    height: 10%;
+    width: 10%;
+}
 html{
    height: 100%;
     
   }
 body{
-    background-color:#eef5ed;
+    background-image: url('/static/images/montreal.jpg');
     background-size: cover;
+    background-repeat: no-repeat;
     position: relative;
-    height: 100%
+    height: 100%;
+    width:100%;
+    animation : transitionIn 2s;
+}
+.bin-line{
+    display: flex;
+   max-height: 100%;
+   max-width: 100%;
+   object-fit: contain;
 }
 .container-fluid > .card{
     margin: auto;
@@ -62,4 +76,16 @@ body{
 #likebutton{
     height: 30px;
     width: 30px;
+}
+
+@keyframes transitionIn{
+    from{
+        opacity: 0;
+        transform: rotateX(-10deg);
+    }
+    to{
+        opacity: 1;
+        transform: rotateX(0);
+    }
+
 }
