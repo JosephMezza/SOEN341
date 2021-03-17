@@ -3,10 +3,10 @@ from follower import getListFromCSV, addUser,getusers,imagesForUser,getUserFollo
 
 def test_CSV():
     dataList = []
-    with open("data/users.csv", newline='') as csvfile:
+    with open("users.csv", newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         dataList = list(reader)      
-    assert getListFromCSV("data/users.csv") == dataList
+    assert getListFromCSV("users.csv") == dataList
 
 # def test_AddUser():
 #     followerlist = getListFromCSV('testData/testFollower.csv')
@@ -26,11 +26,11 @@ def test_CSV():
 #     assert 
 
 def test_getUsers():
-    followerlist = getListFromCSV('data/followers.csv')
+    followerlist = getListFromCSV('followers.csv')
     assert getusers() == followerlist[0][1:]
 
 def test_imagesForUser():
-    imagelist = getListFromCSV('data/userimages.csv')
+    imagelist = getListFromCSV('userimages.csv')
     userIndex = -1
     for index, people in enumerate(imagelist):
         if people[0] == 'Ablion73':
@@ -40,7 +40,7 @@ def test_imagesForUser():
     assert imagesForUser('Ablion73') == imagelist[userIndex][1:]
 
 def test_getUserFollowers():
-    followerlist = getListFromCSV('data/followers.csv')
+    followerlist = getListFromCSV('followers.csv')
         # opens the csv file where the followers are stored and tracks the data inside a list  
     userExist = False
     for people in followerlist[0]:
@@ -61,7 +61,7 @@ def test_getUserFollowers():
 def test_getImagesToShow():
     user = 'Ablion73'
     username = user
-    imagelist = getListFromCSV('data/userimages.csv')
+    imagelist = getListFromCSV('userimages.csv')
     imageList = []
     for follower in getUserFollowers(user):
         print(imagesForUser(follower))
