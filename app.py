@@ -159,7 +159,7 @@ def profile(username):
     print(username)
     imageList= follower.imagesForUser(username)
     print(imageList)
-    return render_template('profile.html', imageList = imageList)
+    return render_template('profile.html', imageList = imageList, username = username)
 
 
 app.config["IMAGE_UPLOADS"] = "static/images"
@@ -184,6 +184,8 @@ def postimage():
             follower.addimage(username, imageName)
             return redirect(request.url)
     return render_template("upload-image.html")
+
+
 
 
 if __name__ == '__main__':
