@@ -13,6 +13,13 @@
     grid-row-gap: 10px;
 
 }
+.profile{
+    margin: auto;
+    width: 52%;
+    border: 3px solid grey;
+    padding: 10px;
+
+}
 .main-grid img{
     height: 100%;
     width: 100%;

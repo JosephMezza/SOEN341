@@ -124,6 +124,16 @@ def getUserFollowers(user):
 
 
 # returns a list with all images to be displayed for a user
+
+def getUserFollowing(user):
+    followerlist = getListFromCSV('data/followers2.csv')
+    following = []
+    for peoplelist in followerlist:
+        for people in peoplelist[1:]:
+            if people == user:
+                following.append(peoplelist[0])
+    return following
+
 def getImagesToShow(user):
     username = user
     imagelist = getListFromCSV('data/userimages.csv')
@@ -214,6 +224,7 @@ if __name__ == '__main__':
     # hash_passwords()
     # populateFollowerDatabase()
     # print(getUserFollowers("Drand1943"))
+    # print(getUserFollowing("Drand1943"))
     # print(getusers())
     # populateImageDatabse()
     # print(imagesForUser("Thithe"))

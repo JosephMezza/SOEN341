@@ -66,8 +66,21 @@ def getID(image):
             ID = posts[0]
     return ID
 
+def getAllLikes(user):
+    postsList = getListFromCSV('data/posts.csv')
+    totalLikes = 0
+    for posts in postsList:
+        if posts[1] == user:
+            totalLikes = totalLikes+ int(posts[4])
+    return totalLikes
+
+
+
+
+
 # addPost("Poters", "img(3).jpg", "LOOK AT lolol")
 # addComment("OMG MARY ME plssssss!!!!", 4749)
 # like(1)
 # print(getInfo(4749))
 # print(getID("img(5).jpg"))
+# print(getAllLikes("Giarturner"))

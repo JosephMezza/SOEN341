@@ -26,8 +26,20 @@
 <body> 
     <br>
     <div>
-        <!-- <a href="/profile/{{username}}">{{username}}</a> -->
+        <div class = "profile">
+            <p style="color: aliceblue;">
+                <a href="/profile/{{username}}">{{username}}</a>
+                <br/>
+                Total Likes: {{likes}}
+                <br/>
+                Followers: {% for people in followers %} {{people}}, {% endfor %}
+                <br/>
+                Following: {% for people in following %} {{people}}, {% endfor %}
+            </p>
+        
+        </div>
     </div>
+    <br><br><br>
     <div class = "main-grid">
 
         {% for image in imageList %}

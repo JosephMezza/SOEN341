@@ -159,7 +159,11 @@ def profile(username):
     print(username)
     imageList= follower.imagesForUser(username)
     print(imageList)
-    return render_template('profile.html', imageList = imageList, username = username)
+    likes = posts.getAllLikes(username)
+    print(likes)
+    followers = follower.getUserFollowers(username)
+    following = follower.getUserFollowing(username)
+    return render_template('profile.html', imageList = imageList, username = username, likes = likes, followers = followers, following = following)
 
 
 app.config["IMAGE_UPLOADS"] = "static/images"
