@@ -30,7 +30,7 @@ def test_getUsers():
     assert getusers() == followerlist[0][1:]
 
 def test_imagesForUser():
-    imagelist = getListFromCSV("data/userImages.csv")
+    imagelist = getListFromCSV('data/userImages.csv')
     userIndex = -1
     for index, people in enumerate(imagelist):
         if people[0] == 'Ablion73':
