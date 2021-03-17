@@ -67,3 +67,4 @@ def test_getImagesToShow():
         print(imagesForUser(follower))
         imageList += imagesForUser(follower)
     assert getImagesToShow('Ablion73') == imageList
+    
