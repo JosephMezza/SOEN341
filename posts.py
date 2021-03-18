@@ -28,7 +28,7 @@ class posts:
         self.postID = len(postsList)
 
 
-
+# this method will add a post to the post dataabse
 def addPost(user, imgpath, caption):
     newPost = posts(user, imgpath, caption)
     postsList = getListFromCSV('data/posts.csv')
@@ -40,13 +40,16 @@ def addPost(user, imgpath, caption):
     post.append(newPost.likes)
     post.append(newPost.time)
     postsList.append(post)
+    # appends evreything to the list before submitting
     setListCSV('data/posts.csv', postsList)
 
+# adds a comment to the specific post
 def addComment(comment, postID):
     postsList = getListFromCSV('data/posts.csv')
     postsList[postID].append(comment)
     setListCSV('data/posts.csv', postsList)
 
+# likes the post with the ID
 def like(postID):
     postsList = getListFromCSV('data/posts.csv')
     likes = int(postsList[postID][4])
@@ -54,10 +57,12 @@ def like(postID):
     postsList[postID][4]= likes
     setListCSV('data/posts.csv', postsList)
 
+# retuirns the full information of the post
 def getInfo(ID):
     postsList = getListFromCSV('data/posts.csv')
     return postsList[ID]
 
+# gets ID when passed an image path
 def getID(image):
     postsList = getListFromCSV('data/posts.csv')
     ID = 1
@@ -66,6 +71,7 @@ def getID(image):
             ID = posts[0]
     return ID
 
+# =returns all likes for a specific user
 def getAllLikes(user):
     postsList = getListFromCSV('data/posts.csv')
     totalLikes = 0
