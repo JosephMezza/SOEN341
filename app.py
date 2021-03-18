@@ -193,18 +193,11 @@ def postimage():
 @app.route('/caption/<image>', methods=["GET","POST"])
 def postCaption(image):
     form = CaptionForm()
-    print('outside validate')
-    if form.submit():
-        print('form submitted')
-    if form.validate_on_submit():
-        print('inside validate')
-        # caption = form.caption
-        # print(caption)
-        # username = str(session['_user_id'])
-        # post.addPost(username, image, caption)
-        return redirect("/post/"+image) # TODO: the submit button currently redirects to '/caption' which is a bug
-
-    print('after validate')
+    if request.method == "POST":
+        caption = form.caption.data
+        username = str(session['_user_id'])
+        posts.addPost(username, image, caption)
+        return redirect("/post/"+image)
     return render_template('caption.html', form=form, image=image)
 
 
