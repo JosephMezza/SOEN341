@@ -13,6 +13,13 @@
     grid-row-gap: 10px;
 
 }
+.profile{
+    margin: auto;
+    width: 52%;
+    border: 3px solid grey;
+    padding: 10px;
+
+}
 .main-grid img{
     height: 100%;
     width: 100%;
@@ -28,9 +35,32 @@
     height: 100%;
     width: 100%;
     padding: 30px;
-    background-color:#eef5ed;
+
+}
+.bin{
+    display: flex;
+    height: 10%;
+    width: 10%;
+}
+html{
+   height: 100%;
+    
+  }
+body{
+    background-image: url('/static/images/montreal.jpg');
     background-size: cover;
-    position: fixed;
+    background-repeat: no-repeat;
+    position: relative;
+    height: 100%;
+    width:100%;
+    animation : transitionIn 2s;
+    background-attachment: fixed;
+}
+.bin-line{
+    display: flex;
+   max-height: 100%;
+   max-width: 100%;
+   object-fit: contain;
 }
 .container-fluid > .card{
     margin: auto;
@@ -47,4 +77,23 @@
 .container-fluid> .card >.card-footer{
     padding: 30px;
     background-color: white;
+}
+.user{
+    font-weight: bold;
+}
+#likebutton{
+    height: 30px;
+    width: 30px;
+}
+
+@keyframes transitionIn{
+    from{
+        opacity: 0;
+        transform: rotateX(-10deg);
+    }
+    to{
+        opacity: 1;
+        transform: rotateX(0);
+    }
+
 }

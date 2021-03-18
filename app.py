@@ -4,6 +4,11 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from forms import LoginForm, SignUpForm
 import bcrypt
 import follower
+import tornado.web
+import tornado.ioloop
+import os
+from werkzeug.utils import secure_filename
+import posts
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -49,14 +54,18 @@ def index():
     # print(session['username'])
     # eventually change to logged in user
     username = "Calasts53"
+    imageList = []
     try:
         username = str(session['_user_id'])
         print(username)
+        imageList = follower.getImagesToShow(username)
+        imagedict = {imageList[index*2+1]: imageList[index*2] for index in len(imageList)/2-5}
+        print(imagedict)
     except:
         print("An exception occurred")
         username = "Calasts53"
     print(username)
-    imageList = follower.getImagesToShow(username)
+    
 
     return render_template('main.html', imageList=imageList) #, loggedIn=session['loggedIn']
 
@@ -116,9 +125,22 @@ def sign_up():
     return render_template('signup.html', form=form)
 
 
-@app.route('/post')
-def post():
-    return render_template('post.html')
+@app.route('/post/<image>', methods=['GET', 'POST'])
+def post(image):
+    id= int(posts.getID(image))
+    postList = posts.getInfo(id)
+    if request.method == 'POST' and 'like' in request.form:
+        posts.like(id)
+        return redirect("/post/"+image)
+    if request.method == 'POST' and 'comment' in request.form:
+        comment = request.form.get("comment")
+        print(comment)
+        posts.addComment(comment, id)
+        return redirect("/post/"+image)
+
+        
+        
+    return render_template('post.html', id=id, postList = postList)
 
 
 @app.route('/users' , methods=["GET","POST"])
@@ -131,6 +153,43 @@ def users():
         follower.follow(username, userToFollow)
         return redirect("/")
     return render_template('users.html', usersList = usersList)
+
+@app.route('/profile/<username>' , methods=["GET","POST"])
+def profile(username):
+    print(username)
+    imageList= follower.imagesForUser(username)
+    print(imageList)
+    likes = posts.getAllLikes(username)
+    print(likes)
+    followers = follower.getUserFollowers(username)
+    following = follower.getUserFollowing(username)
+    return render_template('profile.html', imageList = imageList, username = username, likes = likes, followers = followers, following = following)
+
+
+app.config["IMAGE_UPLOADS"] = "static/images"
+
+
+
+@app.route('/upload-image' , methods=["GET","POST"])
+def postimage():
+    if request.method == "POST":
+        if request.files:
+            image = request.files["image"]
+            print(image)
+            imageString = str(image)
+            indexOne = imageString.index('\'')
+            indexTwo = imageString.index('\'', indexOne+1)
+            imageName = imageString[indexOne+1:indexTwo]
+            print(imageName)
+            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+            print("Image saved")
+
+            username = str(session['_user_id'])
+            follower.addimage(username, imageName)
+            return redirect(request.url)
+    return render_template("upload-image.html")
+
+
 
 
 if __name__ == '__main__':

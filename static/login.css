@@ -5,6 +5,7 @@ body{
   background-size: cover;
   background-repeat: no-repeat;
  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+ animation: transitionIn 2s;
 }
 .box{
     border-radius: 5px;
@@ -84,4 +85,16 @@ text-decoration: none;
 }
 p.options{
     margin-bottom: 10px;
+}
+
+@keyframes transitionIn{
+    from{
+        opacity: 0;
+       
+    }
+    to{
+        opacity: 1;
+        
+    }
+
 }
