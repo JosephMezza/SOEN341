@@ -1,7 +1,7 @@
 from re import I
 from flask import Flask, session, redirect, render_template, flash, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
-from forms import LoginForm, SignUpForm
+from forms import LoginForm, SignUpForm, CaptionForm
 import bcrypt
 import follower
 import tornado.web
@@ -186,10 +186,26 @@ def postimage():
 
             username = str(session['_user_id'])
             follower.addimage(username, imageName)
-            return redirect(request.url)
+            # return redirect(request.url)
+            return redirect("/caption/" + imageName)
     return render_template("upload-image.html")
 
+@app.route('/caption/<image>', methods=["GET","POST"])
+def postCaption(image):
+    form = CaptionForm()
+    print('outside validate')
+    if form.submit():
+        print('form submitted')
+    if form.validate_on_submit():
+        print('inside validate')
+        # caption = form.caption
+        # print(caption)
+        # username = str(session['_user_id'])
+        # post.addPost(username, image, caption)
+        return redirect("/post/"+image) # TODO: the submit button currently redirects to '/caption' which is a bug
 
+    print('after validate')
+    return render_template('caption.html', form=form, image=image)
 
 
 if __name__ == '__main__':
