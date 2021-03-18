@@ -77,7 +77,7 @@ def follow(user, follower):
 
 # returns a lsit with all the pictures they posted
 def imagesForUser(user):
-    imagelist = getListFromCSV('data/userimages.csv')
+    imagelist = getListFromCSV('data/userImages.csv')
         # opens the csv file with the images and checks
 
     userIndex = -1
@@ -117,7 +117,7 @@ def getUserFollowers(user):
 # returns a list with all images to be displayed for a user
 def getImagesToShow(user):
     username = user
-    imagelist = getListFromCSV('data/userimages.csv')
+    imagelist = getListFromCSV('data/userImages.csv')
         # opens the csv file with the images and checks
 
     # userExist = False
