@@ -1,6 +1,7 @@
 import csv
 from follower import getListFromCSV, addUser,getusers,imagesForUser,getUserFollowers,getImagesToShow
 
+#Tests if reading data from a CSV works properly
 def test_CSV():
     dataList = []
     with open("data/users.csv", newline='') as csvfile:
@@ -25,10 +26,15 @@ def test_CSV():
 
 #     assert 
 
+#Tests if we returning a list of all users works properly
 def test_getUsers():
-    followerlist = getListFromCSV('data/followers.csv')
-    assert getusers() == followerlist[0][1:]
+    followerlist = getListFromCSV('data/followers2.csv')
+    newfollowerslist=[]
+    for people in followerlist[1::]:
+        newfollowerslist.append(people[0])
+    assert getusers() == newfollowerslist
 
+#Tests if the proper list of images is returned for a specific user
 def test_imagesForUser():
     imagelist = getListFromCSV('data/userImages.csv')
     userIndex = -1
@@ -39,6 +45,7 @@ def test_imagesForUser():
         return
     assert imagesForUser('Ablion73') == imagelist[userIndex][1:]
 
+#Tests if the getUserFollowers methods returns the correct followers of a user
 def test_getUserFollowers():
     followerlist = getListFromCSV('data/followers.csv')
         # opens the csv file where the followers are stored and tracks the data inside a list  
@@ -58,6 +65,7 @@ def test_getUserFollowers():
             # checks the user to see all the people they follow and store it in a list
     assert getUserFollowers('Ablion73') == followers
 
+#Tests if the proper images that will be displayed on the home page
 def test_getImagesToShow():
     user = 'Ablion73'
     username = user
