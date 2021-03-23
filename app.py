@@ -77,7 +77,6 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = find_user(form.username.data)
-        print(user)
         valid_password = bcrypt.checkpw(form.password.data.encode('utf-8'), user.password.encode('utf-8'))
         if user and valid_password:
             session['loggedIn'] = True
@@ -117,7 +116,7 @@ def sign_up():
         if not user:
             salt = bcrypt.gensalt()
             password = bcrypt.hashpw(form.password.data.encode('utf-8'), salt)
-            follower.addUser(form.username.data, password, form.email.data, form.first_name.data, form.last_name.data)
+            follower.addUser(form.username.data, password.decode(), form.email.data, form.first_name.data, form.last_name.data)
             flash('Sign up successful.')
             return redirect('/login')
         else:
