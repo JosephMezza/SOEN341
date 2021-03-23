@@ -65,7 +65,7 @@ def index():
         print("An exception occurred")
         username = "Calasts53"
     print(username)
-    
+
 
     return render_template('main.html', imageList=imageList) #, loggedIn=session['loggedIn']
 
@@ -77,8 +77,8 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = find_user(form.username.data)
-        valid_password = form.password.data == user.password
-        # valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
+        print(user)
+        valid_password = bcrypt.checkpw(form.password.data.encode('utf-8'), user.password.encode('utf-8'))
         if user and valid_password:
             session['loggedIn'] = True
             login_user(user)
@@ -115,9 +115,9 @@ def sign_up():
         # check first if user already exists
         user = find_user(form.username.data)
         if not user:
-            # salt = bcrypt.gensalt()
-            # password = bcrypt.hashpw(form.password.data.encode(), salt)
-            follower.addUser(form.username.data, form.password.data, form.email.data, form.first_name.data, form.last_name.data)
+            salt = bcrypt.gensalt()
+            password = bcrypt.hashpw(form.password.data.encode('utf-8'), salt)
+            follower.addUser(form.username.data, password, form.email.data, form.first_name.data, form.last_name.data)
             flash('Sign up successful.')
             return redirect('/login')
         else:
@@ -138,8 +138,8 @@ def post(image):
         posts.addComment(comment, id)
         return redirect("/post/"+image)
 
-        
-        
+
+
     return render_template('post.html', id=id, postList = postList)
 
 
