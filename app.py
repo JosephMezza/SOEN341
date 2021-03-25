@@ -9,6 +9,18 @@ import tornado.ioloop
 import os
 from werkzeug.utils import secure_filename
 import posts
+import mysql.connector
+
+config = {'host': '184.144.173.26',
+          'user': 'root',
+          'passwd': 'Binstagram_341',
+          'database': 'binstagram'
+          }
+try:
+    db = mysql.connector.connect(**config)
+except mysql.connector.errors.InterfaceError:
+    config['host'] = '192.168.1.53'
+    db = mysql.connector.connect(**config)
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -59,25 +71,29 @@ def index():
         username = str(session['_user_id'])
         print(username)
         imageList = follower.getImagesToShow(username)
-        imagedict = {imageList[index*2+1]: imageList[index*2] for index in len(imageList)/2-5}
+        imagedict = {imageList[index*2+1]: imageList[index*2]
+                     for index in len(imageList)/2-5}
         print(imagedict)
     except:
         print("An exception occurred")
         username = "Calasts53"
     print(username)
 
-
-    return render_template('main.html', imageList=imageList) #, loggedIn=session['loggedIn']
+    # , loggedIn=session['loggedIn']
+    return render_template('main.html', imageList=imageList)
 
 # Test User:
 # Calasts53
 # eeG1fior0g
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = find_user(form.username.data)
-        valid_password = bcrypt.checkpw(form.password.data.encode('utf-8'), user.password.encode('utf-8'))
+        valid_password = bcrypt.checkpw(form.password.data.encode(
+            'utf-8'), user.password.encode('utf-8'))
         if user and valid_password:
             session['loggedIn'] = True
             login_user(user)
@@ -92,7 +108,8 @@ def login():
             session['loggedIn'] = False
             flash('Incorrect username/password')
             return render_template('main.html')
-    return render_template('login.html', form=form, )#loggedIn=session['loggedIn']
+    # loggedIn=session['loggedIn']
+    return render_template('login.html', form=form, )
 
 
 @app.route('/logout')
@@ -116,7 +133,8 @@ def sign_up():
         if not user:
             salt = bcrypt.gensalt()
             password = bcrypt.hashpw(form.password.data.encode('utf-8'), salt)
-            follower.addUser(form.username.data, password.decode(), form.email.data, form.first_name.data, form.last_name.data)
+            follower.addUser(form.username.data, password.decode(
+            ), form.email.data, form.first_name.data, form.last_name.data)
             flash('Sign up successful.')
             return redirect('/login')
         else:
@@ -126,7 +144,7 @@ def sign_up():
 
 @app.route('/post/<image>', methods=['GET', 'POST'])
 def post(image):
-    id= int(posts.getID(image))
+    id = int(posts.getID(image))
     postList = posts.getInfo(id)
     if request.method == 'POST' and 'like' in request.form:
         posts.like(id)
@@ -137,12 +155,10 @@ def post(image):
         posts.addComment(comment, id)
         return redirect("/post/"+image)
 
+    return render_template('post.html', id=id, postList=postList)
 
 
-    return render_template('post.html', id=id, postList = postList)
-
-
-@app.route('/users' , methods=["GET","POST"])
+@app.route('/users', methods=["GET", "POST"])
 def users():
     usersList = follower.getusers()
     if request.method == 'POST':
@@ -151,25 +167,25 @@ def users():
         username = str(session['_user_id'])
         follower.follow(username, userToFollow)
         return redirect("/")
-    return render_template('users.html', usersList = usersList)
+    return render_template('users.html', usersList=usersList)
 
-@app.route('/profile/<username>' , methods=["GET","POST"])
+
+@app.route('/profile/<username>', methods=["GET", "POST"])
 def profile(username):
     print(username)
-    imageList= follower.imagesForUser(username)
+    imageList = follower.imagesForUser(username)
     print(imageList)
     likes = posts.getAllLikes(username)
     print(likes)
     followers = follower.getUserFollowers(username)
     following = follower.getUserFollowing(username)
-    return render_template('profile.html', imageList = imageList, username = username, likes = likes, followers = followers, following = following)
+    return render_template('profile.html', imageList=imageList, username=username, likes=likes, followers=followers, following=following)
 
 
 app.config["IMAGE_UPLOADS"] = "static/images"
 
 
-
-@app.route('/upload-image' , methods=["GET","POST"])
+@app.route('/upload-image', methods=["GET", "POST"])
 def postimage():
     if request.method == "POST":
         if request.files:
@@ -180,7 +196,8 @@ def postimage():
             indexTwo = imageString.index('\'', indexOne+1)
             imageName = imageString[indexOne+1:indexTwo]
             print(imageName)
-            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+            image.save(os.path.join(
+                app.config["IMAGE_UPLOADS"], image.filename))
             print("Image saved")
 
             username = str(session['_user_id'])
@@ -189,7 +206,8 @@ def postimage():
             return redirect("/caption/" + imageName)
     return render_template("upload-image.html")
 
-@app.route('/caption/<image>', methods=["GET","POST"])
+
+@app.route('/caption/<image>', methods=["GET", "POST"])
 def postCaption(image):
     form = CaptionForm()
     if request.method == "POST":
