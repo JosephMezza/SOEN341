@@ -35,15 +35,15 @@ class posts:
         # postsList = getListFromCSV('data/posts.csv') We shouldn't be needing this 
         self.postID = len(postsList) 
 
+cr = db.cursor() 
 
 # this method will add a post to the post dataabse
 def addPost(user, imgpath, caption):  #This method isn't currently working, have to fix it
-    cr = db.cursor() 
     cr.execute("INSERT INTO posts (ID, user, image, caption, likes, time) VALUES (%s,%s,%s,%s,%s,%s)", (postID, user, imgpath, caption, likes, time)) #will postID, likes & time be generated?
     db.commit() #commits the changes to the database
 
 # adds a comment to the specific post
-def addComment(comment, postID): """TO DO: Lengthen the number of characters for COMMENTS"""
+def addComment(comment, postID): 
     cr.execute("UPDATE posts SET comments = '{}' WHERE ID = '{}'".format(comment, postID)) 
     db.commit()
 
@@ -69,7 +69,7 @@ def getAllLikes(user):
     a = []
     cr.execute("SELECT likes FROM posts WHERE user = 'Ablion73'")
     for i in cr:
-    a.append(i)
+        a.append(i)
     """ TO DO: Have to transform array elements to INT !!! """
     totalLikes = sum(a)
     
