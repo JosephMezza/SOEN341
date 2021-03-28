@@ -11,16 +11,20 @@ from werkzeug.utils import secure_filename
 import posts
 import mysql.connector
 
-config = {'host': '184.144.173.26',
+db_config = {'host': '184.144.173.26',
           'user': 'root',
           'passwd': 'Binstagram_341',
           'database': 'binstagram'
           }
+
 try:
-    db = mysql.connector.connect(**config)
+    db = mysql.connector.connect(**db_config)
 except mysql.connector.errors.InterfaceError:
-    config['host'] = '192.168.1.53'
-    db = mysql.connector.connect(**config)
+    db_config['host'] = '192.168.1.53'
+    db = mysql.connector.connect(**db_config)
+finally:
+    print('Successfully connected to db {} on {} with user {}'.format(
+        db_config['database'], db_config['host'], db_config['user']))
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -85,8 +89,6 @@ def index():
 # Test User:
 # Calasts53
 # eeG1fior0g
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -183,8 +185,6 @@ def profile(username):
 
 
 app.config["IMAGE_UPLOADS"] = "static/images"
-
-
 @app.route('/upload-image', methods=["GET", "POST"])
 def postimage():
     if request.method == "POST":
