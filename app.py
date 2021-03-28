@@ -4,6 +4,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from forms import LoginForm, SignUpForm, CaptionForm
 import bcrypt
 import follower
+import user
 import tornado.web
 import tornado.ioloop
 import os
@@ -25,6 +26,7 @@ except mysql.connector.errors.InterfaceError:
 finally:
     print('Successfully connected to db {} on {} with user {}'.format(
         db_config['database'], db_config['host'], db_config['user']))
+    user.get_user(db, 'Email', 'RudolphSSmith@cuvox.de')
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
