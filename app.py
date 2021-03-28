@@ -26,7 +26,7 @@ except mysql.connector.errors.InterfaceError:
 finally:
     print('Successfully connected to db {} on {} with user {}'.format(
         db_config['database'], db_config['host'], db_config['user']))
-    user.get_user(db, 'Email', 'RudolphSSmith@cuvox.de')
+    print(user.get_user(db, 'Email', 'RudolphSSmith@cuvox.de'))
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'

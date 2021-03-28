@@ -4,7 +4,7 @@ def get_user(db, key, val):
     if key not in VALID_KEYS:
         print('Key {} is not a valid query key'.format(key))
         return
-    cr = db.cursor()
+    cr = db.cursor(dictionary=True)
     cr.execute("SELECT * FROM users WHERE {} = '{}'".format(key, val))
     user = cr.fetchall()
     cr.close()
@@ -12,7 +12,7 @@ def get_user(db, key, val):
 
 
 def get_all_users(db):
-    cr = db.cursor()
+    cr = db.cursor(dictionary=True)
     cr.execute("SELECT * FROM users")
     users = cr.fetchall()
     cr.close()
