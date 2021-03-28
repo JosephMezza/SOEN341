@@ -1,19 +1,27 @@
 import time
 from datetime import date
-import csv
-def getListFromCSV(fileName):
+import mysql.connector
+
+""" def getListFromCSV(fileName):
     dataList=[]
     with open(fileName, newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
         dataList = list(reader)
-        return dataList
+        return dataList  
 
 def setListCSV(fileName, listToWrite):
     with open(fileName, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        writer.writerows(listToWrite)
+        writer.writerows(listToWrite)"""
 
+#I don't think we'll be needing this
 
+db = mysql.connector.connect(
+    host="184.144.173.26",
+    user="root",
+    passwd="Binstagram_341",
+    database="binstagram"
+)
 
 class posts:
     def __init__(self, user, imgpath, caption):
@@ -24,69 +32,50 @@ class posts:
         today = date.today() 
         self.time = today.strftime("%b-%d-%Y")
         self.comments = []
-        postsList = getListFromCSV('data/posts.csv')
-        self.postID = len(postsList)
+        # postsList = getListFromCSV('data/posts.csv') We shouldn't be needing this 
+        self.postID = len(postsList) 
 
 
 # this method will add a post to the post dataabse
-def addPost(user, imgpath, caption):
-    newPost = posts(user, imgpath, caption)
-    postsList = getListFromCSV('data/posts.csv')
-    post = []
-    post.append(newPost.postID)
-    post.append(newPost.user)
-    post.append(newPost.imgpath)
-    post.append(newPost.caption)
-    post.append(newPost.likes)
-    post.append(newPost.time)
-    postsList.append(post)
-    # appends evreything to the list before submitting
-    setListCSV('data/posts.csv', postsList)
+def addPost(user, imgpath, caption):  #This method isn't currently working, have to fix it
+    cr = db.cursor() 
+    cr.execute("INSERT INTO posts (ID, user, image, caption, likes, time) VALUES (%s,%s,%s,%s,%s,%s)", (postID, user, imgpath, caption, likes, time)) #will postID, likes & time be generated?
+    db.commit() #commits the changes to the database
 
 # adds a comment to the specific post
-def addComment(comment, postID):
-    postsList = getListFromCSV('data/posts.csv')
-    postsList[postID].append(comment)
-    setListCSV('data/posts.csv', postsList)
+def addComment(comment, postID): """TO DO: Lengthen the number of characters for COMMENTS"""
+    cr.execute("UPDATE posts SET comments = '{}' WHERE ID = '{}'".format(comment, postID)) 
+    db.commit()
 
 # likes the post with the ID
-def like(postID):
-    postsList = getListFromCSV('data/posts.csv')
-    likes = int(postsList[postID][4])
-    likes=likes+1
-    postsList[postID][4]= likes
-    setListCSV('data/posts.csv', postsList)
+def like(ID):
+    cr.execute ("UPDATE posts SET likes = likes + 1 WHERE ID = '{}'".format(ID)) #Increments the likes
+    db.commit()
 
-# retuirns the full information of the post
+# returns the full information of the post
 def getInfo(ID):
-    postsList = getListFromCSV('data/posts.csv')
-    return postsList[ID]
+    cr.execute("SELECT*FROM posts WHERE ID = '{}'".format(ID)) 
+    for i in cr:
+        print(i)
 
 # gets ID when passed an image path
 def getID(image):
-    postsList = getListFromCSV('data/posts.csv')
-    ID = 1
-    for posts in postsList:
-        if posts[2] == image:
-            ID = posts[0]
-    return ID
+    cr.execute("SELECT ID FROM posts WHERE image = '{}'".format(image))
+    for i in cr:
+        print(i)
 
-# =returns all likes for a specific user
+#returns all likes for a specific user
 def getAllLikes(user):
-    postsList = getListFromCSV('data/posts.csv')
-    totalLikes = 0
-    for posts in postsList:
-        if posts[1] == user:
-            totalLikes = totalLikes+ int(posts[4])
-    return totalLikes
+    a = []
+    cr.execute("SELECT likes FROM posts WHERE user = 'Ablion73'")
+    for i in cr:
+    a.append(i)
+    """ TO DO: Have to transform array elements to INT !!! """
+    totalLikes = sum(a)
+    
 
 
 
 
 
-# addPost("Poters", "img(3).jpg", "LOOK AT lolol")
-# addComment("OMG MARY ME plssssss!!!!", 4749)
-# like(1)
-# print(getInfo(4749))
-# print(getID("img(5).jpg"))
-# print(getAllLikes("Giarturner"))
+#Note to self: Fix addPost() & getALLlikes()

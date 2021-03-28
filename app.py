@@ -55,19 +55,16 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     """retrieve a user object for the current user while hiding password"""
-    user = find_user(user_id)
+    user = find_user(key, val)
     if user:
         user.password = None
     return user
 
 
-def find_user(username):
-    """ TODO : this will later be changed to searching the database"""
-    users = follower.getListFromCSV('data/users.csv')
-    for user in users[1:]:
-        if user[0] == username:
-            return User(*user)
-    return None
+def find_user(key, val):
+    cr = db.cursor()  
+    cr.execute("SELECT*FROM users WHERE {} = '{}'".format(key, val)) #key is the column name & val is the value we search for
+    
 
 
 @app.route('/')
