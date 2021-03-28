@@ -39,14 +39,17 @@ login_manager.login_view = 'login'
 
 class User(UserMixin):
     def __init__(self, username, email, first_name, last_name, password=None):
-        self.id = username
+        self.username = username
+        self.email = email
         self.first_name = first_name
         self.last_name = last_name
-        self.email = email
         self.password = password
 
+    def getUser(self):
+        return (self.username, self.email, self.first_name, self.last_name, self.password)
+
     def __repr__(self):
-        return 'User({})'.format(self.id)
+        return 'User({})'.format(self.username)
 
 
 @login_manager.user_loader

@@ -18,6 +18,20 @@ def get_all_users(db):
     cr.close()
     return users
 
-def add_user(db, username, password, email, first_name, last_name):
+
+def add_user(db, user, commit=True):
     "Add a user to the database"
-    pass
+    cursor = db.cursor()
+
+    add_user = ("INSERT INTO users (Username, Email, First_Name, Last_Name, Password) VALUES ({})".format(
+        *user.getUser()))
+
+    # Insert new user
+    cursor.execute(add_user)
+
+    # commit to database unless specified
+    if commit:
+        db.commit()
+
+    cursor.close()
+    return
