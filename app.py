@@ -1,7 +1,7 @@
 from re import I
 from flask import Flask, session, redirect, render_template, flash, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
-from forms import LoginForm, SignUpForm, CaptionForm, ResetPasswordForm
+from forms import LoginForm, SignUpForm, CaptionForm, ResetPasswordForm, EmailForm
 import bcrypt
 import follower
 import tornado.web
@@ -9,6 +9,7 @@ import tornado.ioloop
 import os
 from werkzeug.utils import secure_filename
 import posts
+import emailsend
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -201,6 +202,18 @@ def postCaption(image):
     return render_template('caption.html', form=form, image=image)
 
 
+@app.route('/forgotPassword', methods=["GET","POST"])
+def forgotPassword():
+    form = EmailForm()
+    if request.method == "POST":
+        email = form.email.data
+        print(email)
+        link = "http://127.0.0.1:5000/resetPassword/"+email
+        emailsend.sendemail(email, link)
+        return redirect("/")
+    return render_template('forgotPassword.html', form=form)
+
+
 @app.route('/resetPassword/<emailadress>', methods=["GET","POST"])
 def ResetPassword(emailadress):
     form = ResetPasswordForm()
@@ -215,7 +228,9 @@ def ResetPassword(emailadress):
             if password != password2:
                 return redirect("/resetPassword/"+emailadress)
 
-            
+            email = emailadress
+            print(email)
+            # changePassword(email, password) implementation needed in database
             return redirect("/")
     return render_template('resetPassword.html', form=form, emailadress=emailadress)
 

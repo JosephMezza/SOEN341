@@ -40,6 +40,10 @@ class CaptionForm(FlaskForm):
     caption = TextAreaField('Caption', validators=[DataRequired()])
     submit = SubmitField('Done')
 
+class EmailForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password',
                              validators=[InputRequired(),
