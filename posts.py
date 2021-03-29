@@ -1,20 +1,5 @@
 import time
 from datetime import date
-import mysql.connector
-
-# def getListFromCSV(fileName):
-#     dataList=[]
-#     with open(fileName, newline='') as csvfile:
-#         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-#         dataList = list(reader)
-#         return dataList
-
-
-# def setListCSV(fileName, listToWrite):
-#     with open(fileName, 'w', newline='') as csvfile:
-#         writer = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-#         writer.writerows(listToWrite)
-
 
 class Post():
     def __init__(self, user, imgpath, caption):
@@ -27,7 +12,7 @@ class Post():
         self.comments = []
         # postsList = getListFromCSV('data/posts.csv') We shouldn't be needing this
         # self.postID = len(postsList)
-        self.postID = 0
+        self.postID = 0  # TODO SEE : https://www.w3schools.com/sql/sql_autoincrement.asp
 
     def getPost(self):
         return (self.postID, self.user, self.imgpath, self.caption, self.likes, self.time)
@@ -102,9 +87,11 @@ def getAllLikes(db, username):
     cr.close()
     return total_likes
 
-# TODO : Note to self - Fix addPost() & getALLlikes()
 
 if __name__ == '__main__':
+    import mysql.connector
+    import User
+
     db = mysql.connector.connect(
             host='192.168.1.53',
             user='root',
@@ -120,6 +107,9 @@ if __name__ == '__main__':
     # print(info)
     # sample post : (14, 'Thithe', 'img(14).jpg', 'Random caption14', 0, datetime.datetime(2021, 3, 14, 0, 0), None)
 
+    addPost(db, Post())
+
     print(getInfo(db, 14))
     print(getID(db, 'img(55).jpg'))
     print(getAllLikes(db, 'Thithe'))
+    db.close()

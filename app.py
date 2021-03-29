@@ -1,6 +1,6 @@
 from re import I
 from flask import Flask, session, redirect, render_template, flash, request, url_for
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required
 from forms import LoginForm, SignUpForm, CaptionForm
 import bcrypt
 import follower
@@ -36,28 +36,13 @@ login_manager.login_view = 'login'
 # unauthenticated users will be redirected to login page
 
 
-class User(UserMixin):
-    def __init__(self, username, email, first_name, last_name, password=None):
-        self.username = username
-        self.email = email
-        self.first_name = first_name
-        self.last_name = last_name
-        self.password = password
-
-    def getUser(self):
-        return (self.username, self.email, self.first_name, self.last_name, self.password)
-
-    def __repr__(self):
-        return 'User({})'.format(self.username)
-
-
 @login_manager.user_loader
 def load_user(user_id):
     """retrieve a user object for the current user while hiding password"""
-    user = user.get_user(key, val)
+    user = user.getUser(db, key, val)
     if user:
         user.password = None
-    return user
+    return User(user)
 
 
 @app.route('/')
@@ -88,7 +73,7 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = find_user(form.username.data)
+        user = user.findUser(form.username.data)
         valid_password = bcrypt.checkpw(form.password.data.encode(
             'utf-8'), user.password.encode('utf-8'))
         if user and valid_password:
@@ -126,7 +111,7 @@ def sign_up():
     print(form.username)
     if form.validate_on_submit():
         # check first if user already exists
-        user = find_user(form.username.data)
+        user = user.get_user(db,form.username.data)
         if not user:
             salt = bcrypt.gensalt()
             password = bcrypt.hashpw(form.password.data.encode('utf-8'), salt)
@@ -214,3 +199,4 @@ def postCaption(image):
 
 if __name__ == '__main__':
     app.run()
+    db.close()
