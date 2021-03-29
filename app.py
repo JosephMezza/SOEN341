@@ -188,8 +188,6 @@ def postimage():
             image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
             print("Image saved")
 
-            username = str(session['_user_id'])
-            follower.addimage(username, imageName)
             # return redirect(request.url)
             return redirect("/caption/" + imageName)
     return render_template("upload-image.html")
@@ -199,7 +197,10 @@ def postCaption(image):
     form = CaptionForm()
     if request.method == "POST":
         caption = form.caption.data
+        if caption == "":
+            return redirect("/caption/"+image)
         username = str(session['_user_id'])
+        follower.addimage(username, image)
         posts.addPost(username, image, caption)
         return redirect("/post/"+image)
     return render_template('caption.html', form=form, image=image)
