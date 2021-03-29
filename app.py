@@ -201,5 +201,17 @@ def postCaption(image):
     return render_template('caption.html', form=form, image=image)
 
 
+@app.route('/resetPassword/<emailadress>', methods=["GET","POST"])
+def postCaption(emailadress):
+    form = ResetPassword()
+    if request.method == "POST":
+        password = form.password.data
+        password2 = form.password2.data
+        print(password)
+        print(password2)
+        return redirect("/")
+    return render_template('resetPassword', form=form, emailadress=emailadress)
+
+
 if __name__ == '__main__':
     app.run()
