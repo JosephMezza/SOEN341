@@ -186,11 +186,16 @@ def postimage():
                 indexTwo = imageString.index('\'', indexOne+1)
                 imageName = imageString[indexOne+1:indexTwo]
                 print(imageName)
-                image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
-                print("Image saved")
-
-                # return redirect(request.url)
-                return redirect("/caption/" + imageName)
+                indexOfDot = imageName.index('.')
+                extensionName = imageName[indexOfDot+1::]
+                print(extensionName)
+                if extensionName.lower() == "png" or extensionName.lower() == "jpg" or extensionName.lower() == "gif":
+                    image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+                    print("Image saved")
+                    # return redirect(request.url)
+                    return redirect("/caption/" + imageName)
+                else:
+                    return redirect("/upload-image")
         except: 
             return redirect("/upload-image")
     return render_template("upload-image.html")
