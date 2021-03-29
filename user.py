@@ -1,7 +1,9 @@
 from flask_login import UserMixin
 
 class User(UserMixin):
-    def __init__(self, username, email, first_name, last_name, password=None):
+
+    def __init__(self, username, email, first_name, last_name, password, id=None):
+        self.id = id
         self.username = username
         self.email = email
         self.first_name = first_name
@@ -9,46 +11,44 @@ class User(UserMixin):
         self.password = password
 
     def getUser(self):
-        return (self.username, self.email, self.first_name, self.last_name, self.password)
+        return (self.id, self.username, self.email, self.first_name, self.last_name, self.password)
 
     def __repr__(self):
         return 'User({})'.format(self.username)
 
 
-def getAllUsers(db):
+def getUserNames(db):
     """retrieve all user data"""
-    cr = db.cursor(dictionary=True)
-    cr.execute("SELECT * FROM users")
-    users = cr.fetchall()
+    cr = db.cursor()
+    cr.execute("SELECT username FROM users")
+    usernames = cr.fetchall()
     cr.close()
-    return users
+    return usernames
 
 
 def getUser(db, key, val):
     """Search in db for row where a value corresponds to a specific key (col)"""
-    cr = db.cursor(dictionary=True)
+    cr = db.cursor()
     cr.execute("SELECT * FROM users WHERE {} = '{}'".format(key, val))
-    user = cr.fetchall()
+    user = User(*cr.fetchone())
     cr.close()
     return user
 
 
-def addUser(db, user, commit=True):
+def addUser(db, user):
     """Add a user to the database"""
     cr = db.cursor()
-    add_user = ("INSERT INTO users (Username, Email, First_Name, Last_Name, Password) VALUES ({})".format(
-        *user.getUser()))
+    fields = '(username, email, first_name, last_name, password)'
+    add_user = ("INSERT INTO users {} VALUES ('{}', '{}', '{}', '{}', '{}')".format(fields, *user.getUser()[1:]))
     # Insert new user
     cr.execute(add_user)
-    # commit to database unless specified
-    if commit:
-        db.commit()
-
+    db.commit()
     cr.close()
     return
 
 
-def follow(db, user, followed, commit=True):
+# TODO : create MANY TO MANY relationship
+def follow(db, user, followed):
     """follow another user"""
     # make sure you cannot follow yourself
     if user.username == followed.username:
@@ -60,10 +60,7 @@ def follow(db, user, followed, commit=True):
     # TODO : INSERT OPERATION
     follow_user = ("INSERT INTO followers".format(user.username, followed.username))
     cr.execute(follow_user)
-    # commit to database unless specified
-    if commit:
-        db.commit()
-
+    db.commit()
     cr.close()
     return
 
@@ -77,6 +74,7 @@ def userImages(db, username):
     return user[1:]
 
 
+# TODO : adapt to MANY TO MANY relationship
 def getUserFollowers(db, username):
     """returns a list with all the followers of a specific user"""
     cr = db.cursor()
@@ -86,6 +84,7 @@ def getUserFollowers(db, username):
     return user[1:]
 
 
+# TODO : adapt to MANY TO MANY relationship
 def getUserFollowing(db, username):
     """returns a list with all users following a specific user"""
     cr = db.cursor()
@@ -95,23 +94,27 @@ def getUserFollowing(db, username):
     return user[1:]
 
 
-def getImagesToShow(user):
-    imagelist = getListFromCSV('data/userImages.csv')
+def getImagesToShow(db, username):
+    """returns a list with all users following a specific user"""
+    cr = db.cursor()
+    cr.execute("SELECT * FROM userImages WHERE username = '{}'".format(username))
+    user = cr.fetchone()
+    cr.close()
+    return user
 
-    imageList = []
-    for follower in getUserFollowers(user):
-        imageList += imagesForUser(follower)
-    return imageList
 
+# TODO : create ONE TO MANY relationship
+def addImage(user, imageName):
+    """add an image to a user's profile"""
 
-def addimage(user, imageName):
-    imagelist = getListFromCSV('data/userimages.csv')
+    cr = db.cursor()
 
-    for people in imagelist:
-        if people[0] == user:
-            people.append(imageName)
-
-    setListCSV('data/userimages.csv', imagelist)
+    # TODO : INSERT OPERATION
+    add_image = ("INSERT INTO userImages".format(imageName))
+    cr.execute(add_image)
+    db.commit()
+    cr.close()
+    return
 
 
 if __name__ == '__main__':
@@ -124,13 +127,18 @@ if __name__ == '__main__':
             database='binstagram'
             )
 
-    # cr = db.cursor()
-    # cr.execute("SHOW COLUMNS FROM followers")
-    # print(cr.fetchall())
-    # cr.close()
-    # db.close()
+    # for loop to add users to db from csv
+    with open('data/users.csv', 'r') as f:
+        for user in f.read().splitlines()[1:]:
+            addUser(db, User(*user.split(',')))
 
-    # print(getAllUsers(db))
-    # print(getUser(db, 'Username', 'Ablion73'))
+    # print(getUserNames(db))
+    # print(getUser(db, 'id', 5))
     # print(userImages(db, 'Ablion73'))
-    print(getUserFollowers(db, 'Ablion73'))
+    # print(getUserFollowers(db, 'Ablion73'))
+
+    cr = db.cursor()
+    cr.execute("SELECT * FROM users")
+    print(cr.fetchall())
+    cr.close()
+    db.close()

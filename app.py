@@ -39,10 +39,10 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(user_id):
     """retrieve a user object for the current user while hiding password"""
-    user = user.getUser(db, key, val)
+    user = user.getUser(db, 'id', user_id)
     if user:
-        user.password = None
-    return User(user)
+        user.pop()
+    return user.User(*user)
 
 
 @app.route('/')
