@@ -26,7 +26,6 @@ except mysql.connector.errors.InterfaceError:
 finally:
     print('Successfully connected to db {} on {} with user {}'.format(
         db_config['database'], db_config['host'], db_config['user']))
-    print(user.get_user(db, 'Email', 'RudolphSSmith@cuvox.de'))
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -55,16 +54,10 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     """retrieve a user object for the current user while hiding password"""
-    user = find_user(key, val)
+    user = user.get_user(key, val)
     if user:
         user.password = None
     return user
-
-
-def find_user(key, val):
-    cr = db.cursor()  
-    cr.execute("SELECT*FROM users WHERE {} = '{}'".format(key, val)) #key is the column name & val is the value we search for
-    
 
 
 @app.route('/')
@@ -148,15 +141,14 @@ def sign_up():
 
 @app.route('/post/<image>', methods=['GET', 'POST'])
 def post(image):
-    id = int(posts.getID(image))
-    postList = posts.getInfo(id)
+    id = int(posts.getID(db, image))
+    postList = posts.getInfo(db, id)
     if request.method == 'POST' and 'like' in request.form:
-        posts.like(id)
+        posts.like(db, id)
         return redirect("/post/"+image)
     if request.method == 'POST' and 'comment' in request.form:
         comment = request.form.get("comment")
-        print(comment)
-        posts.addComment(comment, id)
+        posts.addComment(db, comment, id)
         return redirect("/post/"+image)
 
     return render_template('post.html', id=id, postList=postList)
