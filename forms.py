@@ -39,3 +39,15 @@ class SignUpForm(FlaskForm):
 class CaptionForm(FlaskForm):
     caption = TextAreaField('Caption', validators=[DataRequired()])
     submit = SubmitField('Done')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password',
+                             validators=[InputRequired(),
+                             Length(8),])
+                            #  Regexp('^[a-zA-Z0-9_!]+', 0,
+                            #         'Password must be alphanumeric and can contain ! and _')
+    password2 = PasswordField('Repeat password',
+                              validators=[InputRequired(),
+                                          EqualTo('password',
+                                                  message='Passwords must match')])
+    submit = SubmitField('Sign Up')

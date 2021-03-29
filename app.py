@@ -1,7 +1,7 @@
 from re import I
 from flask import Flask, session, redirect, render_template, flash, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
-from forms import LoginForm, SignUpForm, CaptionForm
+from forms import LoginForm, SignUpForm, CaptionForm, ResetPasswordForm
 import bcrypt
 import follower
 import tornado.web
@@ -202,15 +202,22 @@ def postCaption(image):
 
 
 @app.route('/resetPassword/<emailadress>', methods=["GET","POST"])
-def postCaption(emailadress):
-    form = ResetPassword()
+def ResetPassword(emailadress):
+    form = ResetPasswordForm()
     if request.method == "POST":
-        password = form.password.data
-        password2 = form.password2.data
-        print(password)
-        print(password2)
-        return redirect("/")
-    return render_template('resetPassword', form=form, emailadress=emailadress)
+        if form.validate_on_submit():
+            # gets information of password from form
+            password = form.password.data
+            password2 = form.password2.data
+            print(password)
+            print(password2)
+            # checks to see if password is good
+            if password != password2:
+                return redirect("/resetPassword/"+emailadress)
+
+            
+            return redirect("/")
+    return render_template('resetPassword.html', form=form, emailadress=emailadress)
 
 
 if __name__ == '__main__':
