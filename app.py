@@ -177,19 +177,22 @@ app.config["IMAGE_UPLOADS"] = "static/images"
 @app.route('/upload-image' , methods=["GET","POST"])
 def postimage():
     if request.method == "POST":
-        if request.files:
-            image = request.files["image"]
-            print(image)
-            imageString = str(image)
-            indexOne = imageString.index('\'')
-            indexTwo = imageString.index('\'', indexOne+1)
-            imageName = imageString[indexOne+1:indexTwo]
-            print(imageName)
-            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
-            print("Image saved")
+        try:
+            if request.files:
+                image = request.files["image"]
+                print(image)
+                imageString = str(image)
+                indexOne = imageString.index('\'')
+                indexTwo = imageString.index('\'', indexOne+1)
+                imageName = imageString[indexOne+1:indexTwo]
+                print(imageName)
+                image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+                print("Image saved")
 
-            # return redirect(request.url)
-            return redirect("/caption/" + imageName)
+                # return redirect(request.url)
+                return redirect("/caption/" + imageName)
+        except: 
+            return redirect("/upload-image")
     return render_template("upload-image.html")
 
 @app.route('/caption/<image>', methods=["GET","POST"])
