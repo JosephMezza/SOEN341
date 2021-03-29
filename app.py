@@ -77,23 +77,26 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = find_user(form.username.data)
-        valid_password = form.password.data == user.password
-        # valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
-        if user and valid_password:
-            session['loggedIn'] = True
-            login_user(user)
-            flash('Log in successful.')
-            # check if the next page is set in the session by the @login_required decorator
-            # if not set, it will default to '/'
-            next_page = session.get('next', '/')
-            # reset the next page to default '/'
-            session['next'] = '/'
-            return redirect(next_page)
-        else:
-            session['loggedIn'] = False
-            flash('Incorrect username/password')
-            return render_template('main.html')
+        try:
+            user = find_user(form.username.data)
+            valid_password = form.password.data == user.password
+            # valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
+            if user and valid_password:
+                session['loggedIn'] = True
+                login_user(user)
+                flash('Log in successful.')
+                # check if the next page is set in the session by the @login_required decorator
+                # if not set, it will default to '/'
+                next_page = session.get('next', '/')
+                # reset the next page to default '/'
+                session['next'] = '/'
+                return redirect(next_page)
+            else:
+                session['loggedIn'] = False
+                flash('Incorrect username/password')
+                return render_template('main.html')
+        except:
+            return redirect("/")
     return render_template('login.html', form=form, )#loggedIn=session['loggedIn']
 
 
