@@ -20,16 +20,25 @@ class User(UserMixin):
 def getUserNames(db):
     """retrieve all user data"""
     cr = db.cursor()
-    cr.execute("SELECT username FROM users")
+    cr.execute("SELECT username FROM user")
     usernames = cr.fetchall()
     cr.close()
     return usernames
 
 
-def getUser(db, key, val):
-    """Search in db for row where a value corresponds to a specific key (col)"""
-    cr = db.cursor()
-    cr.execute("SELECT * FROM users WHERE {} = '{}'".format(key, val))
+def getUserByID(db, id, dictionary=False):
+    """Search in db for row where id corresponds to given id"""
+    cr = db.cursor(dictionary=dictionary)
+    cr.execute("SELECT * FROM user WHERE id = '{}'".format(id))
+    user = User(*cr.fetchone())
+    cr.close()
+    return user
+
+
+def getUserByUsername(db, username, dictionary=False):
+    """Search in db for row where username corresponds to given username"""
+    cr = db.cursor(dictionary=dictionary)
+    cr.execute("SELECT * FROM user WHERE username = '{}'".format(username))
     user = User(*cr.fetchone())
     cr.close()
     return user
@@ -39,7 +48,7 @@ def addUser(db, user):
     """Add a user to the database"""
     cr = db.cursor()
     fields = '(username, email, first_name, last_name, password)'
-    add_user = ("INSERT INTO users {} VALUES ('{}', '{}', '{}', '{}', '{}')".format(fields, *user.getUser()[1:]))
+    add_user = ("INSERT INTO user {} VALUES ('{}', '{}', '{}', '{}', '{}')".format(fields, *user.getUser()[1:]))
     # Insert new user
     cr.execute(add_user)
     db.commit()
@@ -47,19 +56,37 @@ def addUser(db, user):
     return
 
 
-# TODO : create MANY TO MANY relationship
-def follow(db, user, followed):
+def isFollowable(user_id, following_id):
+    return user_id != following_id
+
+
+def follow(db, user_id, following_id):
     """follow another user"""
     # make sure you cannot follow yourself
-    if user.username == followed.username:
+    if not isFollowable(user_id, following_id):
         print('User cannot follow themselves')
         return
 
     cr = db.cursor()
 
-    # TODO : INSERT OPERATION
-    follow_user = ("INSERT INTO followers".format(user.username, followed.username))
+    follow_user = ("INSERT INTO follower (user_id, following_id) VALUES ({}, {})".format(user_id, following_id))
     cr.execute(follow_user)
+    db.commit()
+    cr.close()
+    return
+
+
+def unfollow(db, user_id, following_id):
+    """unfollow another user"""
+    # make sure you cannot unfollow yourself
+    if not isFollowable(user_id, following_id):
+        print('User cannot unfollow themselves')
+        return
+
+    cr = db.cursor()
+
+    unfollow_user = ("DELETE FROM follower WHERE user_id = {} AND following_id = {}".format(user_id, following_id))
+    cr.execute(unfollow_user)
     db.commit()
     cr.close()
     return
@@ -78,7 +105,7 @@ def userImages(db, username):
 def getUserFollowers(db, username):
     """returns a list with all the followers of a specific user"""
     cr = db.cursor()
-    cr.execute("SELECT * FROM followers WHERE username = '{}'".format(username))
+    cr.execute("SELECT * FROM follower WHERE username = '{}'".format(username))
     user = cr.fetchone()
     cr.close()
     return user[1:]
@@ -88,7 +115,7 @@ def getUserFollowers(db, username):
 def getUserFollowing(db, username):
     """returns a list with all users following a specific user"""
     cr = db.cursor()
-    cr.execute("SELECT * FROM followers WHERE username = '{}'".format(username))
+    cr.execute("SELECT * FROM follower WHERE username = '{}'".format(username))
     user = cr.fetchone()
     cr.close()
     return user[1:]
@@ -97,20 +124,20 @@ def getUserFollowing(db, username):
 def getImagesToShow(db, username):
     """returns a list with all users following a specific user"""
     cr = db.cursor()
-    cr.execute("SELECT * FROM userImages WHERE username = '{}'".format(username))
+    cr.execute("SELECT * FROM image WHERE username = '{}'".format(username))
     user = cr.fetchone()
     cr.close()
     return user
 
 
 # TODO : create ONE TO MANY relationship
-def addImage(user, imageName):
+def addImage(db, user, imageName):
     """add an image to a user's profile"""
 
     cr = db.cursor()
 
     # TODO : INSERT OPERATION
-    add_image = ("INSERT INTO userImages".format(imageName))
+    add_image = ("INSERT INTO image".format(imageName))
     cr.execute(add_image)
     db.commit()
     cr.close()
@@ -138,7 +165,7 @@ if __name__ == '__main__':
     # print(getUserFollowers(db, 'Ablion73'))
 
     cr = db.cursor()
-    cr.execute("SELECT * FROM users")
+    cr.execute("SELECT * FROM user")
     print(cr.fetchall())
     cr.close()
     db.close()

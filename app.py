@@ -5,11 +5,11 @@ from forms import LoginForm, SignUpForm, CaptionForm
 import bcrypt
 import follower
 import user
+import post
 import tornado.web
 import tornado.ioloop
 import os
 from werkzeug.utils import secure_filename
-import posts
 import mysql.connector
 
 db_config = {'host': '184.144.173.26',

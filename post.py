@@ -1,21 +1,35 @@
-import time
 from datetime import date
 
 class Post():
-    def __init__(self, user, imgpath, caption):
-        self.likes = 0
-        self.user = user
-        self.imgpath = imgpath
+    def __init__(self, user_id, image, time, caption=None, likes=0, id=None):
+        self.id = id
+        self.user_id = user_id
+        self.image = image
+        # today = date.today().strftime("%b-%d-%Y")
+        self.time = time
         self.caption = caption
-        today = date.today()
-        self.time = today.strftime("%b-%d-%Y")
-        self.comments = []
-        # postsList = getListFromCSV('data/posts.csv') We shouldn't be needing this
-        # self.postID = len(postsList)
-        self.postID = 0  # TODO SEE : https://www.w3schools.com/sql/sql_autoincrement.asp
+        self.likes = likes
+        try:
+            self.comments = getComments(self.id)
+        except (Exception, Exception) as e:
+            print(e)
+            self.comments = []
 
     def getPost(self):
-        return (self.postID, self.user, self.imgpath, self.caption, self.likes, self.time)
+        return (self.id, self.user_id, self.image, self.time, self.caption, self.likes)
+
+    def __repr__(self):
+        return 'Post({})'.format(self.id)
+
+
+class Comment():
+    def __init__(self, user_id, post_id, time, content, id=None):
+        self.id = id
+        self.user_id = user_id
+        self.post_id = post_id
+        # today = date.today().strftime("%b-%d-%Y")
+        self.time = time
+        self.content = content
 
 
 def addPost(db, post, commit=True):
@@ -24,7 +38,7 @@ def addPost(db, post, commit=True):
     TODO : This method isn't currently working, have to fix it
     """
     cr = db.cursor(dictionary=True)
-    cr.execute("INSERT INTO posts (ID, user, image, caption, likes, time) VALUES ({})".format(*post.getPost()))
+    cr.execute("INSERT INTO post (user, image, caption, likes, time) VALUES ('{}', '{}', '{}', '{}', '{}')".format(*post.getPost()[1:]))
     # commit to database unless specified
     if commit:
         db.commit()
@@ -88,9 +102,18 @@ def getAllLikes(db, username):
     return total_likes
 
 
+def getComments(db, post_id):
+    """return the comments of a post in order of time posted"""
+    cr = db.cursor()
+    cr.execute("SELECT user_id, content FROM comments WHERE post_id = '{}'".format(post_id))
+    comments = cr.fetchall()
+    cr.close()
+    return comments
+
+
 if __name__ == '__main__':
     import mysql.connector
-    import User
+    import user
 
     db = mysql.connector.connect(
             host='192.168.1.53',
@@ -107,6 +130,10 @@ if __name__ == '__main__':
     # print(info)
     # sample post : (14, 'Thithe', 'img(14).jpg', 'Random caption14', 0, datetime.datetime(2021, 3, 14, 0, 0), None)
 
+    user_id = user.getUserByUsername('Ablion73', dictionary=True)['id']
+    # image = GET_IMAGE
+
+    # post = Post(user_id, image)
     addPost(db, Post())
 
     print(getInfo(db, 14))
