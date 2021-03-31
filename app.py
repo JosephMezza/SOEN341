@@ -1,7 +1,7 @@
 from re import I
 from flask import Flask, session, redirect, render_template, flash, request, url_for
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
-from forms import LoginForm, SignUpForm, CaptionForm
+from forms import LoginForm, SignUpForm, CaptionForm, ResetPasswordForm, EmailForm
 import bcrypt
 import follower
 import tornado.web
@@ -9,6 +9,7 @@ import tornado.ioloop
 import os
 from werkzeug.utils import secure_filename
 import posts
+import emailsend
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -76,22 +77,26 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = find_user(form.username.data)
-        valid_password = bcrypt.checkpw(form.password.data.encode('utf-8'), user.password.encode('utf-8'))
-        if user and valid_password:
-            session['loggedIn'] = True
-            login_user(user)
-            flash('Log in successful.')
-            # check if the next page is set in the session by the @login_required decorator
-            # if not set, it will default to '/'
-            next_page = session.get('next', '/')
-            # reset the next page to default '/'
-            session['next'] = '/'
-            return redirect(next_page)
-        else:
-            session['loggedIn'] = False
-            flash('Incorrect username/password')
-            return render_template('main.html')
+        try:
+            user = find_user(form.username.data)
+            valid_password = form.password.data == user.password
+            # valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
+            if user and valid_password:
+                session['loggedIn'] = True
+                login_user(user)
+                flash('Log in successful.')
+                # check if the next page is set in the session by the @login_required decorator
+                # if not set, it will default to '/'
+                next_page = session.get('next', '/')
+                # reset the next page to default '/'
+                session['next'] = '/'
+                return redirect(next_page)
+            else:
+                session['loggedIn'] = False
+                flash('Incorrect username/password')
+                return render_template('main.html')
+        except:
+            return redirect("/")
     return render_template('login.html', form=form, )#loggedIn=session['loggedIn']
 
 
@@ -172,21 +177,27 @@ app.config["IMAGE_UPLOADS"] = "static/images"
 @app.route('/upload-image' , methods=["GET","POST"])
 def postimage():
     if request.method == "POST":
-        if request.files:
-            image = request.files["image"]
-            print(image)
-            imageString = str(image)
-            indexOne = imageString.index('\'')
-            indexTwo = imageString.index('\'', indexOne+1)
-            imageName = imageString[indexOne+1:indexTwo]
-            print(imageName)
-            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
-            print("Image saved")
-
-            username = str(session['_user_id'])
-            follower.addimage(username, imageName)
-            # return redirect(request.url)
-            return redirect("/caption/" + imageName)
+        try:
+            if request.files:
+                image = request.files["image"]
+                print(image)
+                imageString = str(image)
+                indexOne = imageString.index('\'')
+                indexTwo = imageString.index('\'', indexOne+1)
+                imageName = imageString[indexOne+1:indexTwo]
+                print(imageName)
+                indexOfDot = imageName.index('.')
+                extensionName = imageName[indexOfDot+1::]
+                print(extensionName)
+                if extensionName.lower() == "png" or extensionName.lower() == "jpg" or extensionName.lower() == "gif":
+                    image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+                    print("Image saved")
+                    # return redirect(request.url)
+                    return redirect("/caption/" + imageName)
+                else:
+                    return redirect("/upload-image")
+        except: 
+            return redirect("/upload-image")
     return render_template("upload-image.html")
 
 @app.route('/caption/<image>', methods=["GET","POST"])
@@ -194,10 +205,46 @@ def postCaption(image):
     form = CaptionForm()
     if request.method == "POST":
         caption = form.caption.data
+        if caption == "":
+            return redirect("/caption/"+image)
         username = str(session['_user_id'])
+        follower.addimage(username, image)
         posts.addPost(username, image, caption)
         return redirect("/post/"+image)
     return render_template('caption.html', form=form, image=image)
+
+
+@app.route('/forgotPassword', methods=["GET","POST"])
+def forgotPassword():
+    form = EmailForm()
+    if request.method == "POST":
+        email = form.email.data
+        print(email)
+        link = "http://127.0.0.1:5000/resetPassword/"+email
+        emailsend.sendemail(email, link)
+        return redirect("/")
+    return render_template('forgotPassword.html', form=form)
+
+
+@app.route('/resetPassword/<emailadress>', methods=["GET","POST"])
+def ResetPassword(emailadress):
+    form = ResetPasswordForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            # gets information of password from form
+            password = form.password.data
+            password2 = form.password2.data
+            print(password)
+            print(password2)
+            # checks to see if password is good
+            if password != password2:
+                return redirect("/resetPassword/"+emailadress)
+
+            email = emailadress
+            print(email)
+            # changePassword(email, password) implementation needed in database
+            return redirect("/")
+    return render_template('resetPassword.html', form=form, emailadress=emailadress)
 
 
 if __name__ == '__main__':
