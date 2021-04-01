@@ -54,4 +54,4 @@ class ResetPasswordForm(FlaskForm):
                               validators=[InputRequired(),
                                           EqualTo('password',
                                                   message='Passwords must match')])
-    submit = SubmitField('Sign Up')
+    submit = SubmitField('Reset Password')
