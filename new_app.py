@@ -1,31 +1,15 @@
 from re import I
 from flask import Flask, session, redirect, render_template, flash, request, url_for
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from forms import LoginForm, SignUpForm, CaptionForm, ResetPasswordForm, EmailForm
 import bcrypt
-from user import User
-from post import Post
+import follower
 import tornado.web
 import tornado.ioloop
 import os
 from werkzeug.utils import secure_filename
-import mysql.connector
+import posts
 import emailsend
-
-db_config = {'host': '184.144.173.26',
-          'user': 'root',
-          'passwd': 'Binstagram_341',
-          'database': 'binstagram'
-          }
-
-try:
-    db = mysql.connector.connect(**db_config)
-except mysql.connector.errors.InterfaceError:
-    db_config['host'] = '192.168.1.53'
-    db = mysql.connector.connect(**db_config)
-finally:
-    print('Successfully connected to db {} on {} with user {}'.format(
-        db_config['database'], db_config['host'], db_config['user']))
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
@@ -36,13 +20,34 @@ login_manager.login_view = 'login'
 # unauthenticated users will be redirected to login page
 
 
+class User(UserMixin):
+    def __init__(self, username, email, first_name, last_name, password=None):
+        self.id = username
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.password = password
+
+    def __repr__(self):
+        return 'User({})'.format(self.id)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     """retrieve a user object for the current user while hiding password"""
-    user = User.getUser(db, 'id', user_id)
+    user = find_user(user_id)
     if user:
-        user.pop()
-    return user.User(*user)
+        user.password = None
+    return user
+
+
+def find_user(username):
+    """ TODO : this will later be changed to searching the database"""
+    users = follower.getListFromCSV('data/users.csv')
+    for user in users[1:]:
+        if user[0] == username:
+            return User(*user)
+    return None
 
 
 @app.route('/')
@@ -54,17 +59,16 @@ def index():
     try:
         username = str(session['_user_id'])
         print(username)
-        imageList = User.getImagesToShow(db, username)
-        imagedict = {imageList[index * 2 + 1]: imageList[index * 2]
-                     for index in len(imageList) / 2 - 5}
+        imageList = follower.getImagesToShow(username)
+        imagedict = {imageList[index*2+1]: imageList[index*2] for index in len(imageList)/2-5}
         print(imagedict)
     except:
         print("An exception occurred")
         username = "Calasts53"
     print(username)
 
-    # , loggedIn=session['loggedIn']
-    return render_template('main.html', imageList=imageList)
+
+    return render_template('main.html', imageList=imageList) #, loggedIn=session['loggedIn']
 
 # Test User:
 # Calasts53
@@ -74,9 +78,9 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         try:
-            user = User.getUserByUsername(db, form.username.data)
-            valid_password = bcrypt.checkpw(form.password.data.encode(
-                'utf-8'), user.password.encode('utf-8'))
+            user = find_user(form.username.data)
+            valid_password = form.password.data == user.password
+            # valid_password = bcrypt.checkpw(form.password.data.encode(), user.password.encode())
             if user and valid_password:
                 session['loggedIn'] = True
                 login_user(user)
@@ -93,7 +97,7 @@ def login():
                 return render_template('main.html')
         except:
             return redirect("/")
-    return render_template('login.html', form=form, )
+    return render_template('login.html', form=form, )#loggedIn=session['loggedIn']
 
 
 @app.route('/logout')
@@ -113,12 +117,11 @@ def sign_up():
     print(form.username)
     if form.validate_on_submit():
         # check first if user already exists
-        user = User.get_user(db, form.username.data)
+        user = find_user(form.username.data)
         if not user:
             salt = bcrypt.gensalt()
             password = bcrypt.hashpw(form.password.data.encode('utf-8'), salt)
-            User.addUser(db, form.username.data, password.decode(
-            ), form.email.data, form.first_name.data, form.last_name.data)
+            follower.addUser(form.username.data, password.decode(), form.email.data, form.first_name.data, form.last_name.data)
             flash('Sign up successful.')
             return redirect('/login')
         else:
@@ -128,45 +131,50 @@ def sign_up():
 
 @app.route('/post/<image>', methods=['GET', 'POST'])
 def post(image):
-    id = int(Post.getID(db, image))
-    postList = Post.getInfo(db, id)
+    id= int(posts.getID(image))
+    postList = posts.getInfo(id)
     if request.method == 'POST' and 'like' in request.form:
-        Post.like(db, id)
+        posts.like(id)
         return redirect("/post/"+image)
     if request.method == 'POST' and 'comment' in request.form:
         comment = request.form.get("comment")
-        Post.addComment(db, comment, id)
+        print(comment)
+        posts.addComment(comment, id)
         return redirect("/post/"+image)
 
-    return render_template('post.html', id=id, postList=postList)
 
 
-@app.route('/users', methods=["GET", "POST"])
+    return render_template('post.html', id=id, postList = postList)
+
+
+@app.route('/users' , methods=["GET","POST"])
 def users():
-    usersList = User.getusers()
+    usersList = follower.getusers()
     if request.method == 'POST':
         userToFollow = request.form.get('follow')
         print(userToFollow)
         username = str(session['_user_id'])
-        User.follow(username, userToFollow)
+        follower.follow(username, userToFollow)
         return redirect("/")
-    return render_template('users.html', usersList=usersList)
+    return render_template('users.html', usersList = usersList)
 
-
-@app.route('/profile/<username>', methods=["GET", "POST"])
+@app.route('/profile/<username>' , methods=["GET","POST"])
 def profile(username):
     print(username)
-    imageList = User.imagesForUser(username)
+    imageList= follower.imagesForUser(username)
     print(imageList)
-    likes = Post.getAllLikes(username)
+    likes = posts.getAllLikes(username)
     print(likes)
-    followers = User.getUserFollowers(username)
-    following = User.getUserFollowing(username)
-    return render_template('profile.html', imageList=imageList, username=username, likes=likes, followers=followers, following=following)
+    followers = follower.getUserFollowers(username)
+    following = follower.getUserFollowing(username)
+    return render_template('profile.html', imageList = imageList, username = username, likes = likes, followers = followers, following = following)
 
 
 app.config["IMAGE_UPLOADS"] = "static/images"
-@app.route('/upload-image', methods=["GET", "POST"])
+
+
+
+@app.route('/upload-image' , methods=["GET","POST"])
 def postimage():
     if request.method == "POST":
         try:
@@ -192,14 +200,16 @@ def postimage():
             return redirect("/upload-image")
     return render_template("upload-image.html")
 
-
-@app.route('/caption/<image>', methods=["GET", "POST"])
+@app.route('/caption/<image>', methods=["GET","POST"])
 def postCaption(image):
     form = CaptionForm()
     if request.method == "POST":
         caption = form.caption.data
+        if caption == "":
+            return redirect("/caption/"+image)
         username = str(session['_user_id'])
-        Post.addPost(username, image, caption)
+        follower.addimage(username, image)
+        posts.addPost(username, image, caption)
         return redirect("/post/"+image)
     return render_template('caption.html', form=form, image=image)
 
@@ -239,4 +249,3 @@ def ResetPassword(emailadress):
 
 if __name__ == '__main__':
     app.run()
-    db.close()
