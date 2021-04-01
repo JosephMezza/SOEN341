@@ -67,36 +67,36 @@ class User(UserMixin):
         return
 
     @staticmethod
-    def isFollowable(user_id, following_id):
-        return user_id != following_id
+    def isFollowable(user, following):
+        return user.id != following.id
 
     @staticmethod
-    def follow(db, user_id, following_id):
+    def follow(db, user, following):
         """follow another user"""
         # make sure you cannot follow yourself
-        if not User.isFollowable(user_id, following_id):
+        if not User.isFollowable(user, following):
             print('User cannot follow themselves')
             return
 
         cr = db.cursor()
 
-        follow_user = (f"INSERT INTO follower (user_id, following_id) VALUES ({user_id}, {following_id})")
+        follow_user = (f"INSERT INTO follower (user_id, following_id) VALUES ({user.id}, {following.id})")
         cr.execute(follow_user)
         db.commit()
         cr.close()
         return
 
     @staticmethod
-    def unfollow(db, user_id, following_id):
+    def unfollow(db, user, following):
         """unfollow another user"""
         # make sure you cannot unfollow yourself
-        if not User.isFollowable(user_id, following_id):
+        if not User.isFollowable(user.id, following.id):
             print('User cannot unfollow themselves')
             return
 
         cr = db.cursor()
 
-        unfollow_user = (f"DELETE FROM follower WHERE user_id = {user_id} AND following_id = {following_id}")
+        unfollow_user = (f"DELETE FROM follower WHERE user_id = {user.id} AND following_id = {following.id}")
         cr.execute(unfollow_user)
         db.commit()
         cr.close()
@@ -106,24 +106,24 @@ class User(UserMixin):
     def getFollowers(db, user):
         """returns a list with all the followers of a specific user"""
         cr = db.cursor(dictionary=True)
+        cr.execute(f"SELECT user.* FROM user INNER JOIN follower ON user.id = follower.following_id AND follower.following_id = '{user.id}'")
+        users = cr.fetchall()
+        cr.close()
+        return list(map(lambda x: x, users))
+
+    @staticmethod
+    def getFollowing(db, user):
+        """returns a list with all the users being followed a specific user"""
+        cr = db.cursor(dictionary=True)
         cr.execute(f"SELECT user_id FROM follower WHERE following_id = '{user.id}'")
         users = cr.fetchall()
         cr.close()
         return list(map(lambda x: x['user_id'], users))
 
-    @staticmethod
-    def getFollowing(db, user_id):
-        """returns a list with all the followers of a specific user"""
-        cr = db.cursor()
-        cr.execute("SELECT * FROM follower WHERE id = '{}'".format(user_id))
-        user = cr.fetchall()
-        cr.close()
-        return
-
-    def getImages(db, user_id):
+    def getImages(db, user):
         """get the images a user has posted"""
         cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT image_id FROM post INNER JOIN image ON post.image_id = image.image WHERE user_id = {user_id}")
+        cr.execute(f"SELECT image_id FROM post INNER JOIN image ON post.image_id = image.image WHERE user_id = {user.id}")
         images = cr.fetchall()
         cr.close()
         return list(map(lambda x: x['image'].decode("utf-8")), images)
@@ -180,6 +180,7 @@ if __name__ == '__main__':
     #         db.commit()
     # cr.close()
 
+    user = User.getByID(db, 3)
     # print(User.getUsernames(db))
     # print(User.getByID(db, 1))
     # print(User.getByUsername(db, 'Ablion73'))
@@ -187,8 +188,8 @@ if __name__ == '__main__':
     # print(User.isFollowable())
     # print(User.follow())
     # print(User.unfollow())
-    print(User.getFollowers(db, 1))
-    # print(User.getFollowing())
+    print(User.getFollowers(db, user))
+    print(User.getFollowing(db, user))
 
     # cr.execute("SELECT * FROM user")
     # print(cr.fetchall())
