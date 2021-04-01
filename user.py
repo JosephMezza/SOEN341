@@ -1,19 +1,16 @@
 from flask_login import UserMixin
 
 class User(UserMixin):
-
     def __init__(self, username, email, first_name, last_name, password, id=None):
-        self.id = id
         self.username = username
         self.email = email
         self.first_name = first_name
         self.last_name = last_name
         self.password = password
+        self.id = id
 
     def getUser(self):
         return (self.id, self.username, self.email, self.first_name, self.last_name, self.password)
-
-
 
     @staticmethod
     def _get_image(fname):
@@ -32,25 +29,27 @@ class User(UserMixin):
         return list(map(lambda x: x['username'], usernames))
 
     @staticmethod
-    def getByID(db, id, dictionary=False):
+    def getByID(db, id):
         """Search in db for row where id corresponds to given id"""
-        cr = db.cursor(dictionary=dictionary)
+        cr = db.cursor(dictionary=True)
         cr.execute(f"SELECT * FROM user WHERE id = '{id}'")
         try:
-            user = User(*cr.fetchone())
-        except TypeError:
+            fields = cr.fetchone()
+            user = User(fields['username'], fields['email'], fields['first_name'], fields['last_name'], fields['password'], fields['id'])
+        except KeyError:
             user = None
         cr.close()
         return user
 
     @staticmethod
-    def getByUsername(db, username, dictionary=False):
+    def getByUsername(db, username):
         """Search in db for row where username corresponds to given username"""
-        cr = db.cursor(dictionary=dictionary)
+        cr = db.cursor(dictionary=True)
         cr.execute(f"SELECT * FROM user WHERE username = '{username}'")
         try:
-            user = User(*cr.fetchone())
-        except TypeError:
+            fields = cr.fetchone()
+            user = User(fields['username'], fields['email'], fields['first_name'], fields['last_name'], fields['password'], fields['id'])
+        except KeyError:
             user = None
         cr.close()
         return user
@@ -104,22 +103,22 @@ class User(UserMixin):
         return
 
     @staticmethod
-    def getFollowers(db, user_id):
+    def getFollowers(db, user):
         """returns a list with all the followers of a specific user"""
-        cr = db.cursor()
-        # cr.execute("SELECT * FROM follower WHERE id = '{}'".format(user_id))
-        user = cr.fetchone()
+        cr = db.cursor(dictionary=True)
+        cr.execute(f"SELECT user_id FROM follower WHERE following_id = '{user.id}'")
+        users = cr.fetchall()
         cr.close()
-        return user[1:]
+        return list(map(lambda x: x['user_id'], users))
 
     @staticmethod
     def getFollowing(db, user_id):
         """returns a list with all the followers of a specific user"""
         cr = db.cursor()
-        # cr.execute("SELECT * FROM follower WHERE id = '{}'".format(user_id))
-        user = cr.fetchone()
+        cr.execute("SELECT * FROM follower WHERE id = '{}'".format(user_id))
+        user = cr.fetchall()
         cr.close()
-        return user[1:]
+        return
 
     def getImages(db, user_id):
         """get the images a user has posted"""
@@ -143,12 +142,12 @@ if __name__ == '__main__':
             database='binstagram'
             )
 
-    # for loop to add users to db from csv
+    # add users to db from csv
     # with open('data/users.csv', 'r') as f:
     #     for user in f.read().splitlines()[1:]:
     #         User.addUser(db, User(*user.split(',')))
 
-    # for loop to add images to db from directory /static/user_images
+    # add images to db from directory /static/user_images
     # cr = db.cursor()
     # for i in range(1, 258):
     #     data = (User._get_image(f'static/user_images/img({i}).jpg'),)
@@ -156,7 +155,7 @@ if __name__ == '__main__':
     #     db.commit()
     # cr.close()
 
-    # for loop to retrieve images from db to test directory
+    # retrieve all images from db, output to test directory
     # cr = db.cursor(dictionary=True)
     # cr.execute("SELECT data FROM image")
     # data = cr.fetchall()
@@ -166,6 +165,21 @@ if __name__ == '__main__':
     #     with open(f'test/img({i+1}).jpg', 'wb') as f:
     #         f.write(images[i])
 
+    # add follower relationships to db
+    # cr = db.cursor()
+    # with open('data/followers.csv', 'r') as f:
+    #     follower = f.read().splitlines()[1:]
+    # for i in follower:
+    #     users = i.split(',')
+    #     user_id = User.getByUsername(db, users[0]).id
+    #     # print(users[0], user_id)
+    #     for following in users[1:]:
+    #         following_id = User.getByUsername(db, following).id
+    #         # print(user_id, following_id, sep=' -> ')
+    #         cr.execute(f"INSERT INTO follower (user_id, following_id) VALUES ('{user_id}', '{following_id}')")
+    #         db.commit()
+    # cr.close()
+
     # print(User.getUsernames(db))
     # print(User.getByID(db, 1))
     # print(User.getByUsername(db, 'Ablion73'))
@@ -173,7 +187,7 @@ if __name__ == '__main__':
     # print(User.isFollowable())
     # print(User.follow())
     # print(User.unfollow())
-    # print(User.getFollowers())
+    print(User.getFollowers(db, 1))
     # print(User.getFollowing())
 
     # cr.execute("SELECT * FROM user")
