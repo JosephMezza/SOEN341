@@ -13,11 +13,14 @@ class User(UserMixin):
     def getUser(self):
         return (self.id, self.username, self.email, self.first_name, self.last_name, self.password)
 
+
+
     @staticmethod
-    def _read_image(fname):
+    def _get_image(fname):
+        """Convert digital data to binary format"""
         with open(fname, 'rb') as f:
-            image = f.read()
-        return image
+            data = f.read()
+        return data
 
     @staticmethod
     def getUsernames(db):
@@ -124,7 +127,7 @@ class User(UserMixin):
         cr.execute(f"SELECT image_id FROM post INNER JOIN image ON post.image_id = image.image WHERE user_id = {user_id}")
         images = cr.fetchall()
         cr.close()
-        return list(map(lambda x: b64encode(x['image']).decode("utf-8")), images)
+        return list(map(lambda x: x['image'].decode("utf-8")), images)
 
     def __repr__(self):
         return 'User({})'.format(self.username)
@@ -146,12 +149,22 @@ if __name__ == '__main__':
     #         User.addUser(db, User(*user.split(',')))
 
     # for loop to add images to db from directory /static/user_images
+    # cr = db.cursor()
+    # for i in range(1, 258):
+    #     data = (User._get_image(f'static/user_images/img({i}).jpg'),)
+    #     cr.execute("INSERT INTO image (data) VALUES (%s)", data)
+    #     db.commit()
+    # cr.close()
 
-    cr = db.cursor()
-    for i in range(1, 258):
-        image = User._read_image(f'static/user_images/img({i}).jpg')
-        cr.execute(f"INSERT INTO image (data) VALUES ({image})")
-    cr.close()
+    # for loop to retrieve images from db to test directory
+    # cr = db.cursor(dictionary=True)
+    # cr.execute("SELECT data FROM image")
+    # data = cr.fetchall()
+    # cr.close()
+    # images = list(map(lambda x: x['data'], data))
+    # for i in range(len(images)):
+    #     with open(f'test/img({i+1}).jpg', 'wb') as f:
+    #         f.write(images[i])
 
     # print(User.getUsernames(db))
     # print(User.getByID(db, 1))
@@ -163,8 +176,6 @@ if __name__ == '__main__':
     # print(User.getFollowers())
     # print(User.getFollowing())
 
-    # cr = db.cursor()
     # cr.execute("SELECT * FROM user")
     # print(cr.fetchall())
-    # cr.close()
     db.close()

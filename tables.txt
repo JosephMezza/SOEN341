@@ -45,7 +45,7 @@ CREATE TABLE user_like (
 );
 
 CREATE TABLE image (
-    id INT(11) NOT NULL,
+    id INT(11) NOT NULL AUTO_INCREMENT,
     data BLOB NOT NULL,
     PRIMARY KEY (id)
 );
@@ -109,10 +109,10 @@ user_like
 ```
 ```
 image
-+-------+---------+------+-----+---------+-------+
-| Field | Type    | Null | Key | Default | Extra |
-+-------+---------+------+-----+---------+-------+
-| id    | int(11) | NO   | PRI | NULL    |       |
-| image | blob    | NO   |     | NULL    |       |
-+-------+---------+------+-----+---------+-------+
++-------+---------+------+-----+---------+----------------+
+| Field | Type    | Null | Key | Default | Extra          |
++-------+---------+------+-----+---------+----------------+
+| id    | int(11) | NO   | PRI | NULL    | auto_increment |
+| data  | blob    | NO   |     | NULL    |                |
++-------+---------+------+-----+---------+----------------+
 ```
