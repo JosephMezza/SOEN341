@@ -1,40 +1,39 @@
 from datetime import datetime
 
 class Post():
+
     def __init__(self, user_id, image, time, caption=None, likes=0, id=None):
         self.id = id
         self.user_id = user_id
         self.image = image
-        # today = date.today().strftime("%b-%d-%Y")
         self.time = time
         self.caption = caption
         self.likes = likes
         try:
-            self.comments = Comment.getComments(self.id)
+            self.comments = Comment.getPostComments(self.id)
         except (Exception, Exception) as e:
-            print(e)
             self.comments = []
 
     def getPost(self):
         return (self.id, self.user_id, self.image, self.time, self.caption, self.likes)
 
     @staticmethod
-    def getInfo(db, ID):
-        """full information of the post"""
+    def getFullPost(db, post_id):
+        """full information of the post, including image"""
         cr = db.cursor(dictionary=True)
-        cr.execute("SELECT * FROM post WHERE ID = '{}'".format(ID))
-        info = cr.fetchone()
+        cr.execute(f"SELECT post.* FROM post INNER JOIN image ON post.id = '{post_id}' AND post.image_id = image.id")
+        post = cr.fetchone()
         cr.close()
-        return info
+        return Post(post['user_id'], post['image'], post['time'], post['caption'], post['likes'], post['id'])
 
     @staticmethod
     def getID(db, image):
         """get ID from given image path"""
-        cr = db.cursor()
-        cr.execute("SELECT ID FROM post WHERE image = '{}'".format(image))
+        cr = db.cursor(dictionary=True)
+        cr.execute("SELECT id FROM post WHERE image_id = '{}'".format(image))
         image_id = cr.fetchone()
         cr.close()
-        return int(image_id[0])
+        return image_id['id']
 
     @staticmethod
     def add(db, post, commit=True):
@@ -50,31 +49,26 @@ class Post():
         cr.close()
 
     @staticmethod
-    def like(db, ID, commit=True):
-        """likes the post with the ID"""
-        cr = db.cursor(dictionary=True)
-        cr.execute("UPDATE posts SET likes = likes + 1 WHERE ID = '{}'".format(ID)) #Increments the likes
-        # commit to database unless specified
-        if commit:
-            db.commit()
-        cr.close()
-
-    @staticmethod
-    def unlike(db, ID, commit=True):
-        """likes the post with the ID"""
-        cr = db.cursor(dictionary=True)
-        cr.execute("UPDATE posts SET likes = likes - 1 WHERE ID = '{}'".format(ID)) #Decrements the likes
-        # commit to database unless specified
-        if commit:
-            db.commit()
-        cr.close()
-
-    @staticmethod
-    def getAllLikes(db, username):
-        """returns all likes for a specific user"""
+    def like(db, user, post):
+        """user with user_id likes the post with the post_id"""
         cr = db.cursor()
+        cr.execute(f"UPDATE post SET likes = likes + 1 WHERE id = '{post.id}'") # Increments the likes
+        cr.execute(f"INSERT INTO user_like post SET likes = likes + 1 WHERE id = '{post.id}'")
+        cr.close()
+
+    @staticmethod
+    def unlike(db, user_id, post_id):
+        """user with user_id unlikes the post with the post_id"""
+        cr = db.cursor()
+        cr.execute(f"UPDATE post SET likes = likes - 1 WHERE id = '{post_id}'") # Decrements the likes
+        cr.close()
+
+    @staticmethod
+    def getTotalLikes(db, username):
+        """returns all likes for a specific user"""
+        cr = db.cursor(dictionary=True)
         cr.execute("SELECT likes FROM posts WHERE user = '{}'".format(username))
-        total_likes = sum(map(lambda x: int(x[0]), cr.fetchall()))
+        total_likes = cr.fetchall()
         cr.close()
         return total_likes
 

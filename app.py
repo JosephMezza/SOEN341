@@ -1,7 +1,7 @@
-from re import I
 from flask import Flask, session, redirect, render_template, flash, request, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required
 from forms import LoginForm, SignUpForm, CaptionForm, ResetPasswordForm, EmailForm
+from re import I
 import bcrypt
 from user import User
 from post import Post

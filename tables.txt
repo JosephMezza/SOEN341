@@ -46,7 +46,7 @@ CREATE TABLE user_like (
 
 CREATE TABLE image (
     id INT(11) NOT NULL AUTO_INCREMENT,
-    data BLOB NOT NULL,
+    data MEDIUMBLOB NOT NULL,
     PRIMARY KEY (id)
 );
 

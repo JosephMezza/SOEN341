@@ -13,13 +13,6 @@ class User(UserMixin):
         return (self.id, self.username, self.email, self.first_name, self.last_name, self.password)
 
     @staticmethod
-    def _get_image(fname):
-        """Convert digital data to binary format"""
-        with open(fname, 'rb') as f:
-            data = f.read()
-        return data
-
-    @staticmethod
     def getUsernames(db):
         """retrieve all user data"""
         cr = db.cursor(dictionary=True)
@@ -105,23 +98,25 @@ class User(UserMixin):
     @staticmethod
     def getFollowers(db, user):
         """returns a list with all the followers of a specific user"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT user.* FROM user INNER JOIN follower ON user.id = follower.following_id AND follower.following_id = '{user.id}'")
+        cr = db.cursor()
+        cr.execute(f"SELECT user.* FROM user INNER JOIN follower ON user.id = follower.user_id AND follower.following_id = '{user.id}'")
         users = cr.fetchall()
         cr.close()
-        return list(map(lambda x: x, users))
+        return list(map(lambda x: User(*x), users))
 
     @staticmethod
     def getFollowing(db, user):
         """returns a list with all the users being followed a specific user"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT user_id FROM follower WHERE following_id = '{user.id}'")
+        cr = db.cursor()
+        cr.execute(f"SELECT user.* FROM user INNER JOIN follower ON user.id = follower.following_id AND follower.user_id = '{user.id}'")
         users = cr.fetchall()
         cr.close()
-        return list(map(lambda x: x['user_id'], users))
+        return list(map(lambda x: User(*x), users))
 
+    @staticmethod
     def getImages(db, user):
         """get the images a user has posted"""
+        # TODO : re-add MEDIUM BLOB to post table
         cr = db.cursor(dictionary=True)
         cr.execute(f"SELECT image_id FROM post INNER JOIN image ON post.image_id = image.image WHERE user_id = {user.id}")
         images = cr.fetchall()
@@ -130,6 +125,13 @@ class User(UserMixin):
 
     def __repr__(self):
         return 'User({})'.format(self.username)
+
+
+def get_image(fname):
+    """Convert digital data to binary format"""
+    with open(fname, 'rb') as f:
+        data = f.read()
+    return data
 
 
 if __name__ == '__main__':
@@ -150,7 +152,7 @@ if __name__ == '__main__':
     # add images to db from directory /static/user_images
     # cr = db.cursor()
     # for i in range(1, 258):
-    #     data = (User._get_image(f'static/user_images/img({i}).jpg'),)
+    #     data = (get_image(f'static/user_images/img({i}).jpg'),)
     #     cr.execute("INSERT INTO image (data) VALUES (%s)", data)
     #     db.commit()
     # cr.close()
@@ -180,7 +182,7 @@ if __name__ == '__main__':
     #         db.commit()
     # cr.close()
 
-    user = User.getByID(db, 3)
+    user = User.getByID(db, 1)
     # print(User.getUsernames(db))
     # print(User.getByID(db, 1))
     # print(User.getByUsername(db, 'Ablion73'))
@@ -188,8 +190,9 @@ if __name__ == '__main__':
     # print(User.isFollowable())
     # print(User.follow())
     # print(User.unfollow())
-    print(User.getFollowers(db, user))
-    print(User.getFollowing(db, user))
+    # print(User.getFollowers(db, user))
+    # print(User.getFollowing(db, user))
+    print(User.getImages(db, user))
 
     # cr.execute("SELECT * FROM user")
     # print(cr.fetchall())
