@@ -76,6 +76,29 @@ class User(UserMixin):
         cr.close()
         return list(map(lambda x: base64.b64encode(x['data']).decode('utf-8'), images))
 
+    # TODO
+    # def like(self, db, post):
+    #     """user likes a post"""
+    #     cr = db.cursor()
+    #     cr.execute(f"UPDATE post SET likes = likes + 1 WHERE id = '{post.id}'") # Increments the likes
+    #     cr.execute(f"INSERT INTO user_like post SET likes = likes + 1 WHERE id = '{post.id}'")
+    #     cr.close()
+
+    # @staticmethod
+    # def unlike(self, db, post):
+    #     """user unlikes a post"""
+    #     cr = db.cursor()
+    #     cr.execute(f"UPDATE post SET likes = likes - 1 WHERE id = '{post_id}'") # Decrements the likes
+    #     cr.close()
+
+    # def get_likes(self, db):
+    #     """returns all likes for a user's posts"""
+    #     cr = db.cursor(dictionary=True)
+    #     # cr.execute("SELECT likes FROM posts WHERE user = '{}'".format(user.id))
+    #     total_likes = cr.fetchall()
+    #     cr.close()
+    #     return total_likes
+
     @staticmethod
     def get_usernames(db):
         """retrieve all user data"""
