@@ -104,6 +104,13 @@ class Comment():
         cr.close()
 
 
+def get_image(fname):
+    """Convert digital data to binary format"""
+    with open(fname, 'rb') as f:
+        data = f.read()
+    return data
+
+
 if __name__ == '__main__':
     import mysql.connector
     from user import User
