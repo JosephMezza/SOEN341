@@ -23,14 +23,10 @@ class Post():
         cr.close()
         return Post(**post)
 
-    @staticmethod
-    def add(db, post, commit=True):
-        """
-        add a post to the post database
-        TODO : This method isn't currently working, have to fix it
-        """
+    
+    def add_post(self, db, commit=True):
         cr = db.cursor(dictionary=True)
-        cr.execute("INSERT INTO post (user, image, caption, likes, time) VALUES ('{}', '{}', '{}', '{}', '{}')".format(*post.getPost()[1:]))
+        cr.execute("INSERT INTO post (user_id, image_id, time, caption, likes) VALUES ('{}', '{}', '{}', '{}', '{}')".format(*self.get_post()[1:]))
         # commit to database unless specified
         if commit:
             db.commit()
@@ -102,6 +98,7 @@ if __name__ == '__main__':
     # post = Post(user_id, image)
     Post.addPost(db, Post())
 
+    
     print(Post.getInfo(db, 14))
     print(Post.getID(db, 'img(55).jpg'))
     print(Post.getAllLikes(db, 'Thithe'))
