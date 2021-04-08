@@ -1,36 +1,69 @@
 from datetime import datetime
+from base64 import b64encode
+
 
 class Post():
-    def __init__(self, user_id, image, time, caption=None, likes=0, id=None):
+    def __init__(self, user_id, image_id, time, caption=None, likes=0, id=None):
         self.id = id
         self.user_id = user_id
-        self.image = image # base64
+        self.image_id = image_id
         self.time = time
         self.caption = caption
         self.likes = likes
-        self.comments = Comment.get_comments(self)
 
     def get_post(self, dictionary=False):
         if dictionary:
-            return dict(id=self.id, user_id=self.user_id, image=self.image, time=self.time, caption=self.caption, likes=self.likes)
-        return (self.id, self.user_id, self.image, self.time, self.caption, self.likes)
+            return dict(id=self.id, user_id=self.user_id, image_id=self.image_id, time=self.time, caption=self.caption, likes=self.likes)
+        return (self.id, self.user_id, self.image_id, self.time, self.caption, self.likes)
 
-    def get_full_post(self, db):
-        """full information of the post, including image and comments, from db"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT post.* FROM post INNER JOIN image ON post.id = '{self.id}' AND post.image_id = image.id INNER JOIN ")
-        post = cr.fetchone()
+    def like(self, db, user):
+        """post is liked by a user"""
+        cr = db.cursor()
+        cr.execute(f"UPDATE post SET likes = likes + 1 WHERE id = '{self.id}'") # Increments the likes
+        cr.execute(f"INSERT INTO user_like (user_id, post_id) VALUES ({user.id}, {self.id})")
+        db.commit()
         cr.close()
-        return Post(**post)
 
-    
-    def add_post(self, db, commit=True):
-        cr = db.cursor(dictionary=True)
-        cr.execute("INSERT INTO post (user_id, image_id, time, caption, likes) VALUES ('{}', '{}', '{}', '{}', '{}')".format(*self.get_post()[1:]))
-        # commit to database unless specified
-        if commit:
-            db.commit()
+    def unlike(self, db, user):
+        """post is unliked by a user"""
+        cr = db.cursor()
+        cr.execute(f"UPDATE post SET likes = likes - 1 WHERE id = '{self.id}'") # Decrements the likes
+        cr.execute(f"DELETE FROM user_like WHERE user_id = {user.id} AND post_id = {self.id}")
+        db.commit()
         cr.close()
+
+    def get_image(self, db):
+        """retrieve the image data of a post as a base64 encoded string"""
+        cr = db.cursor(dictionary=True)
+        cr.execute(f"SELECT data FROM image WHERE id = '{self.image_id}'")
+        image = cr.fetchone()
+        cr.close()
+        return b64encode(image['data']).decode('utf-8')
+
+    def add_to_db(self, db, image):
+        """add post to db with image data provided in binary format"""
+        post_data = self.get_post(dictionary=True)
+        post_data.pop('id')
+        cr = db.cursor(dictionary=True)
+        cr.execute("INSERT INTO image (data) VALUES (%s)", image)
+        cr.execute("SELECT id FROM image ORDER BY id DESC LIMIT 1;")
+        post_data['image_id'] = cr.fetchone()['id']
+        cr.execute(f"INSERT INTO post ({', '.join(post_data.keys())}) VALUES {tuple(post_data.values())}")
+        db.commit()
+        cr.close()
+
+    @staticmethod
+    def get_by_id(db, id):
+        """Search in db for row where id corresponds to given id"""
+        cr = db.cursor(dictionary=True)
+        cr.execute(f"SELECT * FROM post WHERE id = {id}")
+        try:
+            fields = cr.fetchone()
+            post = Post(**fields)
+        except TypeError:
+            post = None
+        cr.close()
+        return post
 
     def __repr__(self):
         return 'Post({})'.format(self.id)
@@ -44,17 +77,7 @@ class Comment():
         self.time = time
         self.content = content
 
-    @staticmethod
-    def get_comments(db, post):
-        """returns a list with all the comments of a post"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT * FROM comment WHERE post_id = {post.id}")
-        comments = cr.fetchall()
-        cr.close()
-        return list(map(lambda x: Comment(**x), comments))
-
-    @staticmethod
-    def add(db, post_id, comment):
+    def add_to_db(self, db):
         """add a comment to the specific post"""
         # MySQL datetime: YYYY-MM-DD hh:mm:ss
         time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -63,8 +86,17 @@ class Comment():
         db.commit()
         cr.close()
 
+    @staticmethod
+    def get_post_comments(db, post):
+        """returns a list with all the comments of a post"""
+        cr = db.cursor(dictionary=True)
+        cr.execute(f"SELECT * FROM comment WHERE post_id = {post.id}")
+        comments = cr.fetchall()
+        cr.close()
+        return list(map(lambda x: Comment(**x), comments))
 
-def get_image(fname):
+
+def get_binary(fname):
     """Convert digital data to binary format"""
     with open(fname, 'rb') as f:
         data = f.read()
@@ -89,17 +121,9 @@ if __name__ == '__main__':
     # cr.close()
     # print(info)
 
-    user_id = User.getByUsername(db, 0, dictionary=True)['id']
-    # Sample post : Post(user_id, image, time)
+    post = Post.get_by_id(db, 3)
+    # print(post.get_post(dictionary=True))
+    # image = get_binary('static/images/montreal.jpg')
+    # post.add_to_db(db, image)
 
-    user_id = User.getUserByUsername('Ablion73', dictionary=True)['id']
-    # image = GET_IMAGE
-
-    # post = Post(user_id, image)
-    Post.addPost(db, Post())
-
-    
-    print(Post.getInfo(db, 14))
-    print(Post.getID(db, 'img(55).jpg'))
-    print(Post.getAllLikes(db, 'Thithe'))
     db.close()

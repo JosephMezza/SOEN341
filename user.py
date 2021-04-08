@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-import base64
+from base64 import b64encode
 
 
 class User(UserMixin):
@@ -17,7 +17,7 @@ class User(UserMixin):
         return (self.id, self.username, self.email, self.first_name, self.last_name, self.password)
 
     def is_followable(self, user):
-        return self.id != user.id
+        return self != user
 
     def follow(self, db, user):
         """follow another user"""
@@ -74,30 +74,16 @@ class User(UserMixin):
             f"SELECT data FROM image INNER JOIN post ON image.id = post.image_id WHERE user_id = {self.id}")
         images = cr.fetchall()
         cr.close()
-        return list(map(lambda x: base64.b64encode(x['data']).decode('utf-8'), images))
+        return list(map(lambda x: b64encode(x['data']).decode('utf-8'), images))
 
     # TODO
-    # def like(self, db, post):
-    #     """user likes a post"""
-    #     cr = db.cursor()
-    #     cr.execute(f"UPDATE post SET likes = likes + 1 WHERE id = '{post.id}'") # Increments the likes
-    #     cr.execute(f"INSERT INTO user_like post SET likes = likes + 1 WHERE id = '{post.id}'")
-    #     cr.close()
-
-    # @staticmethod
-    # def unlike(self, db, post):
-    #     """user unlikes a post"""
-    #     cr = db.cursor()
-    #     cr.execute(f"UPDATE post SET likes = likes - 1 WHERE id = '{post_id}'") # Decrements the likes
-    #     cr.close()
-
-    # def get_likes(self, db):
-    #     """returns all likes for a user's posts"""
-    #     cr = db.cursor(dictionary=True)
-    #     # cr.execute("SELECT likes FROM posts WHERE user = '{}'".format(user.id))
-    #     total_likes = cr.fetchall()
-    #     cr.close()
-    #     return total_likes
+    def get_likes(self, db):
+        """returns all likes for a user's posts"""
+        cr = db.cursor(dictionary=True)
+        cr.execute("SELECT likes FROM post WHERE user = '{}'".format(self.id))
+        total_likes = cr.fetchall()
+        cr.close()
+        return total_likes
 
     @staticmethod
     def get_usernames(db):
@@ -116,7 +102,7 @@ class User(UserMixin):
         try:
             fields = cr.fetchone()
             user = User(**fields)
-        except KeyError:
+        except TypeError:
             user = None
         cr.close()
         return user
@@ -134,16 +120,13 @@ class User(UserMixin):
         cr.close()
         return user
 
-    @staticmethod
-    def add_to_db(db, user):
+    def add_to_db(self, db):
         """Add a user to the database"""
-        cr = db.cursor()
-        user_data = user.get_user(dictionary=True)
+        user_data = self.get_user(dictionary=True)
         user_data.pop('id')
-        add_user = (
-            f"INSERT INTO user ({', '.join(user_data.keys())}) VALUES {tuple(user_data.values())}")
+        cr = db.cursor()
         # Insert new user
-        cr.execute(add_user)
+        cr.execute(f"INSERT INTO user ({', '.join(user_data.keys())}) VALUES {tuple(user_data.values())}")
         db.commit()
         cr.close()
         return
