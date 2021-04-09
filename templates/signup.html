@@ -2,74 +2,75 @@
 {% block content %}
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset='utf-8'>
     <title>Signup</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel="stylesheet" href="..\static\resetPassCSS.css">
+    <link rel="stylesheet" href="..\static\resetPass.css">
 </head>
+
 <body>
-    <div class="box1">
+    <div class="signUpForm">
         <h2>Let's get started!<br></h2>
-            <form method="POST" action="/signup">
-                <table class = "signup-tab">
-                    <tr>
-                        <td>
-                            {{ form.csrf_token() }}
-                            <label for=""> {{ form.first_name.label }}</label>
-                            {{ form.first_name }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            {{ form.csrf_token() }}
-                            <label for=""> {{ form.last_name.label }}</label>
-                            {{ form.last_name }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            {{ form.csrf_token() }}
-                            <label for=""> {{ form.email.label }}</label>
-                            {{ form.email }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            {{ form.csrf_token() }}
-                            <label for=""> {{ form.username.label }}</label>
-                            {{ form.username }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            {{ form.csrf_token() }}
-                            <label for=""> {{ form.password.label }}</label>
-                            {{ form.password }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            {{ form.csrf_token() }}
-                            <label for=""> {{ form.password2.label }}</label>
-                            {{ form.password2 }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="form-group">
-                                {{ form.submit(class="submit")}}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td id = "accountmsg">Already have an account?
-                            <a href = "login" style="color: beige">Login</a>
-                        </td>
-                    </tr>
-                </table>
-            </form>
-        </div>
+        <form method="POST" action="/signup">
+            <table class="signup-tab">
+                <tr>
+                    <td>
+                        {{ form.csrf_token() }}
+                        <label for=""> {{ form.first_name.label }}</label>
+                        {{ form.first_name }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ form.csrf_token() }}
+                        <label for=""> {{ form.last_name.label }}</label>
+                        {{ form.last_name }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ form.csrf_token() }}
+                        <label for=""> {{ form.email.label }}</label>
+                        {{ form.email }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ form.csrf_token() }}
+                        <label for=""> {{ form.username.label }}</label>
+                        {{ form.username }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ form.csrf_token() }}
+                        <label for=""> {{ form.password.label }}</label>
+                        {{ form.password }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {{ form.csrf_token() }}
+                        <label for=""> {{ form.password2.label }}</label>
+                        {{ form.password2 }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            {{ form.submit(class="submit")}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="accountmsg">Already have an account?
+                        <a href="login" style="color: beige">Login</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
 </body>
+
 </html>
 {% endblock %}

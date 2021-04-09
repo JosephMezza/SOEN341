@@ -4,7 +4,7 @@ body{
     background-repeat: no-repeat;
     animation: transitionIn 2s;
 }
-.box{
+.forgotPassForm{
     border-radius: 5px;
     width: 350px;
     height: 500px;
@@ -17,7 +17,7 @@ body{
     box-sizing: border-box; /* Includes any borders into the width, height */
     padding: 50px;
 }
-.box1{
+.signUpForm{
     border-radius: 5px;
     width: 350px;
     height: 700px;
@@ -30,7 +30,7 @@ body{
     box-sizing: border-box; /* Includes any borders into the width, height */
     padding: 50px;
 }
-.box2{
+.resetPassForm{
     border-radius: 5px;
     width: 350px;
     height: 400px;

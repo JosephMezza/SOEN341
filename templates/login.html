@@ -2,34 +2,38 @@
 {% block content %}
 <!DOCTYPE html>
 <html>
-   <head>
-<title>Login</title>
-<link rel="stylesheet" href="/static/login.css">
+
+<head>
+   <title>Login</title>
+   <link rel="stylesheet" href="/static/login.css">
 </head>
+
 <body>
-   <div class = "box">
-      <img class = "userimage" src = "/static/images/user.png">
+   <div class="box">
+      <img class="userimage" src="/static/images/user.png">
       <h2>Welcome Back!</h2>
       <form method="POST" action="/login">
-         <div class = "login">
+         <div class="login">
             {{ form.csrf_token() }}
             <label for=""> {{ form.username.label }}</label>
             {{ form.username }}
          </div>
-         <div class = "login">
+         <div class="login">
             {{ form.csrf_token() }}
             <label for=""> {{ form.password.label }}</label>
             {{ form.password }}
          </div>
          <div class="form-group">
-               {{ form.submit(class="submit")}}
+            {{ form.submit(class="submit")}}
          </div>
          <div class="redirect">
-         <p class = "options">
-         <a class = "options" href = "forgotPassword" > Forgot your password?</a></p>
-         <p class = "options">
-         <a class = "options" href = "signup">Don't have an account?</a></p>
-       </div>
+            <p class="options">
+               <a class="options" href="forgotPassword"> Forgot your password?</a>
+            </p>
+            <p class="options">
+               <a class="options" href="signup">Don't have an account?</a>
+            </p>
+         </div>
       </form>
    </div>
 </body>

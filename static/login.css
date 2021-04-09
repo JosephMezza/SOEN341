@@ -1,12 +1,13 @@
 body{
-  margin: 0;
-  padding: 0;
-  background-image: url('/static/images/montreal.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
- font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
- animation: transitionIn 2s;
+    margin: 0;
+    padding: 0;
+    background-image: url('/static/images/montreal.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    animation: transitionIn 2s;
 }
+
 .box{
     border-radius: 5px;
     width: 350px;
@@ -20,29 +21,35 @@ body{
     box-sizing: border-box; /* Includes any borders into the width, height */
     padding: 20px;
 }
+
 .userimage{
-display: block;
-left: 35%;
+    display: block;
+    left: 35%;
     width: 100px;
     height: 100px;
     position: absolute;
     border-radius: 50%;
     top: -18%;   
 }
+
 .fields{
-font-weight: bold;
+    font-weight: bold;
 }
+
 h2{
     text-align: center;
 }
+
 p{
     font-size: 19px;
     margin:2px;
 }
+
 label{
     font-size: 20px;
     margin-bottom: 0px;
 }
+
 input.submit{
     font-size: 20px;
     background-color: #1868e7;
@@ -51,10 +58,12 @@ input.submit{
     border-radius: 15px;
     transition: linear 1s;
 }
+
 input.submit:hover{
     background-color: #0452d1;   
     transition: linear 1s;
 }
+
 input{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 19px;
@@ -67,6 +76,7 @@ input{
     width: 100%;
     margin-bottom: 15px;
 }
+
 div.login{
     margin-bottom: 5px;
 }
@@ -75,14 +85,17 @@ div.redirect{
     width: 100%; 
     text-align: center;
 }
+
 .options{
-font-size: 20px;
-color:white;
-text-decoration: none;
+    font-size: 20px;
+    color:white;
+    text-decoration: none;
 }
+
 .options:hover{
     text-decoration: none;
 }
+
 p.options{
     margin-bottom: 10px;
 }
