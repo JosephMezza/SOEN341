@@ -2,62 +2,52 @@
 {% block content %}
 <!DOCTYPE html>
 <html>
+    
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Post</title>
     <link rel="stylesheet" href="..\static\stylesheet.css">
-    <script src='main.js'></script>
 </head>
+
 <body>
-    <section class = "container-fluid no-padding">
-        <div class = "card">
-            <div class = "card-header">
-                <div class = "user">
+    <section class="container-fluid no-padding">
+        <div class="card">
+            <div class="card-header">
+                <div class="user">
                     <a href="/profile/{{postList[1]}}">{{postList[1]}}</a> <!-- user who posted-->
                 </div>
-                
-                <p>       </p>{{postList[5]}} <!-- date posted-->
+                <p> </p>{{postList[5]}}
+                <!-- date posted-->
             </div>
-            <img src="..\static\images\{{postList[2]}}" id = "car3" alt="car3">
-            <div class = "card-footer">
-               
-                <form action="" id = "likeForm" method="POST" >
-                    <button class="btn" input type="submit" name="like" value="like"><img id = "likebutton" src="..\static\images\likebutton.png" ></img></button>
-                    {{postList[4]}} <!-- number of likes -->
+            <img src="..\static\images\{{postList[2]}}" id="car3" alt="car3">
+            <div class="card-footer">
+                <form action="" id="likeForm" method="POST">
+                    <button class="btn" input type="submit" name="like" value="like"><img id="likebutton"
+                            src="..\static\images\likebutton.png"></img></button>
+                    {{postList[4]}}
+                    <!-- number of likes -->
                     <br><br>
-                   
                 </form>
-                <div class = "user">
+                <div class="user">
                     <!-- {{postList[1]}} -->
-                    {{postList[3]}}<!-- caption-->
+                    {{postList[3]}}
+                    <!-- caption-->
                 </div>
-                
-                
                 <br><br>
                 {% for i in postList[6:]%}
                 {{i}}<br>
                 {% endfor %}
                 <br><br><br>
                 Comments<br>
-                <form action="" id="commentForm", method = "POST", autocomplete="off">                   
-                    <input type = "text" name = "comment">              
+                <form action="" id="commentForm" , method="POST" , autocomplete="off">
+                    <input type="text" name="comment">
                     <br>
-                    <input type="submit" name = "comment"><br>
-                   
-
+                    <input type="submit" name="comment"><br>
                 </form>
                 <br>
-                
-                
-                
-               
             </div>
-
         </div>
-        
     </section>
 </body>
+
 </html>
 {% endblock %}
