@@ -1,9 +1,10 @@
+from follower import follow
 from flask_login import UserMixin
 from base64 import b64encode
 
 
 class User(UserMixin):
-    def __init__(self, username, email, first_name, last_name, password, id=None):
+    def __init__(self, username, email, first_name, last_name, password=None, id=None):
         self.username = username
         self.email = email
         self.first_name = first_name
@@ -16,7 +17,21 @@ class User(UserMixin):
             return dict(id=self.id, username=self.username, email=self.email, first_name=self.first_name, last_name=self.last_name, password=self.password)
         return (self.id, self.username, self.email, self.first_name, self.last_name, self.password)
 
+    # TODO
+    def get_followable(self, db):
+        """get dict of all users where the ones which are followable are specified
+        return dict : {User(): 'follow', User(): 'unfollow'}"""
+        cr = db.cursor(dictionary=True)
+        cr.execute("SELECT id, username, email, first_name, last_name FROM user")
+        users = cr.fetchall()
+        cr.execute(f"SELECT following_id FROM follower WHERE user_id = {self.id}")
+        following = cr.fetchall()
+        cr.close()
+        following = set(map(lambda x: x['following_id'], following))
+        return {User(**user): 'unfollow' if user['id'] in following else 'follow' for user in users}
+
     def is_followable(self, user):
+        """compare user ids to check if user is followable"""
         return self != user
 
     def follow(self, db, user):
@@ -123,7 +138,7 @@ class User(UserMixin):
     def add_to_db(self, db):
         """Add a user to the database"""
         user_data = self.get_user(dictionary=True)
-        user_data.pop('id')
+        user_data.pop('id')  # ensure key assignment is handled by database
         cr = db.cursor()
         # Insert new user
         cr.execute(f"INSERT INTO user ({', '.join(user_data.keys())}) VALUES {tuple(user_data.values())}")
@@ -132,9 +147,15 @@ class User(UserMixin):
         return
 
     def __eq__(self, user):
+        """equate a user to another user by ids as they are unique"""
         return self.id == user.id
 
+    def __hash__(self):
+        """implemented in order to use users as keys for get_followable()"""
+        return hash(self.get_user())
+
     def __repr__(self):
+        """string representation of a user which displays username for shorthand"""
         return f'User({self.username})'
 
 
@@ -187,9 +208,10 @@ if __name__ == '__main__':
     # cr.close()
 
     # print(User.get_usernames(db))
-    # user = User.get_by_username(db, 'Ablion73')
-    # user_by_id = User.get_by_id(db, 2)
-    # assert user != user_by_id, 'ids are identical'
+    user = User.get_by_username(db, 'Ablion73')
+    user_by_id = User.get_by_id(db, 1)
+    assert user == user_by_id, 'ids are different'
+    followable = user.get_followable(db)
     # user = User('test', 'test.test@test.com', 'test', 'testy', 'password')
     # print(user.get_user(dictionary=True))
     # User.add_to_db(db, user)
