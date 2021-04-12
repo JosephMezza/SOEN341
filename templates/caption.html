@@ -4,21 +4,45 @@
 <html>
 <head>
     <title>Caption your Post!</title>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="..\static\stylesheet.css">
+    <script src='main.js'></script>
+    
 </head>
 <body>
-    <img src="..\static\images\{{image}}">
-    <div class="caption">
-        <h2>Enter your caption!<br></h2>
-        <form method="POST" action="">
-            <div class = "caption">
-                <label for=""> {{ form.caption.label }}</label>
-                {{ form.caption }}
+    <section class = "container-fluid no-padding">
+        <div class = "card">
+            <div class = "card-header">
             </div>
-            <div class = "submit">
-                {{ form.submit }}
+            <img src="..\static\images\{{image}}">
+            <div class = "card-footer">   
+                <div class="caption">
+                    <h2>Enter your caption!<br></h2>
+                    <form method="POST" action="">
+                        <div class = "caption">
+                            <label for=""> {{ form.caption.label }}</label>
+                            {{ form.caption }}
+                        </div>
+                        <div class = "submit">
+                            {{ form.submit }}
+                        </div>
+                    </form>
+                </div>          
             </div>
-        </form>
-    </div>
+
+        </div>
+        
+    </section>
+    
+    
+
+
+    </section>
 </body>
 </html>
 {% endblock %}
+
+<!--  -->

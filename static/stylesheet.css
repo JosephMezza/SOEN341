@@ -13,6 +13,7 @@
     grid-row-gap: 10px;
 
 }
+
 .profile{
     margin: auto;
     width: 52%;
@@ -64,8 +65,8 @@ body{
 }
 .container-fluid > .card{
     margin: auto;
-    width: 500px;
-    height: 500px;
+    width: 400px;
+    height: auto;
 }
 .card > .card-header{
     background-color: white;
@@ -77,6 +78,7 @@ body{
 .container-fluid> .card >.card-footer{
     padding: 30px;
     background-color: white;
+    text-align: center;
 }
 .user{
     font-weight: bold;
