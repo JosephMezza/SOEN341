@@ -7,7 +7,6 @@ from post import Post, Comment, get_binary
 from datetime import datetime
 from re import I
 import bcrypt
-import json
 import tornado.web
 import tornado.ioloop
 import os
@@ -20,8 +19,6 @@ db_config = {'host': '184.144.173.26',
           'database': 'binstagram'
           }
 
-db_config['host'] = '192.168.1.53'  # debug
-
 try:
     db = mysql.connector.connect(**db_config)
 except mysql.connector.errors.InterfaceError:
@@ -33,7 +30,7 @@ finally:
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
-app.debug = True
+app.debug = False
 # debugging purposes : rollback db on close if False
 db_config['commit_to_db'] = not app.debug
 login_manager = LoginManager()
@@ -166,7 +163,7 @@ def profile(username):
     return render_template('profile.html', user=user, posts=posts, likes=likes, followers=followers, following=following)
 
 
-app.config["IMAGE_UPLOADS"] = "static/images"
+app.config["IMAGE_UPLOADS"] = "static/images/temp"
 @app.route('/upload-image', methods=["GET", "POST"])
 def postimage():
     if request.method == "POST":
@@ -179,10 +176,9 @@ def postimage():
                 if extension in ("png", "jpg", "gif"):
                     image_file.save(file_path)
                     post = Post(current_user.id, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), commit_to_db=db_config['commit_to_db'])
-                    post.add_to_db(db, get_binary(file_path))
-                    print("Image saved to db")
+                    post_id = post.add_to_db(db, file_path)
                     os.remove(file_path)
-                    return redirect(f"/caption/{post.id}")
+                    return redirect(f"/caption/{post_id}")
                 else:
                     print('invalid file')
                     return redirect("/upload-image")
@@ -199,13 +195,12 @@ def post_caption(post_id):
     form = CaptionForm()
     if request.method == "POST":
         caption = form.caption.data
-        post.caption = caption
-        post.add_to_db(db, image)
-        return redirect(f"/post/{post.id}")
+        post.change_caption(db, caption)
+        return redirect(f"/post/{post_id}")
     return render_template('caption.html', form=form, image=image)
 
 
-@app.route('/forgotPassword', methods=["GET","POST"])
+@app.route('/forgotPassword', methods=["GET", "POST"])
 def forgotPassword():
     form = EmailForm()
     if request.method == "POST":

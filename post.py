@@ -3,7 +3,7 @@ from base64 import b64encode
 
 
 class Post():
-    def __init__(self, user_id, time, caption=None, image_id=None, likes=0, id=None, commit_to_db=True):
+    def __init__(self, user_id, time, caption='', image_id=None, likes=0, id=None, commit_to_db=True):
         self.id = id
         self.user_id = user_id
         self.time = time
@@ -56,7 +56,7 @@ class Post():
         cr.execute(f"SELECT user_id FROM user_like WHERE post_id = {self.id}")
         user_likes = tuple(map(lambda x: str(x['user_id']), cr.fetchall()))
         if not user_likes:
-            return
+            return []
         cr.execute(f"SELECT username FROM user WHERE id IN ({', '.join(user_likes)})")
         users = cr.fetchall()
         cr.close()
@@ -70,15 +70,28 @@ class Post():
         cr.close()
         return b64encode(image['data']).decode('utf-8')
 
-    def add_to_db(self, db, image_data, caption):
+    def add_to_db(self, db, image_path):
         """add post to db with image data provided in binary format"""
+        image_data = get_binary(image_path)
         post_data = self.get_post(dictionary=True)
         post_data.pop('id')
+        post_data.pop('image_id')
         cr = db.cursor(dictionary=True)
         cr.execute("INSERT INTO image (data) VALUES (%s)", (image_data,))
         cr.execute("SELECT id FROM image ORDER BY id DESC LIMIT 1;")
         post_data['image_id'] = cr.fetchone()['id']
         cr.execute(f"INSERT INTO post ({', '.join(post_data.keys())}) VALUES {tuple(post_data.values())}")
+        cr.execute("SELECT id FROM post ORDER BY id DESC LIMIT 1;")
+        post_id = cr.fetchone()['id']
+        if self.commit_to_db:
+            db.commit()
+        cr.close()
+        return post_id
+
+    def change_caption(self, db, caption):
+        """change the caption of a podt in the db"""
+        cr = db.cursor()
+        cr.execute(f"UPDATE post SET caption = '{caption}' WHERE id = '{self.id}'")
         if self.commit_to_db:
             db.commit()
         cr.close()
@@ -136,7 +149,7 @@ class Comment():
 
 
 def get_binary(fname):
-    """Convert digital data to binary format"""
+    """Convert image file to binary format"""
     with open(fname, 'rb') as f:
         data = f.read()
     return data

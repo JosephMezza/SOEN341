@@ -141,6 +141,8 @@ class User(UserMixin):
         cr.execute(f"SELECT * FROM user WHERE {key} = '{value}'")
         fields = cr.fetchone()
         cr.close()
+        if not fields:
+            return
         if hide_password:
             fields['password'] = None
         if commit_to_db:
