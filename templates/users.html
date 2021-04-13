@@ -10,12 +10,10 @@
    <form action="" method="POST" >
       <div class = "box" >
          <p>
-            {% for i in usersList %}
-           
-               <a href="/profile/{{i}}">{{i}}</a>
-               <button class="btn" type="submit" name="follow" value="{{ i }}">Follow</button>
+            {% for username, follow_state in users.items() %}
+               <a href="/profile/{{ username }}">{{ username }}</a>
+               <button class="btn" type="submit" name="{{ follow_state }}" value="{{ username }}">{{ follow_state }}</button>
                <br>
-               
             {% endfor %}
          </p>
       </div>

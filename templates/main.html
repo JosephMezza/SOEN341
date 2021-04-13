@@ -23,41 +23,32 @@
     {% endblock %}
 </head>
 
-<body> 
+<body>
     <br>
     {% if current_user.is_authenticated %}
-    <div class = "main-grid">
-        {% set foundImage = { 'flag': True } %}
-        {% for image in imageList %}
-            {% if image == '' %}
+        <div class = "main-grid">
+            {% set foundImage = { 'flag': True } %}
+            {% if posts == None %}
             {% else %}
-                    <a href= '/post/{{image}}'><img src = "static/images/{{image}}" alt = "{{image}}"/></a> 
+                {% for post_id, image in posts.items() %}
+                    <a href= '/post/{{ post_id }}'><img src="data:image/jpeg;base64,{{ image }}"></a>
+                {% endfor %}
             {% endif %}
-    {% endfor %}
     {% else %}
-    <div class = "bin-line">
-        <img class = "bin" src = "static/images/letter_b.jpg"/>
-        <img class = "bin" src = "static/images/letter_i.jpg"/>
-        <img class = "bin" src = "static/images/letter_n.jpg"/>
-        <img class = "bin" src = "static/images/letter_s.jpg"/>
-        <img class = "bin" src = "static/images/letter_t.jpg"/>
-        <img class = "bin" src = "static/images/letter_a.jpg"/>
-        <img class = "bin" src = "static/images/letter_g.jpg"/>
-        <img class = "bin" src = "static/images/letter_r.jpg"/>
-        <img class = "bin" src = "static/images/letter_a2.jpg"/>
-        <img class = "bin" src = "static/images/letter_m.jpg"/>
-    </div>
-        
-
-    
+        <div class = "bin-line">
+            <img class = "bin" src = "static/images/letter_b.jpg"/>
+            <img class = "bin" src = "static/images/letter_i.jpg"/>
+            <img class = "bin" src = "static/images/letter_n.jpg"/>
+            <img class = "bin" src = "static/images/letter_s.jpg"/>
+            <img class = "bin" src = "static/images/letter_t.jpg"/>
+            <img class = "bin" src = "static/images/letter_a.jpg"/>
+            <img class = "bin" src = "static/images/letter_g.jpg"/>
+            <img class = "bin" src = "static/images/letter_r.jpg"/>
+            <img class = "bin" src = "static/images/letter_a2.jpg"/>
+            <img class = "bin" src = "static/images/letter_m.jpg"/>
+        </div>
     {% endif %}
     </div>
-
-
-   
-
-
 </body>
-
 </html>
 {% endblock %}

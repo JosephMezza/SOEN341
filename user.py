@@ -1,34 +1,37 @@
-from follower import follow
 from flask_login import UserMixin
 from base64 import b64encode
 
 
 class User(UserMixin):
-    def __init__(self, username, email, first_name, last_name, password=None, id=None):
+    _VALID_KEYS = {'id', 'username', 'email'}
+    def __init__(self, username, email, first_name, last_name, password=None, id=None, commit_to_db=True):
         self.username = username
         self.email = email
         self.first_name = first_name
         self.last_name = last_name
         self.password = password
         self.id = id
+        self.commit_to_db = commit_to_db
 
-    def get_user(self, dictionary=False):
-        if dictionary:
-            return dict(id=self.id, username=self.username, email=self.email, first_name=self.first_name, last_name=self.last_name, password=self.password)
-        return (self.id, self.username, self.email, self.first_name, self.last_name, self.password)
+    def get_user(self, dictionary=False, hide_password=False):
+        user = dict(id=self.id, username=self.username, email=self.email, first_name=self.first_name, last_name=self.last_name, password=self.password)
+        if hide_password:
+            user['password'] = None
+        if not dictionary:
+            return tuple(val for val in user.values() if val != None)  # filter None types
+        return user
 
-    # TODO
     def get_followable(self, db):
         """get dict of all users where the ones which are followable are specified
         return dict : {User(): 'follow', User(): 'unfollow'}"""
         cr = db.cursor(dictionary=True)
-        cr.execute("SELECT id, username, email, first_name, last_name FROM user")
+        cr.execute(f"SELECT username, id FROM user WHERE id != {self.id}")
         users = cr.fetchall()
         cr.execute(f"SELECT following_id FROM follower WHERE user_id = {self.id}")
         following = cr.fetchall()
         cr.close()
         following = set(map(lambda x: x['following_id'], following))
-        return {User(**user): 'unfollow' if user['id'] in following else 'follow' for user in users}
+        return {user['username']: 'unfollow' if user['id'] in following else 'follow' for user in users}
 
     def is_followable(self, user):
         """compare user ids to check if user is followable"""
@@ -45,7 +48,8 @@ class User(UserMixin):
         follow_user = (
             f"INSERT INTO follower (user_id, following_id) VALUES ({self.id}, {user.id})")
         cr.execute(follow_user)
-        db.commit()
+        if self.commit_to_db:
+            db.commit()
         cr.close()
         return
 
@@ -60,7 +64,8 @@ class User(UserMixin):
         unfollow_user = (
             f"DELETE FROM follower WHERE user_id = {self.id} AND following_id = {user.id}")
         cr.execute(unfollow_user)
-        db.commit()
+        if self.commit_to_db:
+            db.commit()
         cr.close()
         return
 
@@ -82,23 +87,40 @@ class User(UserMixin):
         cr.close()
         return list(map(lambda x: User(**x), users))
 
-    def get_images(self, db):
-        """get the images a user has posted as base64 encoded strings"""
+    def get_post_images(self, db):
+        """get post ids with base64 encoded string images as dict"""
         cr = db.cursor(dictionary=True)
         cr.execute(
-            f"SELECT data FROM image INNER JOIN post ON image.id = post.image_id WHERE user_id = {self.id}")
-        images = cr.fetchall()
+            f"SELECT post.id, image.data FROM post INNER JOIN image ON post.image_id = image.id WHERE post.user_id = {self.id}")
+        posts = cr.fetchall()
         cr.close()
-        return list(map(lambda x: b64encode(x['data']).decode('utf-8'), images))
+        return {post['id']: b64encode(post['data']).decode('utf-8') for post in posts}
 
-    # TODO
+    def get_following_post_images(self, db):
+        """get images to show on a user's homescreen as base64 encoded strings
+        as a dict where post_id: image"""
+        following = tuple(map(lambda x: x.id, self.get_following(db)))
+        cr = db.cursor(dictionary=True)
+        cr.execute(f"SELECT post.id, image.data FROM post INNER JOIN image ON post.image_id = image.id WHERE post.user_id IN {following}")
+        posts = cr.fetchall()
+        cr.close()
+        return {post['id']: b64encode(post['data']).decode('utf-8') for post in posts}
+
     def get_likes(self, db):
         """returns all likes for a user's posts"""
         cr = db.cursor(dictionary=True)
-        cr.execute("SELECT likes FROM post WHERE user = '{}'".format(self.id))
+        cr.execute(f"SELECT likes FROM post WHERE user_id = '{self.id}'")
         total_likes = cr.fetchall()
         cr.close()
-        return total_likes
+        return sum(map(lambda x: int(x['likes']), total_likes))
+
+    def change_password(self, db, new_password):
+        """changes a user's password"""
+        cr = db.cursor()
+        cr.execute(f"UPDATE user SET password = {new_password} WHERE id = '{self.id}'")
+        if self.commit_to_db:
+            db.commit()
+        cr.close()
 
     @staticmethod
     def get_usernames(db):
@@ -110,30 +132,23 @@ class User(UserMixin):
         return list(map(lambda x: x['username'], usernames))
 
     @staticmethod
-    def get_by_id(db, id):
+    def get_from_db(db, key, value, hide_password=False, commit_to_db=True):
         """Search in db for row where id corresponds to given id"""
+        if key not in User._VALID_KEYS:
+            print('invalid key')
+            return
         cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT * FROM user WHERE id = {id}")
+        cr.execute(f"SELECT * FROM user WHERE {key} = '{value}'")
+        fields = cr.fetchone()
+        cr.close()
+        if hide_password:
+            fields['password'] = None
+        if commit_to_db:
+            fields['commit_to_db'] = commit_to_db
         try:
-            fields = cr.fetchone()
-            user = User(**fields)
+            return User(**fields)
         except TypeError:
-            user = None
-        cr.close()
-        return user
-
-    @staticmethod
-    def get_by_username(db, username):
-        """Search in db for row where username corresponds to given username"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT * FROM user WHERE username = '{username}'")
-        try:
-            fields = cr.fetchone()
-            user = User(**fields)
-        except KeyError:
-            user = None
-        cr.close()
-        return user
+            return
 
     def add_to_db(self, db):
         """Add a user to the database"""
@@ -142,17 +157,17 @@ class User(UserMixin):
         cr = db.cursor()
         # Insert new user
         cr.execute(f"INSERT INTO user ({', '.join(user_data.keys())}) VALUES {tuple(user_data.values())}")
-        db.commit()
+        if self.commit_to_db:
+            db.commit()
         cr.close()
-        return
 
     def __eq__(self, user):
         """equate a user to another user by ids as they are unique"""
         return self.id == user.id
 
     def __hash__(self):
-        """implemented in order to use users as keys for get_followable()"""
-        return hash(self.get_user())
+        """implemented in order to use users as keys in dict"""
+        return hash(self.get_user(hide_password=True))
 
     def __repr__(self):
         """string representation of a user which displays username for shorthand"""
@@ -209,9 +224,14 @@ if __name__ == '__main__':
 
     # print(User.get_usernames(db))
     user = User.get_by_username(db, 'Ablion73')
+    # print(user.get_user(dictionary=True, hide_password=True))
     user_by_id = User.get_by_id(db, 1)
     assert user == user_by_id, 'ids are different'
-    followable = user.get_followable(db)
+    # followable = user.get_followable(db)
+    # print(user.id)
+    # print(followable)
+    # print(user.get_likes(db))
+    print(user.get_following_post_images(db))
     # user = User('test', 'test.test@test.com', 'test', 'testy', 'password')
     # print(user.get_user(dictionary=True))
     # User.add_to_db(db, user)

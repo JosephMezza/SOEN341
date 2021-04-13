@@ -23,35 +23,35 @@
     {% endblock %}
 </head>
 
-<body> 
+<body>
     <br>
     <div>
         <div class = "profile">
             <p style="color: aliceblue;">
-                <a href="/profile/{{username}}">{{username}}</a>
+                <a href="/profile/{{ user.username }}">{{ user.username }}</a>
                 <br/>
-                Total Likes: {{likes}}
+                Total Likes: {{ likes }}
                 <br/>
-                Followers: {% for people in followers %} {{people}}, {% endfor %}
+                Followers: {{ ', '.join(followers) }}
                 <br/>
-                Following: {% for people in following %} {{people}}, {% endfor %}
+                Following: {{ ', '.join(following) }}
             </p>
-        
+
         </div>
     </div>
     <br><br><br>
     <div class = "main-grid">
-
-        {% for image in imageList %}
-            {% if image == '' %}
-            {% else %}
-                <a href= '/post/{{image}}'><img src = "../static/images/{{image}}" alt = "{{image}}"/></a> 
-            {% endif %}
-    {% endfor %}
+        {% set foundImage = { 'flag': True } %}
+        {% if posts == None %}
+        {% else %}
+            {% for post_id, image in posts.items() %}
+                <a href= '/post/{{ post_id }}'><img src="data:image/jpeg;base64,{{ image }}"></a>
+            {% endfor %}
+        {% endif %}
     </div>
 
 
-   
+
 
 
 </body>

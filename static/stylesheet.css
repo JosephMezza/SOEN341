@@ -28,7 +28,7 @@
     right: auto;
     margin: auto;
     justify-content: center;
-  
+
 
 }
 .container-fluid{
@@ -44,7 +44,7 @@
 }
 html{
    height: 100%;
-    
+
   }
 body{
     background-image: url('/static/images/montreal.jpg');

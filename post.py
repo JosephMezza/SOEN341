@@ -1,15 +1,16 @@
-from datetime import datetime
+from user import User
 from base64 import b64encode
 
 
 class Post():
-    def __init__(self, user_id, image_id, time, caption=None, likes=0, id=None):
+    def __init__(self, user_id, time, caption=None, image_id=None, likes=0, id=None, commit_to_db=True):
         self.id = id
         self.user_id = user_id
-        self.image_id = image_id
         self.time = time
         self.caption = caption
+        self.image_id = image_id
         self.likes = likes
+        self.commit_to_db = commit_to_db
 
     def get_post(self, dictionary=False):
         if dictionary:
@@ -21,7 +22,8 @@ class Post():
         cr = db.cursor()
         cr.execute(f"UPDATE post SET likes = likes + 1 WHERE id = '{self.id}'") # Increments the likes
         cr.execute(f"INSERT INTO user_like (user_id, post_id) VALUES ({user.id}, {self.id})")
-        db.commit()
+        if self.commit_to_db:
+            db.commit()
         cr.close()
 
     def unlike(self, db, user):
@@ -29,8 +31,36 @@ class Post():
         cr = db.cursor()
         cr.execute(f"UPDATE post SET likes = likes - 1 WHERE id = '{self.id}'") # Decrements the likes
         cr.execute(f"DELETE FROM user_like WHERE user_id = {user.id} AND post_id = {self.id}")
-        db.commit()
+        if self.commit_to_db:
+            db.commit()
         cr.close()
+
+    def get_user(self, db, hide_password=False, commit_to_db=True):
+        """retrieve the user object for a post"""
+        cr = db.cursor(dictionary=True)
+        cr.execute(f"SELECT * FROM user WHERE id = '{self.user_id}'")
+        user = cr.fetchone()
+        cr.close()
+        if hide_password:
+            user['password'] = None
+        if commit_to_db:
+            user['commit_to_db'] = commit_to_db
+        try:
+            return User(**user)
+        except TypeError:
+            return
+
+    def get_user_likes(self, db):
+        """get list of users who have liked post"""
+        cr = db.cursor(dictionary=True)
+        cr.execute(f"SELECT user_id FROM user_like WHERE post_id = {self.id}")
+        user_likes = tuple(map(lambda x: str(x['user_id']), cr.fetchall()))
+        if not user_likes:
+            return
+        cr.execute(f"SELECT username FROM user WHERE id IN ({', '.join(user_likes)})")
+        users = cr.fetchall()
+        cr.close()
+        return list(map(lambda x: x['username'], users))
 
     def get_image(self, db):
         """retrieve the image data of a post as a base64 encoded string"""
@@ -40,50 +70,59 @@ class Post():
         cr.close()
         return b64encode(image['data']).decode('utf-8')
 
-    def add_to_db(self, db, image):
+    def add_to_db(self, db, image_data, caption):
         """add post to db with image data provided in binary format"""
         post_data = self.get_post(dictionary=True)
         post_data.pop('id')
         cr = db.cursor(dictionary=True)
-        cr.execute("INSERT INTO image (data) VALUES (%s)", image)
+        cr.execute("INSERT INTO image (data) VALUES (%s)", (image_data,))
         cr.execute("SELECT id FROM image ORDER BY id DESC LIMIT 1;")
         post_data['image_id'] = cr.fetchone()['id']
         cr.execute(f"INSERT INTO post ({', '.join(post_data.keys())}) VALUES {tuple(post_data.values())}")
-        db.commit()
+        if self.commit_to_db:
+            db.commit()
         cr.close()
 
     @staticmethod
-    def get_by_id(db, id):
+    def get_by_id(db, id, commit_to_db=True):
         """Search in db for row where id corresponds to given id"""
         cr = db.cursor(dictionary=True)
         cr.execute(f"SELECT * FROM post WHERE id = {id}")
-        try:
-            fields = cr.fetchone()
-            post = Post(**fields)
-        except TypeError:
-            post = None
+        fields = cr.fetchone()
         cr.close()
-        return post
+        if commit_to_db:
+            fields['commit_to_db'] = commit_to_db
+        try:
+            return Post(**fields)
+        except TypeError:
+            return
 
     def __repr__(self):
         return 'Post({})'.format(self.id)
 
 
 class Comment():
-    def __init__(self, user_id, post_id, time, content, id=None):
+    def __init__(self, user_id, post_id, time, content, id=None, commit_to_db=True):
         self.id = id
         self.user_id = user_id
         self.post_id = post_id
         self.time = time
         self.content = content
+        self.commit_to_db = commit_to_db
+
+    def get_comment(self, dictionary=False):
+        if dictionary:
+            return dict(id=self.id, user_id=self.user_id, post_id=self.post_id, time=self.time, content=self.content)
+        return (self.id, self.user_id, self.post_id, self.time, self.content)
 
     def add_to_db(self, db):
-        """add a comment to the specific post"""
-        # MySQL datetime: YYYY-MM-DD hh:mm:ss
-        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        """add a comment to the database"""
+        comment_data = self.get_comment(dictionary=True)
+        comment_data.pop('id')
         cr = db.cursor()
-        # cr.execute("UPDATE post SET comments = '{}' WHERE ID = '{}'".format(comment, post_id))
-        db.commit()
+        cr.execute(f"INSERT INTO comment ({', '.join(comment_data.keys())}) VALUES {tuple(comment_data.values())}")
+        if self.commit_to_db:
+            db.commit()
         cr.close()
 
     @staticmethod
@@ -105,7 +144,6 @@ def get_binary(fname):
 
 if __name__ == '__main__':
     import mysql.connector
-    from user import User
 
     db = mysql.connector.connect(
             host='192.168.1.53',
@@ -114,16 +152,22 @@ if __name__ == '__main__':
             database='binstagram'
             )
 
-    # print all post data
-    # cr = db.cursor()
-    # cr.execute("SELECT * FROM posts")
-    # info = cr.fetchall()
+
+    # set correct number of likes
+    # cr = db.cursor(dictionary=True)
+    # cr.execute("SELECT * FROM post")
+    # posts = list(map(lambda x: Post(**x), cr.fetchall()))
+    # for post in posts:
+    #     try:
+    #         likes = len(post.get_user_likes(db))
+    #     except:
+    #         continue
+    #     cr.execute(f"UPDATE post SET likes = {likes} WHERE id = '{post.id}'")
     # cr.close()
-    # print(info)
 
     post = Post.get_by_id(db, 3)
     # print(post.get_post(dictionary=True))
     # image = get_binary('static/images/montreal.jpg')
     # post.add_to_db(db, image)
-
+    db.commit()
     db.close()

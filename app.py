@@ -1,11 +1,13 @@
 from flask import Flask, session, redirect, render_template, flash, request, url_for
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from forms import LoginForm, SignUpForm, CaptionForm, ResetPasswordForm, EmailForm
 from werkzeug.utils import secure_filename
 from user import User
-from post import Post
+from post import Post, Comment, get_binary
+from datetime import datetime
 from re import I
 import bcrypt
+import json
 import tornado.web
 import tornado.ioloop
 import os
@@ -18,17 +20,22 @@ db_config = {'host': '184.144.173.26',
           'database': 'binstagram'
           }
 
+db_config['host'] = '192.168.1.53'  # debug
+
 try:
     db = mysql.connector.connect(**db_config)
 except mysql.connector.errors.InterfaceError:
     db_config['host'] = '192.168.1.53'
     db = mysql.connector.connect(**db_config)
 finally:
-    print('Successfully connected to db {} on {} with user {}'.format(db_config['database'], db_config['host'], db_config['user']))
+    print(f"Successfully connected to db {db_config['database']} on {db_config['host']} with user {db_config['user']}")
 
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
+app.debug = True
+# debugging purposes : rollback db on close if False
+db_config['commit_to_db'] = not app.debug
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -39,25 +46,19 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(user_id):
     """retrieve a user object for the current user while hiding password"""
-    user = User.getUser(db, 'id', user_id)
+    user = User.get_from_db(db, 'id', user_id, commit_to_db=db_config['commit_to_db'])
     if user:
-        user.pop()
-    return user.User(*user)
+        user.password = None
+    return user
 
 
 @app.route('/')
 def index():
-    username = "Calasts53"
-    imageList = []
     try:
-        username = str(session['_user_id'])
-        imageList = User.getImagesToShow(db, username)
-        imagedict = {imageList[index * 2 + 1]: imageList[index * 2] for index in len(imageList) / 2 - 5}
-        print(imagedict)
+        posts = current_user.get_following_post_images(db)
     except:
-        print("An exception occurred")
-        username = "Calasts53"
-    return render_template('main.html', imageList=imageList)
+        posts = None
+    return render_template('main.html', posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -65,7 +66,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         try:
-            user = User.getUserByUsername(db, form.username.data)
+            user = User.get_from_db(db, 'username', form.username.data, hide_password=False, commit_to_db=db_config['commit_to_db'])
             valid_password = bcrypt.checkpw(form.password.data.encode('utf-8'), user.password.encode('utf-8'))
             if user and valid_password:
                 session['loggedIn'] = True
@@ -83,7 +84,7 @@ def login():
                 return render_template('main.html')
         except:
             return redirect("/")
-    return render_template('login.html', form=form, )
+    return render_template('login.html', form=form)
 
 
 @app.route('/logout')
@@ -98,55 +99,71 @@ def logout():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def sign_up():
-    """ TODO : This must be changed to searching the database"""
+    """Add a user to the database and allow them to sign in"""
     form = SignUpForm()
     if form.validate_on_submit():
         # check first if user already exists
-        user = User.get_user(db, form.username.data)
+        user = User.get_from_db(db, 'username', form.username.data, db_config['commit_to_db'])
         if not user:
             salt = bcrypt.gensalt()
             password = bcrypt.hashpw(form.password.data.encode('utf-8'), salt)
-            User.addUser(db, form.username.data, password.decode(), form.email.data, form.first_name.data, form.last_name.data)
+            user = User(form.username.data, form.email.data, form.first_name.data, form.last_name.data, password.decode(), commit_to_db=db_config['commit_to_db'])
+            user.add_to_db(db)
             flash('Sign up successful.')
             return redirect('/login')
         else:
             flash('This username already exists')
     return render_template('signup.html', form=form)
+# <img id="unlikebutton" src="..\static\images\unlikebutton.png">
 
 
-@app.route('/post/<image>', methods=['GET', 'POST'])
-def post(image):
-    id = int(Post.getID(db, image))
-    postList = Post.getInfo(db, id)
-    if request.method == 'POST' and 'like' in request.form:
-        Post.like(db, id)
-        return redirect("/post/"+image)
-    if request.method == 'POST' and 'comment' in request.form:
-        comment = request.form.get("comment")
-        Post.addComment(db, comment, id)
-        return redirect("/post/"+image)
-    return render_template('post.html', id=id, postList=postList)
+@app.route('/post/<post_id>', methods=['GET', 'POST'])
+def post(post_id):
+    post = Post.get_by_id(db, post_id, commit_to_db=db_config['commit_to_db'])
+    user = post.get_user(db, hide_password=True, commit_to_db=db_config['commit_to_db'])
+    user_likes = post.get_user_likes(db)
+    state = ['like', 'unlike'][current_user.username in user_likes]
+    image = post.get_image(db)
+    comments = Comment.get_post_comments(db, post)
+    if request.method == 'POST':
+        if 'like' in request.form:
+            post.like(db, current_user)
+            return redirect(f"/post/{post_id}")
+        if 'unlike' in request.form:
+            post.unlike(db, current_user)
+            return redirect(f"/post/{post_id}")
+        if 'comment' in request.form:
+            content = request.form.get("comment")
+            comment = Comment(current_user.id, post.id, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), content, commit_to_db=db_config['commit_to_db'])
+            comment.add_to_db(db)
+            return redirect(f"/post/{post_id}")
+    return render_template('post.html', post=post, user=user, user_likes=user_likes, state=state, image=image, comments=comments)
 
 
 @app.route('/users', methods=["GET", "POST"])
 def users():
-    usersList = User.getusers()
+    users = current_user.get_followable(db)  # dict where username: follow_state
     if request.method == 'POST':
-        userToFollow = request.form.get('follow')
-        print(userToFollow)
-        username = str(session['_user_id'])
-        User.follow(username, userToFollow)
-        return redirect("/")
-    return render_template('users.html', usersList=usersList)
+        if 'follow' in request.form:
+            username = request.form.get('follow')
+            user = User.get_from_db(db, 'username', username, db_config['commit_to_db'])
+            current_user.follow(db, user)
+        if 'unfollow' in request.form:
+            username = request.form.get('unfollow')
+            user = User.get_from_db(db, 'username', username, db_config['commit_to_db'])
+            current_user.unfollow(db, user)
+        return redirect("/users")
+    return render_template('users.html', users=users)
 
 
 @app.route('/profile/<username>', methods=["GET", "POST"])
 def profile(username):
-    imageList = User.imagesForUser(username)
-    likes = Post.getAllLikes(username)
-    followers = User.getUserFollowers(username)
-    following = User.getUserFollowing(username)
-    return render_template('profile.html', imageList=imageList, username=username, likes=likes, followers=followers, following=following)
+    user = User.get_from_db(db, 'username', username, db_config['commit_to_db'])
+    posts = user.get_post_images(db)
+    likes = user.get_likes(db)
+    followers = list(map(lambda x: x.username, user.get_followers(db)))
+    following = list(map(lambda x: x.username, user.get_following(db)))
+    return render_template('profile.html', user=user, posts=posts, likes=likes, followers=followers, following=following)
 
 
 app.config["IMAGE_UPLOADS"] = "static/images"
@@ -155,32 +172,36 @@ def postimage():
     if request.method == "POST":
         try:
             if request.files:
-                image = request.files["image"]
-                imageString = str(image)
-                indexOne = imageString.index('\'')
-                indexTwo = imageString.index('\'', indexOne+1)
-                imageName = imageString[indexOne+1:indexTwo]
-                indexOfDot = imageName.index('.')
-                extensionName = imageName[indexOfDot+1::]
-                if extensionName.lower() == "png" or extensionName.lower() == "jpg" or extensionName.lower() == "gif":
-                    image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
-                    print("Image saved")
-                    return redirect("/caption/" + imageName)
+                image_file = request.files["image"]
+                file_name = image_file.filename
+                file_path = f'{app.config["IMAGE_UPLOADS"]}/{file_name}'
+                extension = file_name[file_name.rindex('.') + 1:].lower()
+                if extension in ("png", "jpg", "gif"):
+                    image_file.save(file_path)
+                    post = Post(current_user.id, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), commit_to_db=db_config['commit_to_db'])
+                    post.add_to_db(db, get_binary(file_path))
+                    print("Image saved to db")
+                    os.remove(file_path)
+                    return redirect(f"/caption/{post.id}")
                 else:
+                    print('invalid file')
                     return redirect("/upload-image")
-        except:
+        except Exception as e:
+            print(e)
             return redirect("/upload-image")
     return render_template("upload-image.html")
 
 
-@app.route('/caption/<image>', methods=["GET", "POST"])
-def postCaption(image):
+@app.route('/caption/<post_id>', methods=["GET", "POST"])
+def post_caption(post_id):
+    post = Post.get_by_id(db, post_id, commit_to_db=db_config['commit_to_db'])
+    image = post.get_image(db)
     form = CaptionForm()
     if request.method == "POST":
         caption = form.caption.data
-        username = str(session['_user_id'])
-        Post.addPost(username, image, caption)
-        return redirect("/post/"+image)
+        post.caption = caption
+        post.add_to_db(db, image)
+        return redirect(f"/post/{post.id}")
     return render_template('caption.html', form=form, image=image)
 
 
@@ -195,7 +216,6 @@ def forgotPassword():
         return redirect("/")
     return render_template('forgotPassword.html', form=form)
 
-
 @app.route('/resetPassword/<emailadress>', methods=["GET","POST"])
 def ResetPassword(emailadress):
     form = ResetPasswordForm()
@@ -207,12 +227,24 @@ def ResetPassword(emailadress):
             # checks to see if password is good
             if password != password2:
                 return redirect("/resetPassword/"+emailadress)
-            email = emailadress
-            # changePassword(email, password) implementation needed in database*************
+            user = User.get_by_email(db, emailadress)
+            user.change_password(db, password)
             return redirect("/")
     return render_template('resetPassword.html', form=form, emailadress=emailadress)
 
 
-if __name__ == '__main__':
+def main(commit_to_db=True):
+    if not commit_to_db:
+        cr = db.cursor()
+        cr.execute("START TRANSACTION")
+        cr.close()
     app.run()
+    if not commit_to_db:
+        cr = db.cursor()
+        cr.execute("ROLLBACK")
+        cr.close()
     db.close()
+
+
+if __name__ == '__main__':
+    main(commit_to_db=db_config['commit_to_db'])
