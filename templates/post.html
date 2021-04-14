@@ -16,7 +16,6 @@
                 <div class = "user">
                     <a href="/profile/{{ user.username }}">{{ user.username }}</a> <!-- user who posted-->
                 </div>
-
                 <p>{{ post.time }}</p> <!-- date posted-->
             </div>
             <a href= '/post/{{ post_id }}'></a><img src="data:image/jpeg;base64,{{ image }}"></a>
@@ -40,7 +39,7 @@
                     <b><a href="/profile/{{ username }}"> {{ username }}</a></b> ({{ comment.time }}): {{ comment.content }}<br>
                 {% endfor %}
                 <form action="" id="commentForm", method = "POST", autocomplete="off">
-                    <input type = "text" name = "comment">
+                    <input type="text" name = "comment">
                     <br>
                     <input type="submit" name = "comment"><br>
                 </form>
