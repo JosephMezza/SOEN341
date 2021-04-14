@@ -222,7 +222,7 @@ def ResetPassword(emailadress):
             # checks to see if password is good
             if password != password2:
                 return redirect("/resetPassword/"+emailadress)
-            user = User.get_by_email(db, emailadress)
+            user = User.get_from_db(db, 'email', emailadress)
             user.change_password(db, password)
             return redirect("/")
     return render_template('resetPassword.html', form=form, emailadress=emailadress)
