@@ -3,7 +3,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from forms import LoginForm, SignUpForm, CaptionForm, ResetPasswordForm, EmailForm
 from werkzeug.utils import secure_filename
 from user import User
-from post import Post, Comment, get_binary
+from post import Post, Comment
 from datetime import datetime
 from re import I
 import bcrypt

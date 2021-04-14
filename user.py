@@ -225,15 +225,15 @@ if __name__ == '__main__':
     # cr.close()
 
     # print(User.get_usernames(db))
-    user = User.get_by_username(db, 'Ablion73')
+    user = User.get_from_db(db, 'username', 'Ablion73')
     # print(user.get_user(dictionary=True, hide_password=True))
-    user_by_id = User.get_by_id(db, 1)
+    user_by_id = User.get_from_db(db, 'id', 1)
     assert user == user_by_id, 'ids are different'
     # followable = user.get_followable(db)
     # print(user.id)
     # print(followable)
     # print(user.get_likes(db))
-    print(user.get_following_post_images(db))
+    # print(user.get_following_post_images(db))
     # user = User('test', 'test.test@test.com', 'test', 'testy', 'password')
     # print(user.get_user(dictionary=True))
     # User.add_to_db(db, user)

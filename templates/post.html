@@ -35,7 +35,6 @@
                 <div class = "user">
                     {{ post.caption }} <!-- caption-->
                 </div>
-                <br><br>
                 <br>Comments<br>
                 {% for username, comment in comments.items() %}
                     <b><a href="/profile/{{ username }}"> {{ username }}</a></b> ({{ comment.time }}): {{ comment.content }}<br>
