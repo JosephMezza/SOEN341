@@ -14,6 +14,14 @@
 
 }
 
+.caption{
+    width: 100%;
+    height: 75%;
+    size: 15px;
+}
+.hide-caption{
+    visibility: hidden;
+}
 .profile{
     margin: auto;
     width: 52%;
@@ -21,6 +29,17 @@
     padding: 10px;
 
 }
+.submit-post{
+background-color: #1868e7;
+cursor: pointer;
+width: 90px;
+height: 50px;
+color: white;
+font-size: 20px;
+border-radius: 20px;
+border-width: 0px;
+}
+
 .main-grid img{
     height: 100%;
     width: 100%;
@@ -76,7 +95,7 @@ body{
     width: 100%;
 }
 .container-fluid> .card >.card-footer{
-    padding: 30px;
+    padding: 15px;
     background-color: white;
     text-align: center;
 }
