@@ -1,0 +1,118 @@
+CREATE TABLE IF NOT EXISTS `users` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `username` varchar(64) NOT NULL,
+    `email` varchar(100) NOT NULL,
+    `first_name` varchar(32) NOT NULL,
+    `last_name` varchar(32) NOT NULL,
+    PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE follower (
+    user_id INT(11) NOT NULL,
+    follower_id INT(11) NOT NULL,
+    FOREIGN KEY (`user_id`) REFERENCES user(id),
+    FOREIGN KEY (`follower_id`) REFERENCES user(id)
+);
+
+CREATE TABLE post (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    user_id INT(11) NOT NULL,
+    image_id INT(11) NOT NULL,
+    time DATETIME NOT NULL,
+    caption varchar(200) NOT NULL,
+    likes int(11) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (`user_id`) REFERENCES user(id),
+    FOREIGN KEY (`image_id`) REFERENCES image(id)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE comment (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    user_id INT(11) NOT NULL,
+    post_id INT(11) NOT NULL,
+    time DATETIME NOT NULL,
+    content varchar(200) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (`user_id`) REFERENCES user(id),
+    FOREIGN KEY (`post_id`) REFERENCES post(id)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE user_like (
+    user_id INT(11) NOT NULL,
+    post_id INT(11) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (post_id) REFERENCES post(id)
+);
+
+CREATE TABLE image (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    data MEDIUMBLOB NOT NULL,
+    PRIMARY KEY (id)
+);
+
+
+```
+user
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| id         | int(11)      | NO   | PRI | NULL    | auto_increment |
+| username   | varchar(64)  | NO   | UNI | NULL    |                |
+| email      | varchar(100) | NO   |     | NULL    |                |
+| first_name | varchar(32)  | NO   |     | NULL    |                |
+| last_name  | varchar(32)  | NO   |     | NULL    |                |
+| password   | varchar(255) | NO   |     | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+```
+```
+follower
++--------------+---------+------+-----+---------+-------+
+| Field        | Type    | Null | Key | Default | Extra |
++--------------+---------+------+-----+---------+-------+
+| user_id      | int(11) | NO   | MUL | NULL    |       |
+| following_id | int(11) | NO   | MUL | NULL    |       |
++--------------+---------+------+-----+---------+-------+
+```
+```
+post
++----------+--------------+------+-----+---------+----------------+
+| Field    | Type         | Null | Key | Default | Extra          |
++----------+--------------+------+-----+---------+----------------+
+| id       | int(11)      | NO   | PRI | NULL    | auto_increment |
+| user_id  | int(11)      | NO   | MUL | NULL    |                |
+| image_id | int(11)      | NO   | MUL | NULL    |                |
+| time     | datetime     | NO   |     | NULL    |                |
+| caption  | varchar(200) | NO   |     | NULL    |                |
+| likes    | int(11)      | NO   |     | NULL    |                |
++----------+--------------+------+-----+---------+----------------+
+```
+```
+comment
++---------+--------------+------+-----+---------+----------------+
+| Field   | Type         | Null | Key | Default | Extra          |
++---------+--------------+------+-----+---------+----------------+
+| id      | int(11)      | NO   | PRI | NULL    | auto_increment |
+| user_id | int(11)      | NO   | MUL | NULL    |                |
+| post_id | int(11)      | NO   | MUL | NULL    |                |
+| time    | datetime     | NO   |     | NULL    |                |
+| content | varchar(200) | NO   |     | NULL    |                |
++---------+--------------+------+-----+---------+----------------+
+```
+```
+user_like
++---------+---------+------+-----+---------+-------+
+| Field   | Type    | Null | Key | Default | Extra |
++---------+---------+------+-----+---------+-------+
+| user_id | int(11) | NO   | MUL | NULL    |       |
+| post_id | int(11) | NO   | MUL | NULL    |       |
++---------+---------+------+-----+---------+-------+
+```
+```
+image
++-------+------------+------+-----+---------+----------------+
+| Field | Type       | Null | Key | Default | Extra          |
++-------+------------+------+-----+---------+----------------+
+| id    | int(11)    | NO   | PRI | NULL    | auto_increment |
+| data  | mediumblob | YES  |     | NULL    |                |
++-------+------------+------+-----+---------+----------------+
+```

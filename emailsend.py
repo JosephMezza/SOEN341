@@ -1,7 +1,7 @@
 import smtplib
 
 
-def sendemail(receiver, link):
+def send_email(receiver, link):
     sender_email = "binstagram341@gmail.com"
     rec_email = receiver
     password = "Binstagram_341!"

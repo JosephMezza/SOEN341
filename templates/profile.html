@@ -14,24 +14,34 @@
     <div>
         <div class="profile">
             <p style="color: aliceblue;">
-                <a href="/profile/{{username}}">{{username}}</a>
-                <br />
-                Total Likes: {{likes}}
-                <br />
-                Followers: {% for people in followers %} {{people}}, {% endfor %}
-                <br />
-                Following: {% for people in following %} {{people}}, {% endfor %}
+                <b>User: </b>
+                <a href="/profile/{{ user.username }}">{{ user.username }}</a>
+                <br/>
+                <b>Total Likes:</b> {{ likes }}
+                <br/>
+                <b>Followers:</b>
+                {% for username in followers %}
+                    <a href="/profile/{{ username }}">{{ username }}</a>
+                    {% if username != followers[-1] %}, {% endif %}
+                {% endfor %}
+                <br/>
+                <b>Following:</b>
+                {% for username in following %}
+                    <a href="/profile/{{ username }}">{{ username }}</a>
+                    {% if username != following[-1] %}, {% endif %}
+                {% endfor %}
             </p>
         </div>
     </div>
     <br><br><br>
-    <div class="main-grid">
-        {% for image in imageList %}
-        {% if image == '' %}
+    <div class = "main-grid">
+        {% set foundImage = { 'flag': True } %}
+        {% if posts == None %}
         {% else %}
-        <a href='/post/{{image}}'><img src="../static/images/{{image}}" alt="{{image}}" /></a>
+            {% for post_id, image in posts.items() %}
+                <a href= '/post/{{ post_id }}'><img src="data:image/jpeg;base64,{{ image }}"></a>
+            {% endfor %}
         {% endif %}
-        {% endfor %}
     </div>
 </body>
 
