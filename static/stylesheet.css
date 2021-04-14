@@ -102,3 +102,27 @@ body{
     }
 
 }
+/* unvisited link */
+a:link {
+    color: lightblue;
+  }
+  
+  /* visited link */
+  a:visited {
+    color: lightblue;
+  }
+  
+  /* mouse over link */
+  a:hover {
+    color: lightgray;
+  }
+  
+  /* selected link */
+  a:active {
+    color: royalblue;
+  }
+
+  a{
+    text-decoration: none;
+  }
+  

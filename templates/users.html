@@ -10,15 +10,20 @@
 
 <body>
    <form action="" method="POST">
+      
       <div class="box">
-         <p>
-            {% for username, follow_state in users.items() %}
+         {% for username, follow_state in users.items() %}
+            <!-- <p> -->
+            <div class="container">
                <a href="/profile/{{ username }}">{{ username }}</a>
                <button class="btn" type="submit" name="{{ follow_state }}" value="{{ username }}">{{ follow_state }}</button>
-               <br>
-            {% endfor %}
-         </p>
+               <br>  
+            </div>
+              
+            <!-- </p> -->
+         {% endfor %}
       </div>
+      
    </form>
 </body>
 
