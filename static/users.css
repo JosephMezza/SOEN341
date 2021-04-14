@@ -8,6 +8,7 @@ body{
     width:100%;
     animation : transitionIn 2s;
     background-attachment: fixed;
+    padding-bottom: 25px;
 }
 
 
@@ -46,7 +47,6 @@ a:link {
   
   .box{
     display: grid;
-    height: 1000px;
     width: 1000px;
     left: 0px;
     right: 0px;
@@ -58,6 +58,7 @@ a:link {
     grid-row-gap: 20px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 33px;
+    padding-bottom: 25px;
 
 }
 

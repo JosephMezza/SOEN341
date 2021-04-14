@@ -31,7 +31,7 @@ finally:
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
-app.debug = False
+app.debug = True
 # debugging purposes : rollback db on close if False
 db_config['commit_to_db'] = not app.debug
 app.config["IMAGE_UPLOADS"] = "static/images"
@@ -59,7 +59,6 @@ def index():
     except:
         posts = None
     return render_template('main.html', posts=posts)
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

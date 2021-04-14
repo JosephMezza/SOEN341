@@ -1,9 +1,3 @@
-body{
-    background-image: url('/static/images/montreal.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    animation: transitionIn 2s;
-}
 .forgotPassForm{
     border-radius: 5px;
     width: 350px;
@@ -66,15 +60,5 @@ input{
 label{
     font-size: 20px;
     margin-bottom: 0px;
-}
-@keyframes transitionIn{
-    from{
-        opacity: 0;
-        
-    }
-    to{
-        opacity: 1;
-        
-    }
-
+    width: 200px;
 }

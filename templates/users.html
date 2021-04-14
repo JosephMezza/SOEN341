@@ -1,31 +1,22 @@
 {% extends "base.html" %}
+
+{% block title %} {{ super() }} - Users{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="..\static\users.css">
+{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html>
-
-<head>
-   <title>Followers</title>
-   <link rel="stylesheet" href="/static/users.css">
-</head>
-
-<body>
-   <form action="" method="POST">
-      
-      <div class="box">
-         {% for username, follow_state in users.items() %}
-            <!-- <p> -->
-            <div class="container">
-               <a href="/profile/{{ username }}">{{ username }}</a>
-               <button class="btn" type="submit" name="{{ follow_state }}" value="{{ username }}">{{ follow_state }}</button>
-               <br>  
-            </div>
-              
-            <!-- </p> -->
-         {% endfor %}
-      </div>
-      
-   </form>
-</body>
-
-</html>
+<br/><br/>
+<form action="" method="POST">
+<div class="box">
+    {% for username, follow_state in users.items() %}
+        <div class="container">
+            <a href="/profile/{{ username }}">{{ username }}</a>
+            <button class="btn" type="submit" name="{{ follow_state }}" value="{{ username }}">{{ follow_state }}</button>
+            <br>  
+        </div>
+    {% endfor %}
+</div>
+</form>
 {% endblock %}
