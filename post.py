@@ -140,12 +140,18 @@ class Comment():
 
     @staticmethod
     def get_post_comments(db, post):
-        """returns a list with all the comments of a post"""
+        """returns a dict where username: Comment"""
         cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT * FROM comment WHERE post_id = {post.id}")
+        cr.execute(f"SELECT comment.*, user.username FROM comment INNER JOIN user ON user.id = comment.user_id WHERE comment.post_id = {post.id}")
         comments = cr.fetchall()
         cr.close()
-        return list(map(lambda x: Comment(**x), comments))
+        if not comments:
+            return dict()
+        usernames = [comment.pop('username') for comment in comments]
+        return dict(zip(usernames, map(lambda x: Comment(**x), comments)))
+
+    def __repr__(self):
+        return self.content
 
 
 def get_binary(fname):
@@ -182,5 +188,6 @@ if __name__ == '__main__':
     # print(post.get_post(dictionary=True))
     # image = get_binary('static/images/montreal.jpg')
     # post.add_to_db(db, image)
+    print(Comment.get_post_comments(db, post))
     db.commit()
     db.close()

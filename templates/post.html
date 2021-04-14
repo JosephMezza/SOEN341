@@ -27,7 +27,7 @@
                     <div>Liked by:
                         {% for username in user_likes %}
                             <a href= '/profile/{{ username }}'>{{ username }}</a>
-                            {% if username != user_likes[-1] %},{% endif %}
+                            {% if username != user_likes[-1] %}, {% endif %}
                         {% endfor %}
                     </div>
                     <br><br>
@@ -36,10 +36,10 @@
                     {{ post.caption }} <!-- caption-->
                 </div>
                 <br><br>
-                {% for comment in comments %}
-                    {{ comment.content }}<br>
-                {% endfor %}
                 <br>Comments<br>
+                {% for username, comment in comments.items() %}
+                    <b><a href="/profile/{{ username }}"> {{ username }}</a></b> ({{ comment.time }}): {{ comment.content }}<br>
+                {% endfor %}
                 <form action="" id="commentForm", method = "POST", autocomplete="off">
                     <input type = "text" name = "comment">
                     <br>

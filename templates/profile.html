@@ -28,15 +28,23 @@
     <div>
         <div class = "profile">
             <p style="color: aliceblue;">
+                <b>User: </b>
                 <a href="/profile/{{ user.username }}">{{ user.username }}</a>
                 <br/>
-                Total Likes: {{ likes }}
+                <b>Total Likes:</b> {{ likes }}
                 <br/>
-                Followers: {{ ', '.join(followers) }}
+                <b>Followers:</b>
+                {% for username in followers %}
+                    <a href="/profile/{{ username }}">{{ username }}</a>
+                    {% if username != followers[-1] %}, {% endif %}
+                {% endfor %}
                 <br/>
-                Following: {{ ', '.join(following) }}
+                <b>Following:</b>
+                {% for username in following %}
+                    <a href="/profile/{{ username }}">{{ username }}</a>
+                    {% if username != following[-1] %}, {% endif %}
+                {% endfor %}
             </p>
-
         </div>
     </div>
     <br><br><br>
