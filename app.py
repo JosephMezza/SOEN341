@@ -163,7 +163,7 @@ def profile(username):
     return render_template('profile.html', user=user, posts=posts, likes=likes, followers=followers, following=following)
 
 
-app.config["IMAGE_UPLOADS"] = "static/images/temp"
+app.config["IMAGE_UPLOADS"] = "static/images"
 @app.route('/upload-image', methods=["GET", "POST"])
 def postimage():
     if request.method == "POST":
