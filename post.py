@@ -156,7 +156,7 @@ class Comment():
 
 def get_binary(fname):
     """Convert image file to binary format"""
-    with open(fname, 'rb') as f:
+    with open(fname, 'rb+') as f:
         data = f.read()
     return data
 
