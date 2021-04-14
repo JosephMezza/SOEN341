@@ -30,7 +30,7 @@ finally:
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
-app.debug = False
+app.debug = True
 # debugging purposes : rollback db on close if False
 db_config['commit_to_db'] = not app.debug
 login_manager = LoginManager()
@@ -53,9 +53,11 @@ def load_user(user_id):
 def index():
     try:
         posts = current_user.get_following_post_images(db)
+        currentUser = current_user.username
     except:
         posts = None
-    return render_template('main.html', posts=posts)
+        user= ""
+    return render_template('main.html', posts=posts, currentUser = currentUser)
 
 
 @app.route('/login', methods=['GET', 'POST'])

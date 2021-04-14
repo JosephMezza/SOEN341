@@ -1,8 +1,4 @@
-body{
-    background-image: url('/static/images/wall.jpeg');
-    text-align: center;
-    justify-content: center;
-}
+
 body{
     background-image: url('/static/images/montreal.jpg');
     background-size: cover;
@@ -62,6 +58,7 @@ a:link {
     grid-row-gap: 20px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 33px;
+
 }
 
 .container{

@@ -13,8 +13,8 @@
 }
 
 .main-grid img{
-    height: 100%;
-    width: 100%;
+    height: 500px;
+    width: 350px;
     object-fit: cover;
     left: auto;
     right: auto;
@@ -64,8 +64,8 @@ body{
 
 .container-fluid > .card{
     margin: auto;
-    width: 500px;
-    height: 500px;
+    width: 550px;
+
 }
 
 .card > .card-header{
@@ -84,6 +84,7 @@ body{
 
 .user{
     font-weight: bold;
+    font-size: 20px;
 }
 
 #likebutton{
