@@ -117,7 +117,7 @@ class User(UserMixin):
     def change_password(self, db, new_password):
         """changes a user's password"""
         cr = db.cursor()
-        cr.execute(f"UPDATE user SET password = {new_password} WHERE id = '{self.id}'")
+        cr.execute(f"UPDATE user SET password = '{new_password.decode()}' WHERE id = {self.id}")
         if self.commit_to_db:
             db.commit()
         cr.close()

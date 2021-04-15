@@ -1,4 +1,17 @@
-.main-grid{
+body {
+    padding-top: 30px;
+}
+
+.addimage {
+    width: 50px;
+    height: 50px;
+    background-image: url(/static/images/addimage.png);
+    background-size: contain;
+    cursor: pointer;
+    margin-right: 50%;
+}
+
+.main-grid {
     display: grid;
     height: 1000px;
     width: 1000px;
@@ -12,9 +25,9 @@
     grid-row-gap: 10px;
 }
 
-.main-grid img{
-    height: 100%;
-    width: 100%;
+.main-grid img {
+    height: 500px;
+    width: 350px;
     object-fit: cover;
     left: auto;
     right: auto;
@@ -22,83 +35,116 @@
     justify-content: center;
 }
 
-.container-fluid{
+.container-fluid {
     height: 100%;
     width: 100%;
     padding: 30px;
 }
 
-.profile{
+.profile {
     margin: auto;
     width: 52%;
     border: 3px solid grey;
     padding: 10px;
 }
 
-html{
+html {
     height: 100%;
-  }
-body{
+}
+
+body {
     background-image: url('/static/images/montreal.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     position: relative;
     height: 100%;
-    width:100%;
-    animation : transitionIn 2s;
+    width: 100%;
+    animation: transitionIn 2s;
     background-attachment: fixed;
 }
 
-.bin-line{
+.bin-line {
     display: flex;
     max-height: 100%;
     max-width: 100%;
     object-fit: contain;
 }
 
-.bin{
+.bin {
     display: flex;
     height: 10%;
     width: 10%;
 }
 
-.container-fluid > .card{
+.container-fluid>.card {
     margin: auto;
-    width: 500px;
-    height: 500px;
+    width: 550px;
 }
 
-.card > .card-header{
+.card>.card-header {
     background-color: white;
     padding: 15px;
 }
 
-.card > #car3{
+.card>#car3 {
     width: 100%;
 }
 
-.container-fluid> .card >.card-footer{
+.container-fluid>.card>.card-footer {
     padding: 30px;
     background-color: white;
 }
 
-.user{
+.user {
     font-weight: bold;
+    font-size: 20px;
 }
 
-#likebutton{
+#likebutton {
     height: 30px;
     width: 30px;
 }
 
-@keyframes transitionIn{
-    from{
+@keyframes transitionIn {
+    from {
         opacity: 0;
         transform: rotateX(-10deg);
     }
-    to{
+    to {
         opacity: 1;
         transform: rotateX(0);
     }
+}
 
+/* unvisited link */
+
+a:link {
+    color: lightblue;
+}
+
+/* visited link */
+
+a:visited {
+    color: lightblue;
+}
+
+/* mouse over link */
+
+a:hover {
+    color: lightgray;
+}
+
+/* selected link */
+
+a:active {
+    color: royalblue;
+}
+
+a {
+    text-decoration: none;
+}
+
+.caption {
+    width: 50%;
+    color: white;
 }

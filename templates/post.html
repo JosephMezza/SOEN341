@@ -1,52 +1,43 @@
 {% extends "base.html" %}
+
+{% block title %} {{ super() }} - Post{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html>
-    
-<head>
-    <title>Post</title>
-    <link rel="stylesheet" href="..\static\stylesheet.css">
-</head>
-
-<body>
-    <section class = "container-fluid no-padding">
-        <div class = "card">
-            <div class = "card-header">
-                <div class = "user">
-                    <a href="/profile/{{ user.username }}">{{ user.username }}</a> <!-- user who posted-->
-                </div>
-                <p>{{ post.time }}</p> <!-- date posted-->
+<section class = "container-fluid no-padding">
+    <div class = "card">
+        <div class = "card-header">
+            <div class = "user">
+                <a href="/profile/{{ user.username }}">{{ user.username }}</a> <!-- user who posted-->
             </div>
-            <a href= '/post/{{ post_id }}'></a><img src="data:image/jpeg;base64,{{ image }}"></a>
-            <div class = "card-footer">
-                <form action="" id="likeForm" method="POST" >
-                    <button class="btn" input type="submit" name="{{ state }}" value="{{ state }}"><img id="likebutton" src="..\static\images\{{ state }}button.png"></img></button>
-                    {{ post.likes }} <!-- number of likes -->
-                    <div>Liked by:
-                        {% for username in user_likes %}
-                            <a href= '/profile/{{ username }}'>{{ username }}</a>
-                            {% if username != user_likes[-1] %}, {% endif %}
-                        {% endfor %}
-                    </div>
-                    <br><br>
-                </form>
-                <div class = "user">
-                    {{ post.caption }} <!-- caption-->
-                </div>
-                <br>Comments<br>
-                {% for username, comment in comments.items() %}
-                    <b><a href="/profile/{{ username }}"> {{ username }}</a></b> ({{ comment.time }}): {{ comment.content }}<br>
-                {% endfor %}
-                <form action="" id="commentForm", method = "POST", autocomplete="off">
-                    <input type="text" name = "comment">
-                    <br>
-                    <input type="submit" name = "comment"><br>
-                </form>
-                <br>
-            </div>
+            <p>{{ post.time }}</p> <!-- date posted-->
         </div>
-    </section>
-</body>
-
-</html>
+        <img src="data:image/jpeg;base64,{{ image }}">
+        <div class = "card-footer">
+            <div class = "user">
+                {{ post.caption }} <!-- caption-->
+            </div>
+            <br/>
+            <form action="" id="likeForm" method="POST" >
+                <button class="btn" input type="submit" name="{{ state }}" value="{{ state }}"><img id="likebutton" src="..\static\images\{{ state }}button.png"></img></button>
+                {{ post.likes }} <!-- number of likes -->
+                <div>Liked by:<br/>
+                    {% for username in user_likes %}
+                        <a href= '/profile/{{ username }}'>{{ username }}</a>
+                        {% if username != user_likes[-1] %}, {% endif %}
+                    {% endfor %}
+                </div>
+                
+            </form>
+            <br/>Comments:<br/>
+            {% for username, comment in comments.items() %}
+                <b><a href="/profile/{{ username }}"> {{ username }}</a></b> ({{ comment.time }}): {{ comment.content }}<br>
+            {% endfor %}
+            <form action="" id="commentForm", method = "POST", autocomplete="off">
+                <input type="text" name = "comment">
+                <input type="submit" name = "comment"><br>
+            </form>
+            <br>
+        </div>
+    </div>
+</section>
 {% endblock %}
