@@ -21,15 +21,15 @@ class User(UserMixin):
             return tuple(val for val in user.values() if val != None)  # filter None types
         return user
 
-    def get_followable(self, db):
+    def get_followable(self, data_base):
         """get dict of all users where the ones which are followable are specified
         return dict : {User(): 'follow', User(): 'unfollow'}"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT username, id FROM user WHERE id != {self.id}")
-        users = cr.fetchall()
-        cr.execute(f"SELECT following_id FROM follower WHERE user_id = {self.id}")
-        following = cr.fetchall()
-        cr.close()
+        cursor = data_base.cursor(dictionary=True)
+        cursor.execute(f"SELECT username, id FROM user WHERE id != {self.id}")
+        users = cursor.fetchall()
+        cursor.execute(f"SELECT following_id FROM follower WHERE user_id = {self.id}")
+        following = cursor.fetchall()
+        cursor.close()
         following = set(map(lambda x: x['following_id'], following))
         return {user['username']: 'unfollow' if user['id'] in following else 'follow' for user in users}
 
@@ -37,110 +37,110 @@ class User(UserMixin):
         """compare user ids to check if user is followable"""
         return self != user
 
-    def follow(self, db, user):
+    def follow(self, data_base, user):
         """follow another user"""
         # make sure you cannot follow yourself
         if not self.is_followable(user):
             print('User cannot follow themselves')
             return
 
-        cr = db.cursor()
+        cursor = data_base.cursor()
         follow_user = (
             f"INSERT INTO follower (user_id, following_id) VALUES ({self.id}, {user.id})")
-        cr.execute(follow_user)
+        cursor.execute(follow_user)
         if self.commit_to_db:
-            db.commit()
-        cr.close()
+            data_base.commit()
+        cursor.close()
         return
 
-    def unfollow(self, db, user):
+    def unfollow(self, data_base, user):
         """unfollow another user"""
         # make sure you cannot unfollow yourself
         if not self.is_followable(user):
             print('User cannot unfollow themselves')
             return
 
-        cr = db.cursor()
+        cursor = data_base.cursor()
         unfollow_user = (
             f"DELETE FROM follower WHERE user_id = {self.id} AND following_id = {user.id}")
-        cr.execute(unfollow_user)
+        cursor.execute(unfollow_user)
         if self.commit_to_db:
-            db.commit()
-        cr.close()
+            data_base.commit()
+        cursor.close()
         return
 
-    def get_followers(self, db):
+    def get_followers(self, data_base):
         """returns a list with all the followers of a specific user"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(
+        cursor = data_base.cursor(dictionary=True)
+        cursor.execute(
             f"SELECT user.* FROM user INNER JOIN follower ON user.id = follower.user_id AND follower.following_id = {self.id}")
-        users = cr.fetchall()
-        cr.close()
+        users = cursor.fetchall()
+        cursor.close()
         return list(map(lambda x: User(**x), users))
 
-    def get_following(self, db):
+    def get_following(self, data_base):
         """returns a list with all the users being followed a specific user"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(
+        cursor = data_base.cursor(dictionary=True)
+        cursor.execute(
             f"SELECT user.* FROM user INNER JOIN follower ON user.id = follower.following_id AND follower.user_id = {self.id}")
-        users = cr.fetchall()
-        cr.close()
+        users = cursor.fetchall()
+        cursor.close()
         return list(map(lambda x: User(**x), users))
 
-    def get_post_images(self, db):
+    def get_post_images(self, data_base):
         """get post ids with base64 encoded string images as dict"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(
+        cursor = data_base.cursor(dictionary=True)
+        cursor.execute(
             f"SELECT post.id, image.data FROM post INNER JOIN image ON post.image_id = image.id WHERE post.user_id = {self.id}")
-        posts = cr.fetchall()
-        cr.close()
+        posts = cursor.fetchall()
+        cursor.close()
         return {post['id']: b64encode(post['data']).decode('utf-8') for post in posts}
 
-    def get_following_post_images(self, db):
+    def get_following_post_images(self, data_base):
         """get images to show on a user's homescreen as base64 encoded strings
         as a dict where post_id: image"""
-        following = tuple(map(lambda x: x.id, self.get_following(db)))
-        cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT post.id, image.data FROM post INNER JOIN image ON post.image_id = image.id WHERE post.user_id IN {following}")
-        posts = cr.fetchall()
-        cr.close()
+        following = tuple(map(lambda x: x.id, self.get_following(data_base)))
+        cursor = data_base.cursor(dictionary=True)
+        cursor.execute(f"SELECT post.id, image.data FROM post INNER JOIN image ON post.image_id = image.id WHERE post.user_id IN {following}")
+        posts = cursor.fetchall()
+        cursor.close()
         return {post['id']: b64encode(post['data']).decode('utf-8') for post in posts}
 
-    def get_likes(self, db):
+    def get_likes(self, data_base):
         """returns all likes for a user's posts"""
-        cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT likes FROM post WHERE user_id = '{self.id}'")
-        total_likes = cr.fetchall()
-        cr.close()
+        cursor = data_base.cursor(dictionary=True)
+        cursor.execute(f"SELECT likes FROM post WHERE user_id = '{self.id}'")
+        total_likes = cursor.fetchall()
+        cursor.close()
         return sum(map(lambda x: int(x['likes']), total_likes))
 
-    def change_password(self, db, new_password):
+    def change_password(self, data_base, new_password):
         """changes a user's password"""
-        cr = db.cursor()
-        cr.execute(f"UPDATE user SET password = '{new_password.decode()}' WHERE id = {self.id}")
+        cursor = data_base.cursor()
+        cursor.execute(f"UPDATE user SET password = '{new_password.decode()}' WHERE id = {self.id}")
         if self.commit_to_db:
-            db.commit()
-        cr.close()
+            data_base.commit()
+        cursor.close()
 
     @staticmethod
-    def get_usernames(db):
+    def get_usernames(data_base):
         """retrieve all user data"""
-        cr = db.cursor(dictionary=True)
-        cr.execute("SELECT username FROM user")
-        usernames = cr.fetchall()
-        cr.close()
+        cursor = data_base.cursor(dictionary=True)
+        cursor.execute("SELECT username FROM user")
+        usernames = cursor.fetchall()
+        cursor.close()
         return list(map(lambda x: x['username'], usernames))
 
     @staticmethod
-    def get_from_db(db, key, value, hide_password=False, commit_to_db=True):
+    def get_from_db(data_base, key, value, hide_password=False, commit_to_db=True):
         """Search in db for row where id corresponds to given id"""
         if key not in User._VALID_KEYS:
             print('invalid key')
             return
-        cr = db.cursor(dictionary=True)
-        cr.execute(f"SELECT * FROM user WHERE {key} = '{value}'")
-        fields = cr.fetchone()
-        cr.close()
+        cursor = data_base.cursor(dictionary=True)
+        cursor.execute(f"SELECT * FROM user WHERE {key} = '{value}'")
+        fields = cursor.fetchone()
+        cursor.close()
         if not fields:
             return
         if hide_password:
@@ -152,16 +152,16 @@ class User(UserMixin):
         except TypeError:
             return
 
-    def add_to_db(self, db):
+    def add_to_db(self, data_base):
         """Add a user to the database"""
         user_data = self.get_user(dictionary=True)
         user_data.pop('id')  # ensure key assignment is handled by database
-        cr = db.cursor()
+        cursor = data_base.cursor()
         # Insert new user
-        cr.execute(f"INSERT INTO user ({', '.join(user_data.keys())}) VALUES {tuple(user_data.values())}")
+        cursor.execute(f"INSERT INTO user ({', '.join(user_data.keys())}) VALUES {tuple(user_data.values())}")
         if self.commit_to_db:
-            db.commit()
-        cr.close()
+            data_base.commit()
+        cursor.close()
 
     def __eq__(self, user):
         """equate a user to another user by ids as they are unique"""
@@ -179,7 +179,7 @@ class User(UserMixin):
 if __name__ == '__main__':
     import mysql.connector
 
-    db = mysql.connector.connect(
+    data_base = mysql.connector.connect(
         host='192.168.1.53',
         user='root',
         passwd='Binstagram_341',
@@ -187,63 +187,63 @@ if __name__ == '__main__':
     )
 
     # add users to db from csv
-    # with open('data/users.csv', 'r') as f:
-    #     for user in f.read().splitlines()[1:]:
-    #         User.addUser(db, User(*user.split(',')))
+    # with open('data/users.csv', 'r') as f_name:
+    #     for user in f_name.read().splitlines()[1:]:
+    #         User.addUser(data_base, User(*user.split(',')))
 
     # add images to db from directory /static/user_images
-    # cr = db.cursor()
+    # cursor = data_base.cursor()
     # for i in range(1, 258):
     #     data = (get_image(f'static/user_images/img({i}).jpg'),)
-    #     cr.execute("INSERT INTO image (data) VALUES (%s)", data)
-    #     db.commit()
-    # cr.close()
+    #     cursor.execute("INSERT INTO image (data) VALUES (%s)", data)
+    #     data_base.commit()
+    # cursor.close()
 
-    # retrieve all images from db, output to test directory
-    # cr = db.cursor(dictionary=True)
-    # cr.execute("SELECT data FROM image")
-    # data = cr.fetchall()
-    # cr.close()
+    # retrieve all images from data_base, output to test directory
+    # cursor = data_base.cursor(dictionary=True)
+    # cursor.execute("SELECT data FROM image")
+    # data = cursor.fetchall()
+    # cursor.close()
     # images = list(map(lambda x: x['data'], data))
     # for i in range(len(images)):
-    #     with open(f'test/img({i+1}).jpg', 'wb') as f:
+    #     with open(f'test/img({i+1}).jpg', 'wb') as f_name:
     #         f.write(images[i])
 
     # add follower relationships to db
-    # cr = db.cursor()
-    # with open('data/followers.csv', 'r') as f:
-    #     follower = f.read().splitlines()[1:]
+    # cursor = data_base.cursor()
+    # with open('data/followers.csv', 'r') as f_name:
+    #     follower = f_name.read().splitlines()[1:]
     # for i in follower:
     #     users = i.split(',')
-    #     user_id = User.getByUsername(db, users[0]).id
+    #     user_id = User.getByUsername(data_base, users[0]).id
     #     # print(users[0], user_id)
     #     for following in users[1:]:
-    #         following_id = User.getByUsername(db, following).id
+    #         following_id = User.getByUsername(data_base, following).id
     #         # print(user_id, following_id, sep=' -> ')
-    #         cr.execute(f"INSERT INTO follower (user_id, following_id) VALUES ('{user_id}', '{following_id}')")
-    #         db.commit()
-    # cr.close()
+    #         cursor.execute(f"INSERT INTO follower (user_id, following_id) VALUES ('{user_id}', '{following_id}')")
+    #         data_base.commit()
+    # cursor.close()
 
-    # print(User.get_usernames(db))
-    user = User.get_from_db(db, 'username', 'Ablion73')
+    # print(User.get_usernames(data_base))
+    user = User.get_from_db(data_base, 'username', 'Ablion73')
     # print(user.get_user(dictionary=True, hide_password=True))
-    user_by_id = User.get_from_db(db, 'id', 1)
+    user_by_id = User.get_from_db(data_base, 'id', 1)
     assert user == user_by_id, 'ids are different'
-    # followable = user.get_followable(db)
+    # followable = user.get_followable(data_base)
     # print(user.id)
     # print(followable)
-    # print(user.get_likes(db))
-    # print(user.get_following_post_images(db))
+    # print(user.get_likes(data_base))
+    # print(user.get_following_post_images(data_base))
     # user = User('test', 'test.test@test.com', 'test', 'testy', 'password')
     # print(user.get_user(dictionary=True))
-    # User.add_to_db(db, user)
-    # user.follow(db, user_by_id)
-    # user.unfollow(db, user_by_id)
-    # print(user.get_followers(db))
-    # print(user.get_following(db))
-    # images = user.get_images(db)
+    # User.add_to_db(data_base, user)
+    # user.follow(data_base, user_by_id)
+    # user.unfollow(data_base, user_by_id)
+    # print(user.get_followers(data_base))
+    # print(user.get_following(data_base))
+    # images = user.get_images(data_base)
     # print(images[0][:20])
 
-    # cr.execute("SELECT * FROM user")
-    # print(cr.fetchall())
-    db.close()
+    # cursor.execute("SELECT * FROM user")
+    # print(cursor.fetchall())
+    data_base.close()
