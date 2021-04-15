@@ -146,9 +146,9 @@ class Comment():
         comments = cr.fetchall()
         cr.close()
         if not comments:
-            return dict()
+            return [()]
         usernames = [comment.pop('username') for comment in comments]
-        return dict(zip(usernames, map(lambda x: Comment(**x), comments)))
+        return list(zip(usernames, map(lambda x: Comment(**x), comments)))
 
     def __repr__(self):
         return self.content
@@ -184,7 +184,7 @@ if __name__ == '__main__':
     #     cr.execute(f"UPDATE post SET likes = {likes} WHERE id = '{post.id}'")
     # cr.close()
 
-    post = Post.get_by_id(db, 3)
+    post = Post.get_by_id(db, 162)
     # print(post.get_post(dictionary=True))
     # image = get_binary('static/images/montreal.jpg')
     # post.add_to_db(db, image)
