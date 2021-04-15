@@ -179,7 +179,7 @@ class User(UserMixin):
 if __name__ == '__main__':
     import mysql.connector
 
-    db = mysql.connector.connect(
+    data_base = mysql.connector.connect(
         host='192.168.1.53',
         user='root',
         passwd='Binstagram_341',
