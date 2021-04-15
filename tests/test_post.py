@@ -16,7 +16,7 @@ post = Post.get_by_id(db, 3)
 def test_get_user_likes():
     """compare a list of know users with those in db"""
     user_likes = {'Ablion73', 'Whimseeplis', 'Marknow', 'Crinsonast1984'}
-    assert set(post.get_user_likes(db)) == user_likes)
+    assert set(post.get_user_likes(db)) == user_likes
 
 
 def test_get_user():
