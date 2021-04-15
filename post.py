@@ -165,7 +165,7 @@ if __name__ == '__main__':
     import mysql.connector
 
     db = mysql.connector.connect(
-            host='192.168.1.53',
+            host='184.144.173.26',
             user='root',
             passwd='Binstagram_341',
             database='binstagram'
@@ -185,9 +185,13 @@ if __name__ == '__main__':
     # cr.close()
 
     post = Post.get_by_id(db, 3)
-    # print(post.get_post(dictionary=True))
+    print(post)
+    #print(post.get_post(dictionary=True))
     # image = get_binary('static/images/montreal.jpg')
     # post.add_to_db(db, image)
-    print(Comment.get_post_comments(db, post))
+    #print(Comment.get_post_comments(db, post))
+    #print(Post.get_post(post,db))
+    #print(Post.get_user_likes(post,db))
+    #print(Post.get_image(post,db))
     db.commit()
     db.close()

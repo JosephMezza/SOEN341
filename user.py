@@ -106,7 +106,7 @@ class User(UserMixin):
         cr.close()
         return {post['id']: b64encode(post['data']).decode('utf-8') for post in posts}
 
-    def get_likes(self, db):
+    def get_likes(self, db): 
         """returns all likes for a user's posts"""
         cr = db.cursor(dictionary=True)
         cr.execute(f"SELECT likes FROM post WHERE user_id = '{self.id}'")
@@ -123,7 +123,7 @@ class User(UserMixin):
         cr.close()
 
     @staticmethod
-    def get_usernames(db):
+    def get_usernames(db): 
         """retrieve all user data"""
         cr = db.cursor(dictionary=True)
         cr.execute("SELECT username FROM user")
@@ -132,7 +132,7 @@ class User(UserMixin):
         return list(map(lambda x: x['username'], usernames))
 
     @staticmethod
-    def get_from_db(db, key, value, hide_password=False, commit_to_db=True):
+    def get_from_db(db, key, value, hide_password=False, commit_to_db=True): 
         """Search in db for row where id corresponds to given id"""
         if key not in User._VALID_KEYS:
             print('invalid key')
@@ -180,7 +180,7 @@ if __name__ == '__main__':
     import mysql.connector
 
     db = mysql.connector.connect(
-        host='192.168.1.53',
+        host='184.144.173.26',
         user='root',
         passwd='Binstagram_341',
         database='binstagram'
@@ -227,8 +227,10 @@ if __name__ == '__main__':
     # print(User.get_usernames(db))
     user = User.get_from_db(db, 'username', 'Ablion73')
     # print(user.get_user(dictionary=True, hide_password=True))
-    user_by_id = User.get_from_db(db, 'id', 1)
-    assert user == user_by_id, 'ids are different'
+    user_by_id = User.get_from_db(db, 'id', 3)
+    #assert user == user_by_id, 'ids are different'
+    #print(user.get_likes(db))
+    print(User.get_post_images(user_by_id,db))
     # followable = user.get_followable(db)
     # print(user.id)
     # print(followable)
