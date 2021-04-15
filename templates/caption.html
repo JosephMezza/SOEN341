@@ -7,10 +7,13 @@
 <div class="caption">
     <img src="data:image/jpeg;base64,{{ image }}">
     <h2>Enter your caption!<br></h2>
-    <form method="POST" action="">
-            <label for=""> {{ form.caption.label }}</label>
+    <form method="POST" action="">       
+            <label class = "caption-text" for=""> {{ form.caption.label }}</label>
+            <br/>
             {{ form.caption }}
-            {{ form.submit }}
+            <br/>
+            {{ form.submit(class = "caption-submit") }}
+            <br/>
     </form>
 </div>
 {% endblock %}

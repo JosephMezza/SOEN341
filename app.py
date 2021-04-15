@@ -14,7 +14,6 @@ db_config = {'host': '184.144.173.26',
              'passwd': 'Binstagram_341',
              'database': 'binstagram'
              }
-db_config['host'] = '192.168.1.53'
 try:
     data_base = mysql.connector.connect(**db_config)
 except mysql.connector.errors.InterfaceError:

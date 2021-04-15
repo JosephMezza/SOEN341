@@ -145,6 +145,35 @@ a {
 }
 
 .caption {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1%;
     width: 50%;
     color: white;
+    text-align: center;
 }
+.caption-text{
+    visibility: hidden;
+    height: 0px;
+    margin: 0px;
+}
+.caption-submit{
+    color: white;
+    font-size: 20px;
+    width: 80px;
+    height: 45px;
+    background-color: #1868e7;;
+    border-radius: 18px;
+    padding-bottom: 4px;
+}
+#caption{
+background-color: transparent;
+width: 35%;
+height: 20%;
+border-width: 1px solid white;
+outline: none;
+color: white;
+font-size: 20px;
+margin-bottom: 10px;
+}
+
