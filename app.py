@@ -26,7 +26,7 @@ finally:
 
 app = Flask(__name__)
 app.secret_key = 'secret_key'
-app.debug = True
+app.debug = False
 # debugging purposes : rollback db on close if False
 db_config['commit_to_db'] = not app.debug
 app.config["IMAGE_UPLOADS"] = "static/images"
