@@ -1,49 +1,39 @@
 {% extends "base.html" %}
+
+{% block title %} {{ super() }} - profile{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-
-<head>
-    {% block head %}
-    <title>{% block title %}SOEN 341{% endblock %}</title>
-    <link rel="stylesheet" href="..\static\stylesheet.css">
-    {% endblock %}
-</head>
-
-<body>
-    <br>
-    <div>
-        <div class="profile">
-            <p style="color: aliceblue;">
-                <b>User: </b>
-                <a href="/profile/{{ user.username }}">{{ user.username }}</a>
-                <br/>
-                <b>Total Likes:</b> {{ likes }}
-                <br/>
-                <b>Followers:</b>
-                {% for username in followers %}
-                    <a href="/profile/{{ username }}">{{ username }}</a>
-                    {% if username != followers[-1] %}, {% endif %}
-                {% endfor %}
-                <br/>
-                <b>Following:</b>
-                {% for username in following %}
-                    <a href="/profile/{{ username }}">{{ username }}</a>
-                    {% if username != following[-1] %}, {% endif %}
-                {% endfor %}
-            </p>
-        </div>
-    </div>
-    <br><br><br>
-    <div class = "main-grid">
-        {% set foundImage = { 'flag': True } %}
-        {% if posts == None %}
-        {% else %}
-            {% for post_id, image in posts.items() %}
-                <a href= '/post/{{ post_id }}'><img src="data:image/jpeg;base64,{{ image }}"></a>
+<br>
+<div>
+    <div class="profile">
+        <p style="color: aliceblue;">
+            <b>User: </b>
+            <a href="/profile/{{ user.username }}">{{ user.username }}</a>
+            <br/>
+            <b>Total Likes:</b> {{ likes }}
+            <br/>
+            <b>Followers:</b>
+            {% for username in followers %}
+                <a href="/profile/{{ username }}">{{ username }}</a>
+                {% if username != followers[-1] %}, {% endif %}
             {% endfor %}
-        {% endif %}
+            <br/>
+            <b>Following:</b>
+            {% for username in following %}
+                <a href="/profile/{{ username }}">{{ username }}</a>
+                {% if username != following[-1] %}, {% endif %}
+            {% endfor %}
+        </p>
     </div>
-</body>
-
-</html>
+</div>
+<br><br><br>
+<div class = "main-grid">
+    {% set foundImage = { 'flag': True } %}
+    {% if posts == None %}
+    {% else %}
+        {% for post_id, image in posts.items() %}
+            <a href= '/post/{{ post_id }}'><img src="data:image/jpeg;base64,{{ image }}"></a>
+        {% endfor %}
+    {% endif %}
+</div>
 {% endblock %}

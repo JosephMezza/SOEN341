@@ -1,76 +1,71 @@
 {% extends "base.html" %}
+
+{% block title %} {{ super() }} - Signup{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="..\static\signup.css">
+{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>Signup</title>
-    <link rel="stylesheet" href="..\static\resetPass.css">
-</head>
-
-<body>
-    <div class="signUpForm">
-        <h2>Let's get started!<br></h2>
-        <form method="POST" action="/signup">
-            <table class="signup-tab">
-                <tr>
-                    <td>
-                        {{ form.csrf_token() }}
-                        <label for=""> {{ form.first_name.label }}</label>
-                        {{ form.first_name }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ form.csrf_token() }}
-                        <label for=""> {{ form.last_name.label }}</label>
-                        {{ form.last_name }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ form.csrf_token() }}
-                        <label for=""> {{ form.email.label }}</label>
-                        {{ form.email }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ form.csrf_token() }}
-                        <label for=""> {{ form.username.label }}</label>
-                        {{ form.username }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ form.csrf_token() }}
-                        <label for=""> {{ form.password.label }}</label>
-                        {{ form.password }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ form.csrf_token() }}
-                        <label for=""> {{ form.password2.label }}</label>
-                        {{ form.password2 }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="form-group">
-                            {{ form.submit(class="submit")}}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td id="accountmsg">Already have an account?
-                        <a href="login" style="color: beige">Login</a>
-                    </td>
-                </tr>
-            </table>
-        </form>
-    </div>
-</body>
-
-</html>
+<div class="signUpForm">
+    <h2>Let's get started!<br></h2>
+    <form method="POST" action="/signup">
+        <table>
+            <tr>
+                <td>
+                    {{ form.csrf_token() }}
+                    <label for=""> {{ form.first_name.label }}</label>
+                    {{ form.first_name }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.csrf_token() }}
+                    <label for=""> {{ form.last_name.label }}</label>
+                    {{ form.last_name }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.csrf_token() }}
+                    <label for=""> {{ form.email.label }}</label>
+                    {{ form.email }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.csrf_token() }}
+                    <label for=""> {{ form.username.label }}</label>
+                    {{ form.username }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.csrf_token() }}
+                    <label for=""> {{ form.password.label }}</label>
+                    {{ form.password }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {{ form.csrf_token() }}
+                    <label for=""> {{ form.password2.label }}</label>
+                    {{ form.password2 }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        {{ form.submit(class="submit")}}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Already have an account?
+                    <a href="login">Login</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
 {% endblock %}

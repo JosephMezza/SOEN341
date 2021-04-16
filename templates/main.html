@@ -1,24 +1,20 @@
 {% extends "base.html" %}
+
+{% block title %} {{ super() }} - main{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <title>Home</title>
-    <link rel="stylesheet" href="..\static\stylesheet.css">
-</head>
-
-<body>
     <br>
     {% if current_user.is_authenticated %}
         <div class = "main-grid">
             {% set foundImage = { 'flag': True } %}
-            {% if posts == None %}
-            {% else %}
+            {% if posts %}
                 {% for post_id, image in posts.items() %}
                     <a href= '/post/{{ post_id }}'><img src="data:image/jpeg;base64,{{ image }}"></a>
                 {% endfor %}
             {% endif %}
+            <br/><br/>
+        </div>
+    
     {% else %}
         <div class = "bin-line">
             <img class = "bin" src = "static/images/letter_b.jpg"/>
@@ -33,7 +29,5 @@
             <img class = "bin" src = "static/images/letter_m.jpg"/>
         </div>
     {% endif %}
-    </div>
-</body>
-</html>
+
 {% endblock %}

@@ -1,14 +1,12 @@
 {% extends "base.html" %}
+
+{% block title %} {{ super() }} - Login{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="..\static\login.css">
+{% endblock %}
+
 {% block content %}
-<!DOCTYPE html>
-<html>
-
-<head>
-   <title>Login</title>
-   <link rel="stylesheet" href="/static/login.css">
-</head>
-
-<body>
    <div class="box">
       <img class="userimage" src="/static/images/user.png">
       <h2>Welcome Back!</h2>
@@ -36,7 +34,4 @@
          </div>
       </form>
    </div>
-</body>
-
-</html>
 {% endblock %}
