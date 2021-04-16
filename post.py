@@ -164,8 +164,8 @@ def get_binary(fname):
 if __name__ == '__main__':
     import mysql.connector
 
-    data_base = mysql.connector.connect(
-            host='192.168.1.53',
+    db = mysql.connector.connect(
+            host='184.144.173.26',
             user='root',
             passwd='Binstagram_341',
             database='binstagram'
