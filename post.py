@@ -163,7 +163,7 @@ def get_binary(fname):
 
 if __name__ == '__main__':
     import mysql.connector
-    
+
     db = mysql.connector.connect(
             host='184.144.173.26',
             user='root',
@@ -183,7 +183,7 @@ if __name__ == '__main__':
     #         continue
     #     cursor.execute(f"UPDATE post SET likes = {likes} WHERE id = '{post.id}'")
     # cursor.close()
-    
+
     post = Post.get_by_id(data_base, 162)
     # print(post.get_post(dictionary=True))
     # image = get_binary('static/images/montreal.jpg')

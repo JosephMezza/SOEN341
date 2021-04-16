@@ -1,6 +1,5 @@
 from user import User
 import mysql.connector
-import datetime
 
 db = mysql.connector.connect(
     host='184.144.173.26',

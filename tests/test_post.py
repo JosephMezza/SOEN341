@@ -27,7 +27,7 @@ def test_get_user():
 def test_get_post_comments():
     """check a known comment has been posted to a particular image"""
     post_comments = Comment.get_post_comments(db, post)
-    assert str(post_comments['alexabarra']) == 'Nice Pic'
+    assert post_comments[0][0] == 'alexabarra' and post_comments[0][1].content == 'Nice Pic'
 
 
 def test_like():
