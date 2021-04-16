@@ -1,7 +1,7 @@
 from post import Post, Comment
 from user import User
 import mysql.connector
-
+import mysql
 
 db = mysql.connector.connect(
     host='184.144.173.26',
