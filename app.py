@@ -9,15 +9,15 @@ import os
 import mysql.connector
 import emailsend
 
-db_config = {'host': '184.144.173.26',
+db_config = {'host': 'localhost',
              'user': 'root',
-             'passwd': 'Binstagram_341',
+             'passwd': '',
              'database': 'binstagram'
              }
 try:
     data_base = mysql.connector.connect(**db_config)
 except mysql.connector.errors.InterfaceError:
-    db_config['host'] = '192.168.1.53'
+    db_config['host'] = 'localhost'
     data_base = mysql.connector.connect(**db_config)
 finally:
     print(
@@ -124,6 +124,8 @@ def post(post_id):
     state = ['like', 'unlike'][current_user.username in user_likes]
     image = post.get_image(data_base)
     comments = Comment.get_post_comments(data_base, post)
+    print(comments[0])
+    print(len(comments[0]))
     if request.method == 'POST':
         if 'like' in request.form:
             post.like(data_base, current_user)

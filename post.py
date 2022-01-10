@@ -165,9 +165,9 @@ if __name__ == '__main__':
     import mysql.connector
 
     db = mysql.connector.connect(
-            host='184.144.173.26',
+            host='localhost',
             user='root',
-            passwd='Binstagram_341',
+            passwd='',
             database='binstagram'
             )
 
